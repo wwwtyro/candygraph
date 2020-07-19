@@ -62,5 +62,6 @@ cg.render(coords, viewport, [
   }),
 ]);
 ```
-
-<div style="text-align:center"><img src="media/simple-plot.png" /></div>
+<p align="center">
+  <img src="media/simple-plot.png">
+</p>
