@@ -23,6 +23,10 @@
 
 ## Example
 
+<p align="center">
+  <img src="media/simple-plot.png">
+</p>
+
 ```ts
 import { createCandyGraph } from "candygraph";
 
@@ -74,6 +78,3 @@ cg.render(coords, viewport, [
   }),
 ]);
 ```
-<p align="center">
-  <img src="media/simple-plot.png">
-</p>
