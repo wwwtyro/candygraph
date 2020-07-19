@@ -1,13 +1,25 @@
-# CandyGraph
+<h1 align="center">
+  CandyGraph
+</h1>
 
-> CandyGraph is still in [major version zero](https://semver.org/#spec-item-4); the API should be considered unstable.
+<div align="center">
+  A flexible and fast-by-default 2D plotting library tuned for rendering huge datasets on the GPU at interactive speeds.
+</div>
 
-CandyGraph is a flexible and fast-by-default 2D plotting library tuned for rendering huge datasets on the GPU at interactive speeds.
+<div align="center">
+  <h3 align="center">
+    <a href="https://wwwtyro.github.io/candygraph/tutorial/dist/">Tutorial</a> |
+    <a href="https://wwwtyro.github.io/candygraph/examples/dist/">Examples</a> |
+    <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/API.md">API Docs</a>
+  </h3>
+</div>
 
 - Adopts D3's elegant concept of scales, but implements them on the GPU to maximize data throughput and handle scale changes with no additional cost.
 - Performs all rendering on the GPU, even axes and text. This keeps rendering and compositing fast and simple - no need to overlay a canvas or svg over your plot.
 - Provides a small but growing set of highly optimized primitives that are tuned for handling huge datasets.
 - Provides a set of higher-level composite objects composed of primitives to simplify common rendering tasks.
+
+> CandyGraph is still in [major version zero](https://semver.org/#spec-item-4); the API should be considered unstable.
 
 ## Example
 
