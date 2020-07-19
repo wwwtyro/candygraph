@@ -1,6 +1,6 @@
 {
   "name": "candygraph",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Fast by default, flexible 2D plotting library.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -28,6 +28,10 @@
   "dependencies": {
     "gl-matrix": "^3.3.0",
     "regl": "^1.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wwwtyro/candygraph.git"
   },
   "devDependencies": {
     "@types/node": "^14.0.19",
