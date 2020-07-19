@@ -1,0 +1,49 @@
+{
+  "name": "candygraph",
+  "version": "0.0.0",
+  "description": "Fast by default, flexible 2D plotting library.",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "keywords": [
+    "2d",
+    "plot",
+    "graph",
+    "chart",
+    "webgl",
+    "regl"
+  ],
+  "author": "Rye Terrell <ryeterrell@ryeterrell.net> (https://wwwtyro.net)",
+  "license": "Unlicense",
+  "scripts": {
+    "build": "webpack && npm run build-tutorial && npm run build-examples",
+    "build-tutorial": "webpack --config docs/tutorial/webpack.config.js",
+    "build-examples": "webpack --config docs/examples/webpack.config.js",
+    "start-tutorial": "webpack-dev-server --config docs/tutorial/webpack.config.js",
+    "start-examples": "webpack-dev-server --config docs/examples/webpack.config.js",
+    "clean": "rm -rf lib",
+    "lint": "eslint './src/**/*.ts' './docs/examples/src/**/*.ts' './docs/tutorial/src/**/*.ts'",
+    "start": "concurrently -k 'npm run watch' 'npm run start-tutorial' 'npm run start-examples'",
+    "watch": "webpack --watch"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.3.0",
+    "regl": "^1.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.19",
+    "@typescript-eslint/eslint-plugin": "^3.5.0",
+    "@typescript-eslint/parser": "^3.5.0",
+    "concurrently": "^5.2.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "markdown-it": "^11.0.0",
+    "prettier": "^2.0.5",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
+    "url-loader": "^4.1.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
+  }
+}

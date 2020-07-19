@@ -1,0 +1,147 @@
+import { CandyGraph } from "../../..";
+
+export default async function RelativeTime(cg: CandyGraph) {
+  const HISTORY = 1.0; // Seconds of history to keep
+  const TRACE_LENGTH = 5; // Number of seconds for each trace
+  const TRACE_RESOLUTION = 100; // Number of points per trace
+
+  // Keep track of the traces.
+  let traces: ReturnType<typeof createTrace>[] = [];
+
+  // Create a canvas and add it to the page.
+  const canvas = document.createElement("canvas");
+  canvas.width = 480;
+  canvas.height = 384;
+  document.body.appendChild(canvas);
+
+  // The viewport for our plot. Units are pixels.
+  const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
+
+  // We'll make two coordinate systems; one for the x-axis, which is relative time,
+  // and one for the traces, which are in real time. We'll share the y scale between
+  // them.
+  const yScale = cg.scale.linear([0, 25], [32, viewport.height - 16]);
+  const axisCoords = cg.coordinate.cartesian(
+    cg.scale.linear([-1, 5], [16, viewport.width - 16]),
+    yScale
+  );
+  const timeCoords = cg.coordinate.cartesian(
+    cg.scale.linear([-1, 5], [16, viewport.width - 16]),
+    yScale
+  );
+
+  const font = await cg.defaultFont;
+
+  // Make our two axes.
+  const axes = [
+    cg
+      .orthoAxis(axisCoords, "x", font, {
+        labelSide: 1,
+        tickOffset: -3,
+        tickLength: 6,
+      })
+      .retain(),
+    cg
+      .orthoAxis(axisCoords, "y", font, {
+        axisIntercept: 0,
+        labelAnchor: [1, 1.25],
+        tickOrigin: 0,
+        tickStep: 5,
+        tickLength: 0,
+        labelFormatter: (n: number) => (n === 0 ? "" : n.toString()),
+      })
+      .retain(),
+  ];
+
+  const grid = cg
+    .grid(
+      axes[0].info.ticks,
+      axes[1].info.ticks,
+      axisCoords.xscale.domain,
+      axisCoords.yscale.domain
+    )
+    .retain();
+
+  function primenoise(t: number) {
+    const primes = [2, 3, 5, 7, 11, 13, 17, 19];
+    let sum = 0;
+    for (const p of primes) {
+      sum += Math.sin(t / p);
+    }
+    return sum / primes.length;
+  }
+
+  // Make a new trace. This is just a line strip with an associated
+  // timestamp. We'll make it change as a function of time to make
+  // the animation obvious.
+  function createTrace(time: number) {
+    const xs = [];
+    const ys = [];
+    const y0 = 12.5 + 12.5 * primenoise(32 * time);
+    for (let i = 0; i < TRACE_RESOLUTION; i++) {
+      const x = (TRACE_LENGTH * i) / (TRACE_RESOLUTION - 1);
+      const y = y0 + 12.5 * primenoise(4 * x + 32 * time);
+      xs.push(x + time);
+      ys.push(y);
+    }
+    return {
+      timestamp: time,
+      trace: cg
+        .lineStrip(xs, ys, {
+          colors: [1, 0, 1, 1],
+          widths: 3.0,
+        })
+        .retain(),
+    };
+  }
+
+  function render(time: number) {
+    time = time / 1000;
+
+    traces.push(createTrace(time));
+
+    // Remove old traces.
+    traces = traces.filter((trace) => {
+      if (time - trace.timestamp > HISTORY) {
+        trace.trace.dispose();
+        return false;
+      }
+      return true;
+    });
+
+    // Update the styling according to the age of the trace. Skip
+    // the most recently added trace.
+    for (let i = 0; i < traces.length - 1; i++) {
+      const trace = traces[i];
+      const age = time - trace.timestamp;
+      trace.trace.colors.update([0, 0, 0, 0.5 * (1 - age / HISTORY)]);
+      trace.trace.widths.update(1);
+    }
+
+    // Update the timeCoords.
+    timeCoords.xscale.domain = [time - 1, time + 5];
+
+    // Clear the canvas.
+    cg.clear([1, 1, 1, 1]);
+
+    // Render the grid with the relative time coordinate system.
+    cg.render(axisCoords, viewport, grid);
+
+    // Render the traces with the real time coordinate system.
+    cg.render(
+      timeCoords,
+      viewport,
+      traces.map((trace) => trace.trace)
+    );
+
+    // Render the axes with the relative time coordinate system.
+    cg.render(axisCoords, viewport, axes);
+
+    // Copy to our canvas.
+    cg.copyTo(viewport, canvas);
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+}
