@@ -91,19 +91,21 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     colors.push(Math.random(), Math.random(), Math.random(), 0.5);
   }
 
-  const circles = cg.circles([0, 0], { colors, borderWidths: 0 }).retain();
+  const circles = cg
+    .interleavedCircles([0, 0], { colors, borderWidths: 0 })
+    .retain();
 
   function render(year: number) {
     year = Math.max(nations.bounds.date.min, year);
     year = Math.min(nations.bounds.date.max, year);
     const index = year - nations.bounds.date.min;
-    const positions = [];
+    const xys = [];
     const radii = [];
     for (const nation of nations.data) {
-      positions.push(nation.income[index], nation.expectancy[index]);
+      xys.push(nation.income[index], nation.expectancy[index]);
       radii.push(Math.pow(nation.population[index], 0.175));
     }
-    circles.positions.update(positions);
+    circles.xys.update(xys);
     circles.radii.update(radii);
 
     cg.clear([1, 1, 1, 1]);

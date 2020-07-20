@@ -6,6 +6,7 @@ import HealthAndWealth from "./health-and-wealth";
 import InterleavedLineSegments from "./interleaved-line-segments";
 import MultiViewport from "./multi-viewport";
 import SimplePlot from "./simple-plot";
+import SimplePlotPoints from "./simple-plot-points";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024;
@@ -14,5 +15,6 @@ TimeAndState(cg);
 LinearLog(cg);
 InterleavedLineSegments(cg);
 SimplePlot(cg);
+SimplePlotPoints(cg);
 HealthAndWealth(cg);
 RelativeTime(cg);

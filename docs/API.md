@@ -215,13 +215,30 @@ pixels and result in an inconsistent appearance.
 | colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the lines. If this value is a single Vector4, it will apply to all the lines. |
 | widths | number or NumberArray or Dataset | 1            | The width of the lines. If this value is a single number, it will apply to all the lines.  |
 
-#### `cg.circles(positions: NumberArray or Dataset, [options: {}]): Circles`
+#### `cg.circles(xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): Circles`
 
-Returns a `Circles` object that draws colored circles with borders when rendered.
+Renders colored circles with optional borders.
+
+| Parameter | Type                   | Description                                                                    |
+| --------- | ---------------------- | ------------------------------------------------------------------------------ |
+| xs        | NumberArray or Dataset | Required. The x coordinates of the circle centers in the form `[x0, x1, ...]`. |
+| ys        | NumberArray or Dataset | Required. The y coordinates of the circle centers in the form `[y0, y1, ...]`. |
+| options   | Object                 | Optional. See below.                                                           |
+
+| Option       | Type                             | Default        | Description                                                                                                                 |
+| ------------ | -------------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| colors       | NumberArray or Dataset           | [0, 0, 0, 0.5] | The interior color of the circles. If this value is a single Vector4, it will apply to all the circles.                     |
+| radii        | number or NumberArray or Dataset | 10             | The radius of the circles (including border) in pixels. If this value is a single number, it will apply to all the circles. |
+| borderColors | NumberArray or Dataset           | [0, 0, 0, 1]   | The color of the borders. If this value is a single Vector4, it will apply to all the circles.                              |
+| borderWidths | number or NumberArray or Dataset | 3              | The width of the borders in pixels. If this value is a single number, it will apply to all the borders.                     |
+
+#### `cg.interleavedCircles(xys: NumberArray or Dataset, [options: {}]): Circles`
+
+Renders colored circles with optional borders.
 
 | Parameter | Type                   | Description                                                                                  |
 | --------- | ---------------------- | -------------------------------------------------------------------------------------------- |
-| positions | NumberArray or Dataset | Required. The x and y coordinates of the circle centers in the form `[x0, y0, x1, y1, ...]`. |
+| xys       | NumberArray or Dataset | Required. The x and y coordinates of the circle centers in the form `[x0, y0, x1, y1, ...]`. |
 | options   | Object                 | Optional. See below.                                                                         |
 
 | Option       | Type                             | Default        | Description                                                                                                                 |

@@ -42,6 +42,7 @@ export class CandyGraph {
   public readonly hlines: primitive.hlines.Factory;
   public readonly vlines: primitive.vlines.Factory;
   public readonly circles: primitive.circles.Factory;
+  public readonly interleavedCircles: primitive.interleavedCircles.Factory;
   public readonly defaultFont: Promise<Font>;
   public readonly axis: composite.axis.Factory;
   public readonly orthoAxis: composite.orthoAxis.Factory;
@@ -89,6 +90,7 @@ export class CandyGraph {
     this.hlines = primitive.hlines.factory(this.regl);
     this.vlines = primitive.vlines.factory(this.regl);
     this.circles = primitive.circles.factory(this.regl);
+    this.interleavedCircles = primitive.interleavedCircles.factory(this.regl);
 
     this.defaultFont = new Promise<Font>(async (accept) => {
       const image = await loadImage(

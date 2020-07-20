@@ -17,8 +17,7 @@ const DEFAULT_OPTIONS = {
 };
 
 type Props = {
-  offsetX: Buffer;
-  offsetY: Buffer;
+  offset: Buffer;
   color: Buffer;
   radius: Buffer;
   borderWidth: Buffer;
@@ -35,18 +34,13 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   // prettier-ignore
   const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options?: Options
-  ) {
-    return new Circles(regl, positionBuffer, xs, ys, options);
+  return function (xys: NumberArray | Dataset, options?: Options) {
+    return new InterleavedCircles(regl, positionBuffer, xys, options);
   };
 }
 
-export class Circles extends Primitive {
-  public readonly xs: Dataset;
-  public readonly ys: Dataset;
+export class InterleavedCircles extends Primitive {
+  public readonly xys: Dataset;
   public readonly colors: Dataset;
   public readonly radii: Dataset;
   public readonly borderWidths: Dataset;
@@ -55,14 +49,12 @@ export class Circles extends Primitive {
   constructor(
     private regl: Regl,
     private positionBuffer: Buffer,
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
+    xys: NumberArray | Dataset,
     options: Options = {}
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.xs = createDataset(regl, xs);
-    this.ys = createDataset(regl, ys);
+    this.xys = createDataset(regl, xys);
     this.colors = createDataset(regl, opts.colors);
     this.radii = createDataset(regl, opts.radii);
     this.borderWidths = createDataset(regl, opts.borderWidths);
@@ -74,7 +66,7 @@ export class Circles extends Primitive {
       vert: `
           precision highp float;
           attribute vec2 position;
-          attribute float offsetX, offsetY;
+          attribute vec2 offset;
           attribute vec4 color;
           attribute vec4 borderColor; 
           attribute float radius;
@@ -90,7 +82,6 @@ export class Circles extends Primitive {
     
           void main() {
             vPosition = position * radius;
-            vec2 offset = vec2(offsetX, offsetY);
             vec2 screenPosition = toRange(offset) + vPosition;
             gl_Position = rangeToClip(screenPosition);
             vColor = color;
@@ -152,12 +143,8 @@ export class Circles extends Primitive {
           buffer: this.positionBuffer,
           divisor: 0,
         },
-        offsetX: {
-          buffer: this.regl.prop<Props, "offsetX">("offsetX"),
-          divisor: 1,
-        },
-        offsetY: {
-          buffer: this.regl.prop<Props, "offsetY">("offsetY"),
+        offset: {
+          buffer: this.regl.prop<Props, "offset">("offset"),
           divisor: 1,
         },
         color: {
@@ -187,12 +174,11 @@ export class Circles extends Primitive {
   }
 
   public render(command: DrawCommand): void {
-    const { xs, ys, colors, radii, borderWidths, borderColors } = this;
-    const instances = xs.count(1);
+    const { xys, colors, radii, borderWidths, borderColors } = this;
+    const instances = xys.count(2);
     command({
       instances,
-      offsetX: xs.buffer,
-      offsetY: ys.buffer,
+      offset: xys.buffer,
       color: colors.buffer,
       radius: radii.buffer,
       borderWidth: borderWidths.buffer,
@@ -205,8 +191,7 @@ export class Circles extends Primitive {
   }
 
   public dispose(): void {
-    this.xs.disposeIfAuto();
-    this.ys.disposeIfAuto();
+    this.xys.disposeIfAuto();
     this.radii.disposeIfAuto();
     this.borderWidths.disposeIfAuto();
     this.colors.disposeIfAuto();
