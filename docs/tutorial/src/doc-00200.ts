@@ -21,7 +21,6 @@ export default async function doc_00200(cg: CandyGraph) {
     ys.push(Math.sin(x));
   }
 
-  cg.clear([1, 1, 1, 1]);
   // skip-doc-stop
 
   // While you can build axes out of CandyGraph primitives yourself, CandyGraph
@@ -35,7 +34,9 @@ export default async function doc_00200(cg: CandyGraph) {
 
   const font = await cg.defaultFont;
 
-  // And then render our axes:
+  // Then render our data and axes:
+
+  cg.clear([1, 1, 1, 1]); // skip-doc
 
   cg.render(coords, viewport, [
     cg.lineStrip(xs, ys, {
