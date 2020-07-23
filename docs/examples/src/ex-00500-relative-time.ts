@@ -1,3 +1,9 @@
+// ### Animated, relative time [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// Click to toggle animation:
+//
+// <canvas id="ex-00500" style="box-shadow: 0px 0px 8px #ccc;" width=512 height=384></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
 export default async function RelativeTime(cg: CandyGraph) {
@@ -9,10 +15,7 @@ export default async function RelativeTime(cg: CandyGraph) {
   let traces: ReturnType<typeof createTrace>[] = [];
 
   // Create a canvas and add it to the page.
-  const canvas = document.createElement("canvas");
-  canvas.width = 480;
-  canvas.height = 384;
-  document.body.appendChild(canvas);
+  const canvas = document.getElementById("ex-00500") as HTMLCanvasElement;
 
   // The viewport for our plot. Units are pixels.
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
@@ -139,9 +142,23 @@ export default async function RelativeTime(cg: CandyGraph) {
 
     // Copy to our canvas.
     cg.copyTo(viewport, canvas);
-
-    requestAnimationFrame(render);
   }
 
-  requestAnimationFrame(render);
+  let animating = false;
+
+  function animate(time: number) {
+    requestAnimationFrame(animate);
+    if (!animating) {
+      return;
+    }
+    render(time);
+  }
+
+  document.getElementById("ex-00500")?.addEventListener("click", function () {
+    animating = !animating;
+  });
+
+  render(0);
+  animate(0);
 }
+// skip-doc-stop

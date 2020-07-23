@@ -1,12 +1,20 @@
+// ### Scatter plot [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// <canvas id="ex-00300" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
-export default async function SimplePlotPoints(cg: CandyGraph) {
+export default async function ScatterPlot(cg: CandyGraph) {
   // Generate some x & y data.
   const xs = [];
   const ys = [];
-  for (let x = 0; x <= 1 + Number.EPSILON; x += 0.05) {
-    xs.push(x);
-    ys.push(0.5 + 0.25 * Math.sin(x * 2 * Math.PI));
+  for (let i = 0; i < 10000; i++) {
+    const x = Math.random();
+    const y = x;
+    const d =
+      0.8 * (Math.random() - 0.5) * Math.pow(Math.sin(x * Math.PI), 2.0);
+    xs.push(x - d);
+    ys.push(y + d);
   }
 
   // Create a viewport. Units are in pixels.
@@ -25,20 +33,11 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
   // Clear the viewport.
   cg.clear([1, 1, 1, 1]);
 
-  // Render the a line strip representing the x & y data, and axes.
+  // Render the data as circles and the axes.
   cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
-      colors: [1, 0.5, 0, 1],
-      widths: 3,
-    }),
     cg.circles(xs, ys, {
-      colors: [1, 0.5, 0, 1],
-      radii: 6.0,
-      borderWidths: 0,
-    }),
-    cg.circles(xs, ys, {
-      colors: [1, 1, 1, 1],
-      radii: 3.0,
+      colors: [1, 0.5, 0.0, 1.0],
+      radii: 1,
       borderWidths: 0,
     }),
     cg.orthoAxis(coords, "x", font, {
@@ -57,5 +56,6 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
   ]);
 
   // Copy the plot to a new canvas and add it to the document.
-  document.body.appendChild(cg.copyTo(viewport));
+  cg.copyTo(viewport, document.getElementById("ex-00300") as HTMLCanvasElement);
 }
+// skip-doc-stop

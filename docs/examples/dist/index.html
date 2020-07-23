@@ -2,13 +2,49 @@
   <head>
     <title>CandyGraph Examples</title>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/css/uikit.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
     <script src="bundle.js" defer></script>
-    <style>
-      canvas {
-        box-shadow: 0px 0px 8px #ccc;
-        margin: 16px;
-      }
-    </style>
   </head>
-  <body></body>
+  <body>
+    <div class="uk-section">
+      <div class="uk-container">
+        <h1>CandyGraph Examples</h1>
+        <h3>Simple line plot <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00100-simple-plot.ts">(source)</a></h3>
+<p><canvas id="ex-00100" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas></p>
+<h3>Simple line plot with points <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00200-simple-plot-points.ts">(source)</a></h3>
+<p><canvas id="ex-00200" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas></p>
+<h3>Scatter plot <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00300-scatter-plot.ts">(source)</a></h3>
+<p><canvas id="ex-00300" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas></p>
+<h3>Logarithmic Y-Axis <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00400-linear-log.ts">(source)</a></h3>
+<p><canvas id="ex-00400" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas></p>
+<h3>Animated, relative time <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00500-relative-time.ts">(source)</a></h3>
+<p>Click to toggle animation:</p>
+<p><canvas id="ex-00500" style="box-shadow: 0px 0px 8px #ccc;" width=512 height=384></canvas></p>
+<h3>Animated, background state <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00600-time-and-state.ts">(source)</a></h3>
+<p>Click to toggle animation:</p>
+<p><canvas id="ex-00600" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas></p>
+<h3>Multiple vieports <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00700-multi-viewport.ts">(source)</a></h3>
+<p><canvas id="ex-00700" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=512></canvas></p>
+<h3>Simple mouse interaction <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-00800-health-and-wealth.ts">(source)</a></h3>
+<p><canvas id="ex-00800" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=768></canvas></p>
+<h3>Line segments <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/ex-10000-interleaved-line-segments.ts">(source)</a></h3>
+<p><canvas id="ex-10000" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas></p>
+
+      </div>
+    </div>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
 </html>

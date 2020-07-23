@@ -1,3 +1,7 @@
+// ### Line segments [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// <canvas id="ex-10000" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
 export default function InterleavedLineSegments(cg: CandyGraph) {
@@ -26,5 +30,6 @@ export default function InterleavedLineSegments(cg: CandyGraph) {
     }),
   ]);
 
-  document.body.appendChild(cg.copyTo(viewport));
+  cg.copyTo(viewport, document.getElementById("ex-10000") as HTMLCanvasElement);
 }
+// skip-doc-stop

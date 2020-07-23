@@ -1,11 +1,12 @@
+// ### Simple mouse interaction [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// <canvas id="ex-00800" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=768></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
 export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   // Create a canvas and add it to the page.
-  const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 768;
-  document.body.appendChild(canvas);
+  const canvas = document.getElementById("ex-00800") as HTMLCanvasElement;
 
   const nations = await loadNations();
 
@@ -230,3 +231,4 @@ async function loadNations() {
     data: nationData,
   };
 }
+// skip-doc-stop

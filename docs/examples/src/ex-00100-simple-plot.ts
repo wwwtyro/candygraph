@@ -1,3 +1,7 @@
+// ### Simple line plot [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// <canvas id="ex-00100" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
 export default async function SimplePlot(cg: CandyGraph) {
@@ -47,5 +51,5 @@ export default async function SimplePlot(cg: CandyGraph) {
   ]);
 
   // Copy the plot to a new canvas and add it to the document.
-  document.body.appendChild(cg.copyTo(viewport));
+  cg.copyTo(viewport, document.getElementById("ex-00100") as HTMLCanvasElement);
 }

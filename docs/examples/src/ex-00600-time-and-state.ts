@@ -1,11 +1,14 @@
+// ### Animated, background state [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// Click to toggle animation:
+//
+// <canvas id="ex-00600" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
 export default async function TimeAndState(cg: CandyGraph) {
   // Create a canvas and add it to the page.
-  const canvas = document.createElement("canvas");
-  canvas.width = 384;
-  canvas.height = 384;
-  document.body.appendChild(canvas);
+  const canvas = document.getElementById("ex-00600") as HTMLCanvasElement;
 
   // The viewport for our plot. Units are pixels.
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
@@ -157,9 +160,23 @@ export default async function TimeAndState(cg: CandyGraph) {
 
     // Copy to our target canvas.
     cg.copyTo(viewport, canvas);
-
-    requestAnimationFrame(render);
   }
 
-  requestAnimationFrame(render);
+  let animating = false;
+
+  function animate(time: number) {
+    requestAnimationFrame(animate);
+    if (!animating) {
+      return;
+    }
+    render(time);
+  }
+
+  document.getElementById("ex-00600")?.addEventListener("click", function () {
+    animating = !animating;
+  });
+
+  render(0);
+  animate(0);
 }
+// skip-doc-stop

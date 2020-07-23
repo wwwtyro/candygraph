@@ -1,9 +1,11 @@
+// ### Multiple vieports [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// <canvas id="ex-00700" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=512></canvas>
+
+// skip-doc-start
 import { CandyGraph } from "../../..";
 
 export default async function MultiViewport(cg: CandyGraph) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 512;
+  const canvas = document.getElementById("ex-00700") as HTMLCanvasElement;
 
   const coordstop = cg.coordinate.cartesian(
     cg.scale.linear([0, 10], [40, 256 - 16]),
@@ -156,9 +158,7 @@ export default async function MultiViewport(cg: CandyGraph) {
     randomTraces(),
   ]);
 
-  document.body.appendChild(
-    cg.copyTo({ x: 0, y: 0, width: 1024, height: 512 }, canvas)
-  );
+  cg.copyTo({ x: 0, y: 0, width: 1024, height: 512 }, canvas);
 
   miniaxesbottom[0].dispose();
   miniaxesbottom[1].dispose();
@@ -166,3 +166,4 @@ export default async function MultiViewport(cg: CandyGraph) {
   miniaxestop[1].dispose();
   xs.dispose();
 }
+// skip-doc-stop
