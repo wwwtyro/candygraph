@@ -7,6 +7,7 @@ import InterleavedLineSegments from "./interleaved-line-segments";
 import MultiViewport from "./multi-viewport";
 import SimplePlot from "./simple-plot";
 import SimplePlotPoints from "./simple-plot-points";
+import ScatterPlot from "./scatter-plot";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024;
@@ -18,3 +19,4 @@ SimplePlot(cg);
 SimplePlotPoints(cg);
 HealthAndWealth(cg);
 RelativeTime(cg);
+ScatterPlot(cg);
