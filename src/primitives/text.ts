@@ -237,7 +237,7 @@ export class Text extends Primitive {
           }
           alpha /= float(samples * samples);
           alpha *= color.a;
-          gl_FragColor = vec4(color.rgb * alpha, alpha);
+          gl_FragColor = vec4(color.rgb, alpha);
         }
       `,
       attributes: {

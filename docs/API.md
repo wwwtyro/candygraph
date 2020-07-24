@@ -16,13 +16,13 @@ import { CandyGraph } from "candygraph";
 
 ### Methods
 
-#### `cg.clear(color: Vec4): void`
+#### `cg.clear(color: Vector4): void`
 
 Clears the entire CandyGraph canvas.
 
-| Parameter | Type | Description                                                                                                  |
-| --------- | ---- | ------------------------------------------------------------------------------------------------------------ |
-| color     | Vec4 | Required. An array of four values - red, green, blue, and alpha. The values should be in the range [0 .. 1]. |
+| Parameter | Type    | Description                                                                                                  |
+| --------- | ------- | ------------------------------------------------------------------------------------------------------------ |
+| color     | Vector4 | Required. An array of four values - red, green, blue, and alpha. The values should be in the range [0 .. 1]. |
 
 ##### Example
 
@@ -109,10 +109,10 @@ Creates a `LineSegments` that draws line segments when rendered.
 | points    | NumberArray or Dataset | Required. An array of points in the format `[x0, y0, x1, y1, ...]` that represent the endpoints of the line segments to be rendered. |
 | options   | Object                 | Optional. See below.                                                                                                                 |
 
-| Option | Type                             | Default      | Description                                                                                               |
-| ------ | -------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------- |
-| widths | number or NumberArray or Dataset | 1            | The width of the line segments. If this parameter is a single number, it will apply to all line segments. |
-| colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the line segments. If this parameter is a single Vec4, it will apply to all line segments.   |
+| Option | Type                             | Default      | Description                                                                                                |
+| ------ | -------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| widths | number or NumberArray or Dataset | 1            | The width of the line segments. If this parameter is a single number, it will apply to all line segments.  |
+| colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the line segments. If this parameter is a single Vector4, it will apply to all line segments. |
 
 #### `cg.lineStrip(xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): LineStrip`
 
@@ -124,10 +124,10 @@ Returns a `LineStrip` that draws a line strip when rendered.
 | ys        | NumberArray or Dataset | Required. An array of points in the format `[y0, y1, ...]` that represent the y-coordinates of the line strip to be rendered. |
 | options   | Object                 | Optional. See below.                                                                                                          |
 
-| Option | Type                             | Default      | Description                                                                                                |
-| ------ | -------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
-| widths | number or NumberArray or Dataset | 1            | The width of the line strip segments. If this parameter is a single number, it will apply to all segments. |
-| colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the line strip segments. If this parameter is a single Vec4, it will apply to all segments.   |
+| Option | Type                             | Default      | Description                                                                                                 |
+| ------ | -------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------- |
+| widths | number or NumberArray or Dataset | 1            | The width of the line strip segments. If this parameter is a single number, it will apply to all segments.  |
+| colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the line strip segments. If this parameter is a single Vector4, it will apply to all segments. |
 
 #### `cg.font(image: HTMLImageElement, json: {}): Font`
 
@@ -247,6 +247,19 @@ Renders colored circles with optional borders.
 | radii        | number or NumberArray or Dataset | 10             | The radius of the circles (including border) in pixels. If this value is a single number, it will apply to all the circles. |
 | borderColors | NumberArray or Dataset           | [0, 0, 0, 1]   | The color of the borders. If this value is a single Vector4, it will apply to all the circles.                              |
 | borderWidths | number or NumberArray or Dataset | 3              | The width of the borders in pixels. If this value is a single number, it will apply to all the borders.                     |
+
+#### `cg.rects(rects: NumberArray or Dataset, [options: {}]): Rects`
+
+Renders colored rectangles.
+
+| Parameter | Type                   | Description                                                                                                                                        |
+| --------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rects     | NumberArray or Dataset | Required. The x, y position of the lower-left corner of the rectangle and its width and height in the form `[x0, y0, w0, h0, x1, y1, w1, h1, ...]` |
+| options   | Object                 | Optional. See below.                                                                                                                               |
+
+| Option | Type                   | Default        | Description                                                                                          |
+| ------ | ---------------------- | -------------- | ---------------------------------------------------------------------------------------------------- |
+| colors | NumberArray or Dataset | [0, 0, 0, 0.5] | The color of the rectangles. If this value is a single Vector4, it will apply to all the rectangles. |
 
 #### `cg.axis(coords: CoordinateSystem, start: Vector2, end: Vector2, ticks: NumberArray, labels: string[], font: Font, [options: {}]): Axis`
 

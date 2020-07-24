@@ -8,6 +8,7 @@ import MultiViewport from "./ex-00700-multi-viewport";
 import SimplePlot from "./ex-00100-simple-plot";
 import SimplePlotPoints from "./ex-00200-simple-plot-points";
 import ScatterPlot from "./ex-00300-scatter-plot";
+import BarGraph from "./ex-00350-bar-graph";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024;
@@ -20,3 +21,4 @@ SimplePlotPoints(cg);
 HealthAndWealth(cg);
 RelativeTime(cg);
 ScatterPlot(cg);
+BarGraph(cg);

@@ -7,3 +7,4 @@ export * as hlines from "./hlines";
 export * as vlines from "./vlines";
 export * as circles from "./circles";
 export * as interleavedCircles from "./interleaved-circles";
+export * as rects from "./rects";

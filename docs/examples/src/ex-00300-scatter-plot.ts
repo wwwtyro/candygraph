@@ -2,7 +2,7 @@
 // <canvas id="ex-00300" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import { CandyGraph } from "../../../lib";
 
 export default async function ScatterPlot(cg: CandyGraph) {
   // Generate some x & y data.
