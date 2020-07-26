@@ -1,6 +1,6 @@
 {
   "name": "candygraph",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Fast by default, flexible 2D plotting library.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
