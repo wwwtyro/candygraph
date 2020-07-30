@@ -10,6 +10,7 @@ import SimplePlotPoints from "./ex-00200-simple-plot-points";
 import ScatterPlot from "./ex-00300-scatter-plot";
 import BarGraph from "./ex-00350-bar-graph";
 import PieChart from "./ex-00375-pie-chart";
+import Area from "./ex-00250-area-chart";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024;
@@ -24,3 +25,4 @@ RelativeTime(cg);
 ScatterPlot(cg);
 BarGraph(cg);
 PieChart(cg);
+Area(cg);
