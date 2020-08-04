@@ -276,6 +276,22 @@ Renders colored wedges. Useful for pie charts.
 | colors | NumberArray or Dataset           | [0, 0, 0, 0.5] | The interior color of the wedges. If this value is a single Vector4, it will apply to all the wedges.  |
 | radii  | number or NumberArray or Dataset | 10             | The radius of the wedges in pixels. If this value is a single number, it will apply to all the wedges. |
 
+#### `cg.shapes(shape: NumberArray or Dataset, xys: NumberArray or Dataset, [options: {}]): Shapes`
+
+Renders colored shapes. Useful for custom trace points.
+
+| Parameter | Type                   | Description                                                                                                                                     |
+| --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| shape     | NumberArray or Dataset | Required. Set of 2D points in the form `[x0, y0, x1, y1, ...]` that describe the (unindexed) set of triangles representing the shape to render. |
+| xys       | NumberArray or Dataset | Required. The x, y coordinates of the shape positions in the form `[x0, y0, x1, y1, ...]`                                                       |
+| options   | Object                 | Optional. See below.                                                                                                                            |
+
+| Option   | Type                   | Default        | Description                                                                                              |
+| -------- | ---------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| colors   | NumberArray or Dataset | [0, 0, 0, 0.5] | The color of the shapes. If this value is a single Vector4, it will apply to all the shapes.             |
+| scales   | NumberArray or Dataset | [1, 1]         | The scale of the shapes. If this value is a single Vector2, it will apply to all the shapes.             |
+| rotation | NumberArray or Dataset | [0]            | The rotation of the shapes in radians. If this value is a single float, it will apply to all the shapes. |
+
 #### `cg.axis(coords: CoordinateSystem, start: Vector2, end: Vector2, ticks: NumberArray, labels: string[], font: Font, [options: {}]): Axis`
 
 Returns an `Axis` object that draws an axis when rendered.

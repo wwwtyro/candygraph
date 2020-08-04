@@ -8,7 +8,7 @@ export default async function Area(cg: CandyGraph) {
   // Generate some x & y data.
   const xs = [];
   const ys = [];
-  for (let x = 0; x <= 100 + Number.EPSILON; x += 10) {
+  for (let x = 0; x <= 100; x += 10) {
     xs.push(x);
     ys.push(Math.random() * 50 + 25);
   }
@@ -41,10 +41,10 @@ export default async function Area(cg: CandyGraph) {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    cg.triangles(triangles, { color: [0, 0.5, 1, 0.25] }),
+    cg.triangles(triangles, { color: [0, 0.5, 1, 0.125] }),
     cg.lineStrip(xs, ys, {
-      colors: [0, 0.5, 1, 1],
-      widths: 2,
+      colors: [0, 0.25, 0.5, 1],
+      widths: 1,
     }),
     cg.orthoAxis(coords, "x", font, {
       labelSide: 1,

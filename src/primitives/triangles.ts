@@ -69,11 +69,6 @@ export class Triangles extends Primitive {
         color: this.regl.prop<Props, "color">("color"),
       },
 
-      cull: {
-        enable: true,
-        face: "back",
-      },
-
       count: this.regl.prop<Props, "count">("count"),
     });
   }
