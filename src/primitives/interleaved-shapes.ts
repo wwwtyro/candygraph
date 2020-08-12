@@ -16,8 +16,7 @@ const DEFAULT_OPTIONS = {
 
 type Props = {
   position: Buffer;
-  xs: Buffer;
-  ys: Buffer;
+  xy: Buffer;
   scale: Buffer;
   rotation: Buffer;
   color: Buffer;
@@ -34,18 +33,16 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   return function (
     shape: NumberArray | Dataset,
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
+    xys: NumberArray | Dataset,
     options?: Options
-  ): Shapes {
-    return new Shapes(regl, shape, xs, ys, options);
+  ): InterleavedShapes {
+    return new InterleavedShapes(regl, shape, xys, options);
   };
 }
 
-export class Shapes extends Primitive {
+export class InterleavedShapes extends Primitive {
   public shape: Dataset;
-  public xs: Dataset;
-  public ys: Dataset;
+  public xys: Dataset;
   public scales: Dataset;
   public rotations: Dataset;
   public colors: Dataset;
@@ -53,15 +50,13 @@ export class Shapes extends Primitive {
   constructor(
     private regl: Regl,
     shape: NumberArray | Dataset,
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
+    xys: NumberArray | Dataset,
     options: Options = {}
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.shape = createDataset(regl, shape);
-    this.xs = createDataset(regl, xs);
-    this.ys = createDataset(regl, ys);
+    this.xys = createDataset(regl, xys);
     this.scales = createDataset(regl, opts.scales);
     this.rotations = createDataset(regl, opts.rotations);
     this.colors = createDataset(regl, opts.colors);
@@ -72,8 +67,8 @@ export class Shapes extends Primitive {
       vert: `
           precision highp float;
           attribute vec2 position;
-          attribute vec2 scale;
-          attribute float xs, ys, rotation;
+          attribute vec2 xy, scale;
+          attribute float rotation;
           attribute vec4 color;
       
           varying vec4 vColor;
@@ -81,7 +76,6 @@ export class Shapes extends Primitive {
           ${glsl}
     
           void main() {
-            vec2 xy = vec2(xs, ys);
             vec2 pos = scale * position;
             float sint = sin(rotation);
             float cost = cos(rotation);
@@ -108,12 +102,8 @@ export class Shapes extends Primitive {
           buffer: this.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
-        xs: {
-          buffer: this.regl.prop<Props, "xs">("xs"),
-          divisor: 1,
-        },
-        ys: {
-          buffer: this.regl.prop<Props, "ys">("ys"),
+        xy: {
+          buffer: this.regl.prop<Props, "xy">("xy"),
           divisor: 1,
         },
         scale: {
@@ -135,12 +125,11 @@ export class Shapes extends Primitive {
   }
 
   public render(command: DrawCommand): void {
-    const { shape, xs, ys, scales, rotations, colors } = this;
-    const instances = xs.count(1);
+    const { shape, xys, scales, rotations, colors } = this;
+    const instances = xys.count(2);
     command({
       instances,
-      xs: xs.buffer,
-      ys: ys.buffer,
+      xy: xys.buffer,
       position: shape.buffer,
       scale: scales.buffer,
       rotation: rotations.buffer,
@@ -153,8 +142,7 @@ export class Shapes extends Primitive {
   }
 
   public dispose(): void {
-    this.xs.disposeIfAuto();
-    this.ys.disposeIfAuto();
+    this.xys.disposeIfAuto();
     this.shape.disposeIfAuto();
     this.scales.disposeIfAuto();
     this.rotations.disposeIfAuto();

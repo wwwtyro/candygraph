@@ -12,6 +12,7 @@ import BarGraph from "./ex-00350-bar-graph";
 import PieChart from "./ex-00375-pie-chart";
 import Area from "./ex-00250-area-chart";
 import Shapes from "./ex-11000-shapes";
+import InterleavedShapes from "./ex-12000-interleaved-shapes";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024;
@@ -28,3 +29,4 @@ BarGraph(cg);
 PieChart(cg);
 Area(cg);
 Shapes(cg);
+InterleavedShapes(cg);

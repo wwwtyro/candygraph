@@ -46,6 +46,7 @@ export class CandyGraph {
   public readonly rects: primitive.rects.Factory;
   public readonly wedges: primitive.wedges.Factory;
   public readonly shapes: primitive.shapes.Factory;
+  public readonly interleavedShapes: primitive.interleavedShapes.Factory;
   public readonly defaultFont: Promise<Font>;
   public readonly axis: composite.axis.Factory;
   public readonly orthoAxis: composite.orthoAxis.Factory;
@@ -97,6 +98,7 @@ export class CandyGraph {
     this.rects = primitive.rects.factory(this.regl);
     this.wedges = primitive.wedges.factory(this.regl);
     this.shapes = primitive.shapes.factory(this.regl);
+    this.interleavedShapes = primitive.interleavedShapes.factory(this.regl);
 
     this.defaultFont = new Promise<Font>(async (accept) => {
       const image = await loadImage(

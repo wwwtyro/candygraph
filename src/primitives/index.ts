@@ -10,3 +10,4 @@ export * as interleavedCircles from "./interleaved-circles";
 export * as rects from "./rects";
 export * as wedges from "./wedges";
 export * as shapes from "./shapes";
+export * as interleavedShapes from "./interleaved-shapes";
