@@ -1,5 +1,5 @@
 // ### Scatter plot [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
-// <canvas id="ex-00300" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
+// <canvas id="ex-00350" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
 import { CandyGraph } from "../../../lib";
@@ -56,6 +56,6 @@ export default async function ScatterPlot(cg: CandyGraph) {
   ]);
 
   // Copy the plot to a new canvas and add it to the document.
-  cg.copyTo(viewport, document.getElementById("ex-00300") as HTMLCanvasElement);
+  cg.copyTo(viewport, document.getElementById("ex-00350") as HTMLCanvasElement);
 }
 // skip-doc-stop

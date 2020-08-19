@@ -1,5 +1,5 @@
 // ### Bar graph [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
-// <canvas id="ex-00350" style="box-shadow: 0px 0px 8px #888;" width=512 height=1024></canvas>
+// <canvas id="ex-00300" style="box-shadow: 0px 0px 8px #888;" width=512 height=1024></canvas>
 
 // skip-doc-start
 import { CandyGraph } from "../../../lib";
@@ -118,6 +118,6 @@ export default async function BarGraph(cg: CandyGraph) {
     }),
   ]);
 
-  cg.copyTo(viewport, document.getElementById("ex-00350") as HTMLCanvasElement);
+  cg.copyTo(viewport, document.getElementById("ex-00300") as HTMLCanvasElement);
 }
 // skip-doc-stop

@@ -27,7 +27,7 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
   const font = await cg.defaultFont;
 
   // Clear the viewport.
-  cg.clear([1, 1, 1, 1]);
+  cg.clear([0, 0, 0.25, 1]);
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
@@ -41,21 +41,27 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
       borderWidths: 0,
     }),
     cg.circles(xs, ys, {
-      colors: [1, 1, 1, 1],
+      colors: [0, 0, 0.25, 1],
       radii: 3.0,
       borderWidths: 0,
     }),
     cg.orthoAxis(coords, "x", font, {
+      axisColor: [1, 1, 1, 1],
       labelSide: 1,
+      labelColor: [1, 1, 1, 1],
+      labelFormatter: (n) => n.toFixed(1),
+      tickColor: [1, 1, 1, 1],
       tickOffset: -2.5,
       tickLength: 6,
       tickStep: 0.2,
-      labelFormatter: (n) => n.toFixed(1),
     }),
     cg.orthoAxis(coords, "y", font, {
+      axisColor: [1, 1, 1, 1],
       tickOffset: 2.5,
       tickLength: 6,
       tickStep: 0.2,
+      tickColor: [1, 1, 1, 1],
+      labelColor: [1, 1, 1, 1],
       labelFormatter: (n) => n.toFixed(1),
     }),
   ]);
