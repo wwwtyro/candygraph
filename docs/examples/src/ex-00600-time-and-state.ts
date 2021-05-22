@@ -163,12 +163,13 @@ export default async function TimeAndState(cg: CandyGraph) {
   }
 
   let animating = false;
-
-  function animate(time: number) {
+  let time = 0;
+  function animate() {
     requestAnimationFrame(animate);
     if (!animating) {
       return;
     }
+    time += 1000 / 60;
     render(time);
   }
 
@@ -177,6 +178,6 @@ export default async function TimeAndState(cg: CandyGraph) {
   });
 
   render(0);
-  animate(0);
+  animate();
 }
 // skip-doc-stop

@@ -26,9 +26,8 @@ export default function doc_00100(cg: CandyGraph): void {
   const yscale = cg.scale.linear([-1, 1], [0, viewport.height]);
 
   // Now that we have our scales, we can create a coordinate system. Coordinate
-  // systems in CandyGraph wrap a couple of scales and add a little more GLSL
-  // glue code for use on the GPU. Here we'll create a cartesian coordinate
-  // system:
+  // systems in CandyGraph wrap scales and add a little more GLSL glue code for
+  // use on the GPU. Here we'll create a cartesian coordinate system:
   const coords = cg.coordinate.cartesian(xscale, yscale);
 
   // Next we're going to make some data for our plot. We'll loop through 0 to 2π

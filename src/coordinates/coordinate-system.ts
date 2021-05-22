@@ -3,6 +3,7 @@ import { Vector2 } from "../common";
 
 export enum Kind {
   Cartesian,
+  Polar,
 }
 
 export abstract class CoordinateSystem {

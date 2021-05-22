@@ -18,7 +18,7 @@
   </head>
   <body>
     <div class="uk-section">
-      <div class="uk-container">
+      <div class="uk-container" style="text-align: center">
         <h1>CandyGraph Examples</h1>
         {{ insert }}
       </div>

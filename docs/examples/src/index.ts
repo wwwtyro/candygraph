@@ -13,6 +13,7 @@ import PieChart from "./ex-00375-pie-chart";
 import Area from "./ex-00250-area-chart";
 import Shapes from "./ex-11000-shapes";
 import InterleavedShapes from "./ex-12000-interleaved-shapes";
+import Polar from "./ex-00900-polar-plot";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024;
@@ -23,6 +24,7 @@ InterleavedLineSegments(cg);
 SimplePlot(cg);
 SimplePlotPoints(cg);
 HealthAndWealth(cg);
+Polar(cg);
 RelativeTime(cg);
 ScatterPlot(cg);
 BarGraph(cg);

@@ -61,9 +61,8 @@ to the full width and height of our viewport. Here they are:</p>
   const yscale = cg.scale.linear([-1, 1], [0, viewport.height]);
 </code></pre>
 <p>Now that we have our scales, we can create a coordinate system. Coordinate
-systems in CandyGraph wrap a couple of scales and add a little more GLSL
-glue code for use on the GPU. Here we’ll create a cartesian coordinate
-system:</p>
+systems in CandyGraph wrap scales and add a little more GLSL glue code for
+use on the GPU. Here we’ll create a cartesian coordinate system:</p>
 <pre><code class="language-typescript">  const coords = cg.coordinate.cartesian(xscale, yscale);
 </code></pre>
 <p>Next we’re going to make some data for our plot. We’ll loop through 0 to 2π

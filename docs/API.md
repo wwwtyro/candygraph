@@ -426,6 +426,17 @@ Returns a `CartesianCoordinateSystem`.
 | xscale    | Scale | The scale for the x-axis. |
 | yscale    | Scale | The scale for the y-axis. |
 
+#### `cg.coordinate.polar(xscale: Scale, yscale: Scale): PolarCoordinateSystem`
+
+Returns a `PolarCoordinateSystem`.
+
+| Parameter    | Type  | Description                                           |
+| ------------ | ----- | ----------------------------------------------------- |
+| radialScale  | Scale | The scale for the radial axis (distance from origin). |
+| angularScale | Scale | The scale for the angular axis.                       |
+| xScale       | Scale | The scale for the x-axis.                             |
+| yScale       | Scale | The scale for the y-axis.                             |
+
 ### Properties
 
 - `regl`: The `Regl` context backing this `CandyGraph` object.
