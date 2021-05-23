@@ -1,6 +1,6 @@
 {
   "name": "candygraph",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Fast by default, flexible 2D plotting library.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -27,27 +27,27 @@
   },
   "dependencies": {
     "gl-matrix": "^3.3.0",
-    "regl": "^1.6.1"
+    "regl": "^1.7.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wwwtyro/candygraph.git"
   },
   "devDependencies": {
-    "@types/node": "^14.0.19",
-    "@typescript-eslint/eslint-plugin": "^3.5.0",
-    "@typescript-eslint/parser": "^3.5.0",
-    "concurrently": "^5.2.0",
-    "eslint": "^7.4.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "markdown-it": "^11.0.0",
-    "prettier": "^2.0.5",
+    "@types/node": "^14.17.0",
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
+    "concurrently": "^5.3.0",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "markdown-it": "^11.0.1",
+    "prettier": "^2.3.0",
     "ts-loader": "^7.0.5",
-    "typescript": "^3.9.5",
-    "url-loader": "^4.1.0",
-    "webpack": "^4.43.0",
+    "typescript": "^3.9.9",
+    "url-loader": "^4.1.1",
+    "webpack": "^4.46.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.2"
   }
 }
