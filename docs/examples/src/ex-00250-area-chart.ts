@@ -23,15 +23,23 @@ export default async function Area(cg: CandyGraph) {
     triangles.push(x0, 0, x1, 0, x1, y1, x0, 0, x1, y1, x0, y0);
   }
 
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-00250") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
   // Create a viewport. Units are in pixels.
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
   const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 100], [32, viewport.width - 16]),
-    cg.scale.linear([0, 100], [32, viewport.height - 16])
+    cg.scale.linear([0, 100], [32 * dpr, viewport.width - 16 * dpr]),
+    cg.scale.linear([0, 100], [32 * dpr, viewport.height - 16 * dpr])
   );
 
   const font = await cg.defaultFont;
@@ -44,18 +52,24 @@ export default async function Area(cg: CandyGraph) {
     cg.triangles(triangles, { color: [0, 0.5, 1, 0.125] }),
     cg.lineStrip(xs, ys, {
       colors: [0, 0.25, 0.5, 1],
-      widths: 1,
+      widths: 1 * dpr,
     }),
     cg.orthoAxis(coords, "x", font, {
       labelSide: 1,
-      tickOffset: -2.5,
-      tickLength: 6,
+      tickOffset: -2.5 * dpr,
+      tickLength: 6 * dpr,
       tickStep: 10,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
     }),
     cg.orthoAxis(coords, "y", font, {
-      tickOffset: 2.5,
-      tickLength: 6,
+      tickOffset: 2.5 * dpr,
+      tickLength: 6 * dpr,
       tickStep: 10,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
     }),
   ]);
 

@@ -5,7 +5,15 @@
 import { CandyGraph } from "../../..";
 
 export default function InterleavedShapes(cg: CandyGraph) {
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-12000") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = cg.coordinate.cartesian(
     cg.scale.linear([0, 1], [0, viewport.width]),
@@ -28,7 +36,7 @@ export default function InterleavedShapes(cg: CandyGraph) {
   for (let i = 0; i < 300; i++) {
     xys.push(Math.random(), Math.random());
     colors.push(Math.random(), Math.random(), Math.random(), 1);
-    const scale = 1 + Math.random() * 10;
+    const scale = (1 + Math.random() * 10) * dpr;
     scales.push(scale, scale);
     rotations.push(Math.random() * 2 * Math.PI);
   }

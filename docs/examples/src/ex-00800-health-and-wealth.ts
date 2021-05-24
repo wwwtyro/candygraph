@@ -8,13 +8,20 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   // Create a canvas and add it to the page.
   const canvas = document.getElementById("ex-00800") as HTMLCanvasElement;
 
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
   const nations = await loadNations();
 
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
 
   const coords = cg.coordinate.cartesian(
-    cg.scale.log(10, [100, 100000], [64, viewport.width - 20]),
-    cg.scale.linear([10, 90], [48, viewport.height - 60])
+    cg.scale.log(10, [100, 100000], [64 * dpr, viewport.width - 20 * dpr]),
+    cg.scale.linear([10, 90], [48 * dpr, viewport.height - 60 * dpr])
   );
 
   const screenCoords = cg.coordinate.cartesian(
@@ -30,41 +37,54 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
         labelSide: 1,
         labelFormatter: (n) =>
           n < 1000 ? n.toString() : Math.round(n / 1000).toString() + "K",
-        tickLength: 6,
-        tickOffset: -3,
+        tickLength: 6 * dpr,
+        tickOffset: -3 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
+
         minorTickCount: 10,
-        minorTickLength: 4,
-        minorTickOffset: -2,
+        minorTickLength: 4 * dpr,
+        minorTickOffset: -2 * dpr,
+        minorTickWidth: 1 * dpr,
       })
       .retain(),
     cg
       .orthoAxis(coords, "y", font, {
         tickStep: 10,
-        tickLength: 6,
-        tickOffset: 3,
+        tickLength: 6 * dpr,
+        tickOffset: 3 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
       })
       .retain(),
   ];
 
   const Labels = [
     cg
-      .text(font, "Income", [canvas.width / 2, 8], {
+      .text(font, "Income", [canvas.width / 2, 8 * dpr], {
         anchor: [0, -1],
-        size: 16,
+        size: 16 * dpr,
       })
       .retain(),
     cg
-      .text(font, "Life Expectancy", [8, canvas.height / 2], {
+      .text(font, "Life Expectancy", [8 * dpr, canvas.height / 2], {
         anchor: [0, 1],
         angle: Math.PI / 2,
-        size: 16,
+        size: 16 * dpr,
       })
       .retain(),
     cg
-      .text(font, "The Health & Wealth of Nations", [8, canvas.height - 8], {
-        anchor: [-1, 1],
-        size: 32,
-      })
+      .text(
+        font,
+        "The Health & Wealth of Nations",
+        [8 * dpr, canvas.height - 8 * dpr],
+        {
+          anchor: [-1, 1],
+          size: 32 * dpr,
+        }
+      )
       .retain(),
   ];
 
@@ -74,7 +94,8 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
         axes[0].info.ticks,
         axes[1].info.ticks,
         coords.xscale.domain,
-        coords.yscale.domain
+        coords.yscale.domain,
+        { width: 1 * dpr }
       )
       .retain(),
     cg
@@ -82,7 +103,8 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
         axes[0].info.minorTicks,
         [],
         coords.xscale.domain,
-        coords.yscale.domain
+        coords.yscale.domain,
+        { width: 1 * dpr }
       )
       .retain(),
   ];
@@ -104,7 +126,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     const radii = [];
     for (const nation of nations.data) {
       xys.push(nation.income[index], nation.expectancy[index]);
-      radii.push(Math.pow(nation.population[index], 0.175));
+      radii.push(Math.pow(nation.population[index], 0.175) * dpr);
     }
     circles.xys.update(xys);
     circles.radii.update(radii);
@@ -117,12 +139,12 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
         font,
         year.toString(),
         [
-          screenCoords.xscale.domain[1] - 32,
-          screenCoords.yscale.domain[0] + 32,
+          screenCoords.xscale.domain[1] - 32 * dpr,
+          screenCoords.yscale.domain[0] + 32 * dpr,
         ],
         {
           anchor: [1, -1],
-          size: 128,
+          size: 128 * dpr,
           color: [0, 0, 0, 0.25],
         }
       ),

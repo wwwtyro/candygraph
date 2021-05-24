@@ -7,14 +7,21 @@ import { CandyGraph } from "../../..";
 export default async function MultiViewport(cg: CandyGraph) {
   const canvas = document.getElementById("ex-00700") as HTMLCanvasElement;
 
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
   const coordstop = cg.coordinate.cartesian(
-    cg.scale.linear([0, 10], [40, 256 - 16]),
-    cg.scale.linear([0, 10], [16, 256 - 40])
+    cg.scale.linear([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
+    cg.scale.linear([0, 10], [16 * dpr, 256 * dpr - 40 * dpr])
   );
 
   const coordsbottom = cg.coordinate.cartesian(
-    cg.scale.linear([0, 10], [40, 256 - 16]),
-    cg.scale.linear([0, 10], [40, 256 - 16])
+    cg.scale.linear([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
+    cg.scale.linear([0, 10], [40 * dpr, 256 * dpr - 16 * dpr])
   );
 
   const font = await cg.defaultFont;
@@ -24,16 +31,22 @@ export default async function MultiViewport(cg: CandyGraph) {
       .orthoAxis(coordstop, "x", font, {
         axisIntercept: 10.5,
         tickStep: 2,
-        tickLength: 5,
-        tickOffset: 2.5,
+        tickLength: 5 * dpr,
+        tickOffset: 2.5 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
       })
       .retain(),
     cg
       .orthoAxis(coordstop, "y", font, {
         axisIntercept: -0.5,
         tickStep: 2,
-        tickLength: 5,
-        tickOffset: 2,
+        tickLength: 5 * dpr,
+        tickOffset: 2 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
       })
       .retain(),
   ];
@@ -43,17 +56,23 @@ export default async function MultiViewport(cg: CandyGraph) {
       .orthoAxis(coordsbottom, "x", font, {
         axisIntercept: -0.5,
         tickStep: 2,
-        tickLength: 5,
-        tickOffset: -2,
+        tickLength: 5 * dpr,
+        tickOffset: -2 * dpr,
         labelSide: 1,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
       })
       .retain(),
     cg
       .orthoAxis(coordsbottom, "y", font, {
         axisIntercept: -0.5,
         tickStep: 2,
-        tickLength: 5,
-        tickOffset: 2,
+        tickLength: 5 * dpr,
+        tickOffset: 2 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
       })
       .retain(),
   ];
@@ -83,82 +102,102 @@ export default async function MultiViewport(cg: CandyGraph) {
     }
     return cg.lineStrip(xs, ys, {
       colors: [Math.random(), Math.random(), Math.random(), 1],
-      widths: Math.random() * 2 + 1,
+      widths: dpr * (Math.random() * 2 + 1),
     });
   }
 
   cg.clear([1, 1, 1, 1]);
 
-  cg.render(coordsbottom, { x: 0, y: 0, width: 256, height: 256 }, [
+  cg.render(coordsbottom, { x: 0, y: 0, width: 256 * dpr, height: 256 * dpr }, [
     randomTraces(),
     miniaxesbottom,
   ]);
-  cg.render(coordsbottom, { x: 256, y: 0, width: 256, height: 256 }, [
-    randomTraces(),
-    randomTraces(),
-    miniaxesbottom,
-  ]);
-  cg.render(coordstop, { x: 0, y: 256, width: 256, height: 256 }, [
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-    miniaxestop,
-  ]);
-  cg.render(coordstop, { x: 256, y: 256, width: 256, height: 256 }, [
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-    miniaxestop,
-  ]);
-
-  const coordsbig = cg.coordinate.cartesian(
-    cg.scale.linear([0, 10], [40, 512 - 40]),
-    cg.scale.linear([0, 10], [32, 512 - 32])
+  cg.render(
+    coordsbottom,
+    { x: 256 * dpr, y: 0, width: 256 * dpr, height: 256 * dpr },
+    [randomTraces(), randomTraces(), miniaxesbottom]
+  );
+  cg.render(
+    coordstop,
+    { x: 0, y: 256 * dpr, width: 256 * dpr, height: 256 * dpr },
+    [randomTraces(), randomTraces(), randomTraces(), miniaxestop]
+  );
+  cg.render(
+    coordstop,
+    { x: 256 * dpr, y: 256 * dpr, width: 256 * dpr, height: 256 * dpr },
+    [
+      randomTraces(),
+      randomTraces(),
+      randomTraces(),
+      randomTraces(),
+      miniaxestop,
+    ]
   );
 
-  cg.render(coordsbig, { x: 512, y: 0, width: 512, height: 512 }, [
-    cg.orthoAxis(coordsbig, "x", font, {
-      axisIntercept: 0,
-      tickStep: 2,
-      tickLength: 5,
-      tickOffset: -2,
-      labelSide: 1,
-      minorTickCount: 4,
-      minorTickOffset: 2,
-      minorTickLength: 4,
-    }),
-    cg.orthoAxis(coordsbig, "y", font, {
-      axisIntercept: 0,
-      tickStep: 0.5,
-      tickLength: 5,
-      tickOffset: 2,
-      labelFormatter: (l) => l.toFixed(2),
-      labelAngle: Math.PI * 0.125,
-    }),
-    cg.orthoAxis(coordsbig, "x", font, {
-      axisIntercept: 10,
-      tickStep: 1,
-      tickLength: 5,
-      tickOffset: 2.5,
-      labelSide: -1,
-    }),
-    cg.orthoAxis(coordsbig, "y", font, {
-      axisIntercept: 10,
-      tickStep: 0.5,
-      tickLength: 5,
-      tickOffset: 2,
-      labelSide: 1,
-    }),
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-    randomTraces(),
-  ]);
+  const coordsbig = cg.coordinate.cartesian(
+    cg.scale.linear([0, 10], [40 * dpr, 512 * dpr - 40 * dpr]),
+    cg.scale.linear([0, 10], [32 * dpr, 512 * dpr - 32 * dpr])
+  );
 
-  cg.copyTo({ x: 0, y: 0, width: 1024, height: 512 }, canvas);
+  cg.render(
+    coordsbig,
+    { x: 512 * dpr, y: 0, width: 512 * dpr, height: 512 * dpr },
+    [
+      cg.orthoAxis(coordsbig, "x", font, {
+        axisIntercept: 0,
+        tickStep: 2,
+        tickLength: 5 * dpr,
+        tickOffset: -2 * dpr,
+        labelSide: 1,
+        minorTickCount: 4,
+        minorTickOffset: 2 * dpr,
+        minorTickLength: 4 * dpr,
+        minorTickWidth: 1 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
+      }),
+      cg.orthoAxis(coordsbig, "y", font, {
+        axisIntercept: 0,
+        tickStep: 0.5,
+        tickLength: 5 * dpr,
+        tickOffset: 2 * dpr,
+        labelFormatter: (l) => l.toFixed(2),
+        labelAngle: Math.PI * 0.125,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
+      }),
+      cg.orthoAxis(coordsbig, "x", font, {
+        axisIntercept: 10,
+        tickStep: 1,
+        tickLength: 5 * dpr,
+        tickOffset: 2.5 * dpr,
+        labelSide: -1,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
+      }),
+      cg.orthoAxis(coordsbig, "y", font, {
+        axisIntercept: 10,
+        tickStep: 0.5,
+        tickLength: 5 * dpr,
+        tickOffset: 2 * dpr,
+        labelSide: 1,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
+      }),
+      randomTraces(),
+      randomTraces(),
+      randomTraces(),
+      randomTraces(),
+      randomTraces(),
+      randomTraces(),
+    ]
+  );
+
+  cg.copyTo({ x: 0, y: 0, width: 1024 * dpr, height: 512 * dpr }, canvas);
 
   miniaxesbottom[0].dispose();
   miniaxesbottom[1].dispose();

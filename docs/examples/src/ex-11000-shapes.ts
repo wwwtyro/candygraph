@@ -5,7 +5,15 @@
 import { CandyGraph } from "../../..";
 
 export default function Shapes(cg: CandyGraph) {
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-11000") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = cg.coordinate.cartesian(
     cg.scale.linear([0, 2 * Math.PI], [0, viewport.width]),
@@ -37,7 +45,7 @@ export default function Shapes(cg: CandyGraph) {
       Math.random() * 0.75 + 0.25,
       1
     );
-    const scale = 1 + Math.random() * 2;
+    const scale = (1 + Math.random() * 2) * dpr;
     scales.push(scale, scale);
     rotations.push(Math.random() * 2 * Math.PI);
   }
@@ -49,7 +57,7 @@ export default function Shapes(cg: CandyGraph) {
   cg.render(coords, viewport, [
     cg.lineStrip(xData, ys0, {
       colors: [1, 1, 1, 1],
-      widths: 2,
+      widths: 2 * dpr,
     }),
     cg.shapes(shape, xData, ys0, {
       colors,
@@ -58,7 +66,7 @@ export default function Shapes(cg: CandyGraph) {
     }),
     cg.lineStrip(xData, ys1, {
       colors: [1, 1, 1, 1],
-      widths: 2,
+      widths: 2 * dpr,
     }),
     cg.shapes(shape, xData, ys1, {
       colors,

@@ -16,7 +16,7 @@ import InterleavedShapes from "./ex-12000-interleaved-shapes";
 import Polar from "./ex-00900-polar-plot";
 
 const cg = new CandyGraph();
-cg.canvas.width = cg.canvas.height = 1024;
+cg.canvas.width = cg.canvas.height = 1024 * window.devicePixelRatio;
 MultiViewport(cg);
 TimeAndState(cg);
 LinearLog(cg);

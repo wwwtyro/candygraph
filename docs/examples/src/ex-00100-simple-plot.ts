@@ -13,15 +13,23 @@ export default async function SimplePlot(cg: CandyGraph) {
     ys.push(0.5 + 0.25 * Math.sin(x * 2 * Math.PI));
   }
 
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-00100") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
   // Create a viewport. Units are in pixels.
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
   const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 1], [32, viewport.width - 16]),
-    cg.scale.linear([0, 1], [32, viewport.height - 16])
+    cg.scale.linear([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
+    cg.scale.linear([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );
 
   const font = await cg.defaultFont;
@@ -33,19 +41,25 @@ export default async function SimplePlot(cg: CandyGraph) {
   cg.render(coords, viewport, [
     cg.lineStrip(xs, ys, {
       colors: [1, 0.5, 0.0, 1.0],
-      widths: 3,
+      widths: 3 * dpr,
     }),
     cg.orthoAxis(coords, "x", font, {
       labelSide: 1,
-      tickOffset: -2.5,
-      tickLength: 6,
+      tickOffset: -2.5 * dpr,
+      tickLength: 6 * dpr,
       tickStep: 0.2,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
       labelFormatter: (n) => n.toFixed(1),
     }),
     cg.orthoAxis(coords, "y", font, {
-      tickOffset: 2.5,
-      tickLength: 6,
+      tickOffset: 2.5 * dpr,
+      tickLength: 6 * dpr,
       tickStep: 0.2,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
       labelFormatter: (n) => n.toFixed(1),
     }),
   ]);

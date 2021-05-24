@@ -13,8 +13,16 @@ export default async function PolarPlot(cg: CandyGraph) {
     thetas.push(Math.PI * rho * 2 * Math.PI);
   }
 
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-00900") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
   // Create a viewport. Units are in pixels.
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   // Create a polar coordinate system. The first two scales map input data to
   // polar distance and angle (in radians), the next two map the resulting
@@ -22,8 +30,8 @@ export default async function PolarPlot(cg: CandyGraph) {
   const coords = cg.coordinate.polar(
     cg.scale.linear([0, 1], [0, 1]), // radial scale
     cg.scale.linear([0, 1], [0, 1]), // angular scale
-    cg.scale.linear([-1.1, 1.1], [16, viewport.width - 16]), // x scale
-    cg.scale.linear([-1.1, 1.1], [16, viewport.height - 16]) // y scale
+    cg.scale.linear([-1.1, 1.1], [16 * dpr, viewport.width - 16 * dpr]), // x scale
+    cg.scale.linear([-1.1, 1.1], [16 * dpr, viewport.height - 16 * dpr]) // y scale
   );
 
   const font = await cg.defaultFont;
@@ -39,21 +47,22 @@ export default async function PolarPlot(cg: CandyGraph) {
   for (let turn = 0; turn < 1.0; turn += 20 / 360) {
     const theta = turn * 2 * Math.PI;
     axisLinePositions.push(0, theta, 1.0, theta);
-    axisLineWidths.push(1);
+    axisLineWidths.push(1 * dpr);
     axisLineColors.push(0.75, 0.75, 0.75, 1.0);
     axisLinePositions.push(0.93, theta, 1.0, theta);
-    axisLineWidths.push(2);
+    axisLineWidths.push(2 * dpr);
     axisLineColors.push(0, 0, 0, 1.0);
     for (let i = 1; i <= 9; i++) {
       const phi = theta + (i * 2 * 2 * Math.PI) / 360;
       axisLinePositions.push(0.95, phi, 1.0, phi);
-      axisLineWidths.push(1.0);
+      axisLineWidths.push(1.0 * dpr);
       axisLineColors.push(0, 0, 0, 1.0);
     }
     axisLabels.push(
       cg.text(font, Math.round(turn * 360).toString(), [1.05, theta], {
         anchor: turn < 0.25 || turn > 0.75 ? [-1, 0] : [1, 0],
         angle: turn < 0.25 || turn > 0.75 ? theta : theta + Math.PI,
+        size: 12 * dpr,
       })
     );
   }
@@ -63,16 +72,16 @@ export default async function PolarPlot(cg: CandyGraph) {
     const theta0 = (turn + 0.0) * 2 * Math.PI;
     const theta1 = (turn + 0.001) * 2 * Math.PI;
     axisLinePositions.push(1.0, theta0, 1.0, theta1);
-    axisLineWidths.push(1.0);
+    axisLineWidths.push(1.0 * dpr);
     axisLineColors.push(0, 0, 0, 1.0);
     axisLinePositions.push(0.25, theta0, 0.25, theta1);
-    axisLineWidths.push(1.0);
+    axisLineWidths.push(1.0 * dpr);
     axisLineColors.push(0.75, 0.75, 0.75, 1.0);
     axisLinePositions.push(0.5, theta0, 0.5, theta1);
-    axisLineWidths.push(1.0);
+    axisLineWidths.push(1.0 * dpr);
     axisLineColors.push(0.75, 0.75, 0.75, 1.0);
     axisLinePositions.push(0.75, theta0, 0.75, theta1);
-    axisLineWidths.push(1.0);
+    axisLineWidths.push(1.0 * dpr);
     axisLineColors.push(0.75, 0.75, 0.75, 1.0);
   }
 
@@ -85,7 +94,7 @@ export default async function PolarPlot(cg: CandyGraph) {
     ...axisLabels,
     cg.lineStrip(rhos, thetas, {
       colors: [1, 0.5, 0, 1],
-      widths: 2.5,
+      widths: 2.5 * dpr,
     }),
   ]);
 

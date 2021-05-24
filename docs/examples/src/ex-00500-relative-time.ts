@@ -17,19 +17,29 @@ export default async function RelativeTime(cg: CandyGraph) {
   // Create a canvas and add it to the page.
   const canvas = document.getElementById("ex-00500") as HTMLCanvasElement;
 
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
   // The viewport for our plot. Units are pixels.
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
 
   // We'll make two coordinate systems; one for the x-axis, which is relative time,
   // and one for the traces, which are in real time. We'll share the y scale between
   // them.
-  const yScale = cg.scale.linear([0, 25], [32, viewport.height - 16]);
+  const yScale = cg.scale.linear(
+    [0, 25],
+    [32 * dpr, viewport.height - 16 * dpr]
+  );
   const axisCoords = cg.coordinate.cartesian(
-    cg.scale.linear([-1, 5], [16, viewport.width - 16]),
+    cg.scale.linear([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
   const timeCoords = cg.coordinate.cartesian(
-    cg.scale.linear([-1, 5], [16, viewport.width - 16]),
+    cg.scale.linear([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
 
@@ -40,8 +50,11 @@ export default async function RelativeTime(cg: CandyGraph) {
     cg
       .orthoAxis(axisCoords, "x", font, {
         labelSide: 1,
-        tickOffset: -3,
-        tickLength: 6,
+        tickOffset: -3 * dpr,
+        tickLength: 6 * dpr,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
       })
       .retain(),
     cg
@@ -51,6 +64,10 @@ export default async function RelativeTime(cg: CandyGraph) {
         tickOrigin: 0,
         tickStep: 5,
         tickLength: 0,
+        tickWidth: 1 * dpr,
+        axisWidth: 1 * dpr,
+        labelSize: 12 * dpr,
+
         labelFormatter: (n: number) => (n === 0 ? "" : n.toString()),
       })
       .retain(),
@@ -61,7 +78,8 @@ export default async function RelativeTime(cg: CandyGraph) {
       axes[0].info.ticks,
       axes[1].info.ticks,
       axisCoords.xscale.domain,
-      axisCoords.yscale.domain
+      axisCoords.yscale.domain,
+      { width: 1 * dpr }
     )
     .retain();
 
@@ -92,7 +110,7 @@ export default async function RelativeTime(cg: CandyGraph) {
       trace: cg
         .lineStrip(xs, ys, {
           colors: [1, 0, 1, 1],
-          widths: 3.0,
+          widths: 3.0 * dpr,
         })
         .retain(),
     };
@@ -118,7 +136,7 @@ export default async function RelativeTime(cg: CandyGraph) {
       const trace = traces[i];
       const age = time - trace.timestamp;
       trace.trace.colors.update([0, 0, 0, 0.5 * (1 - age / HISTORY)]);
-      trace.trace.widths.update(1);
+      trace.trace.widths.update(1 * dpr);
     }
 
     // Update the timeCoords.

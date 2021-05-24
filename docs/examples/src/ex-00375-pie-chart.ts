@@ -6,7 +6,16 @@ import { CandyGraph } from "../../../lib";
 
 export default async function PieChart(cg: CandyGraph) {
   const font = await cg.defaultFont;
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-00375") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   // Generate a handful of wedges.
   const angles = [];
@@ -18,10 +27,15 @@ export default async function PieChart(cg: CandyGraph) {
     angles.push(theta);
     angles.push(step);
     text.push(
-      cg.text(font, `${Math.round((100 * step) / (2 * Math.PI))}%`, [
-        0.5 * Math.cos(theta + 0.5 * step),
-        0.5 * Math.sin(theta + 0.5 * step),
-      ])
+      cg.text(
+        font,
+        `${Math.round((100 * step) / (2 * Math.PI))}%`,
+        [
+          0.5 * Math.cos(theta + 0.5 * step),
+          0.5 * Math.sin(theta + 0.5 * step),
+        ],
+        { size: 12 * dpr }
+      )
     );
     theta += step;
     colors.push(
@@ -35,10 +49,12 @@ export default async function PieChart(cg: CandyGraph) {
   const step = 2 * Math.PI - theta;
   angles.push(step);
   text.push(
-    cg.text(font, `${Math.round((100 * step) / (2 * Math.PI))}%`, [
-      0.6 * Math.cos(theta + 0.5 * step),
-      0.6 * Math.sin(theta + 0.5 * step),
-    ])
+    cg.text(
+      font,
+      `${Math.round((100 * step) / (2 * Math.PI))}%`,
+      [0.6 * Math.cos(theta + 0.5 * step), 0.6 * Math.sin(theta + 0.5 * step)],
+      { size: 12 * dpr }
+    )
   );
   colors.push(
     Math.random() * 0.5 + 0.5,
@@ -64,7 +80,7 @@ export default async function PieChart(cg: CandyGraph) {
   cg.render(coords, viewport, [
     cg.wedges(positions, angles, {
       colors,
-      radii: 128,
+      radii: 128 * dpr,
     }),
     text,
   ]);

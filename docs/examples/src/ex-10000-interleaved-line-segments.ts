@@ -5,7 +5,15 @@
 import { CandyGraph } from "../../..";
 
 export default function InterleavedLineSegments(cg: CandyGraph) {
-  const viewport = { x: 0, y: 0, width: 384, height: 384 };
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-10000") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = cg.coordinate.cartesian(
     cg.scale.linear([0, 1], [0, viewport.width]),
@@ -18,7 +26,7 @@ export default function InterleavedLineSegments(cg: CandyGraph) {
   for (let i = 0; i < 10000; i++) {
     points.push(Math.random(), Math.random());
     colors.push(Math.random(), Math.random(), Math.random(), 0.25);
-    widths.push(Math.random() * 10 + 1);
+    widths.push((Math.random() * 10 + 1) * dpr);
   }
 
   cg.clear([1, 1, 1, 1]);

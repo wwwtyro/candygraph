@@ -67,11 +67,22 @@ export default async function BarGraph(cg: CandyGraph) {
 
   const keys = Object.keys(pops).reverse();
 
-  const viewport = { x: 0, y: 0, width: 512, height: 1024 };
+  // Scale the canvas by the device pixel ratio.
+  const dpr = window.devicePixelRatio;
+  const canvas = document.getElementById("ex-00300") as HTMLCanvasElement;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  const viewport = { x: 0, y: 0, width: 512 * dpr, height: 1024 * dpr };
 
   const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 40000000], [160, viewport.width - 24]),
-    cg.scale.linear([-0.75, keys.length - 1], [32, viewport.height - 48])
+    cg.scale.linear([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
+    cg.scale.linear(
+      [-0.75, keys.length - 1],
+      [32 * dpr, viewport.height - 48 * dpr]
+    )
   );
 
   const font = await cg.defaultFont;
@@ -94,9 +105,13 @@ export default async function BarGraph(cg: CandyGraph) {
       labelColor: [1, 1, 1, 1],
       labelSide: 1,
       tickColor: [1, 1, 1, 1],
-      tickOffset: -2.5,
-      tickLength: 6,
+      tickOffset: -2.5 * dpr,
+      tickLength: 6 * dpr,
       tickStep: 10000000,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+
       labelFormatter: (n) => (n > 0 ? `${n / 1000000}M` : "0"),
     }),
     cg.orthoAxis(coords, "x", font, {
@@ -104,9 +119,13 @@ export default async function BarGraph(cg: CandyGraph) {
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],
       tickColor: [1, 1, 1, 1],
-      tickOffset: 3,
-      tickLength: 6,
+      tickOffset: 3 * dpr,
+      tickLength: 6 * dpr,
       tickStep: 10000000,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+
       labelFormatter: (n) => (n > 0 ? `${n / 1000000}M` : "0"),
     }),
     cg.orthoAxis(coords, "y", font, {
@@ -114,6 +133,10 @@ export default async function BarGraph(cg: CandyGraph) {
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],
       tickLength: 0,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+
       labelFormatter: (n) => keys[n] || "",
     }),
   ]);
