@@ -8,7 +8,7 @@ import { CandyGraph } from "candygraph";
 
 ### Constructor
 
-#### `const cg = new CandyGraph(canvas?: HTMLCanvasElement): CandyGraph`
+#### `const cg = new CandyGraph([options?: {}]): CandyGraph`
 
 | Parameter | Type   | Description          |
 | --------- | ------ | -------------------- |
