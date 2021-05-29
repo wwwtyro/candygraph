@@ -31,6 +31,16 @@ const commonGLSL = `
   }
 `;
 
+type CandyGraphOptions = {
+  canvas?: HTMLCanvasElement;
+  alpha?: boolean;
+};
+
+const DEFAULT_OPTIONS = {
+  canvas: null,
+  alpha: false,
+};
+
 export class CandyGraph {
   public readonly regl: Regl;
   public readonly canvas: HTMLCanvasElement;
@@ -58,14 +68,16 @@ export class CandyGraph {
   private coordinateScopeCache = new Map<CoordinateSystem, DrawCommand>();
   private scope: DrawCommand;
 
-  constructor(canvas?: HTMLCanvasElement) {
-    this.canvas = canvas ?? document.createElement("canvas");
+  constructor(options: CandyGraphOptions = {}) {
+    const opts = { ...DEFAULT_OPTIONS, ...options };
+    this.canvas = opts.canvas ?? document.createElement("canvas");
     this.regl = REGL({
       canvas: this.canvas,
       extensions: ["angle_instanced_arrays", "oes_standard_derivatives"],
       attributes: {
         depth: false,
-        alpha: false,
+        alpha: opts.alpha,
+        premultipliedAlpha: false,
       },
     });
     this.scope = this.regl({

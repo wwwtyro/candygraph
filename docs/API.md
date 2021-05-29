@@ -10,9 +10,14 @@ import { CandyGraph } from "candygraph";
 
 #### `const cg = new CandyGraph(canvas?: HTMLCanvasElement): CandyGraph`
 
-| Parameter | Type              | Description                                                                                              |
-| --------- | ----------------- | -------------------------------------------------------------------------------------------------------- |
-| canvas    | HTMLCanvasElement | Optional. The canvas element the webgl context will be created from. One will be created if not provided |
+| Parameter | Type   | Description          |
+| --------- | ------ | -------------------- |
+| options   | Object | Optional. See below. |
+
+| Option | Type              | Default           | Description                                                                                     |
+| ------ | ----------------- | ----------------- | ----------------------------------------------------------------------------------------------- |
+| canvas | HTMLCanvasElement | HTMLCanvasElement | The canvas element the webgl context will be created from. One will be created if not provided. |
+| alpha  | boolean           | false             | Indicates if the canvas contains an alpha buffer.                                               |
 
 ### Methods
 
