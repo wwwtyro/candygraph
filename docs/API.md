@@ -14,10 +14,11 @@ import { CandyGraph } from "candygraph";
 | --------- | ------ | -------------------- |
 | options   | Object | Optional. See below. |
 
-| Option | Type              | Default           | Description                                                                                     |
-| ------ | ----------------- | ----------------- | ----------------------------------------------------------------------------------------------- |
-| canvas | HTMLCanvasElement | HTMLCanvasElement | The canvas element the webgl context will be created from. One will be created if not provided. |
-| alpha  | boolean           | false             | Indicates if the canvas contains an alpha buffer.                                               |
+| Option  | Type              | Default           | Description                                                                                     |
+| ------- | ----------------- | ----------------- | ----------------------------------------------------------------------------------------------- |
+| canvas  | HTMLCanvasElement | HTMLCanvasElement | The canvas element the webgl context will be created from. One will be created if not provided. |
+| alpha   | boolean           | false             | Indicates if the canvas contains an alpha buffer.                                               |
+| culling | boolean           | true              | Indicates if Regl employs culling.                                                              |
 
 ### Methods
 
