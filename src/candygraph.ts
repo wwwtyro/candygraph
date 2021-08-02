@@ -34,11 +34,13 @@ const commonGLSL = `
 type CandyGraphOptions = {
   canvas?: HTMLCanvasElement;
   alpha?: boolean;
+  culling?: boolean;
 };
 
 const DEFAULT_OPTIONS = {
   canvas: null,
   alpha: false,
+  culling: true,
 };
 
 export class CandyGraph {
@@ -93,7 +95,7 @@ export class CandyGraph {
         enable: false,
       },
       cull: {
-        enable: true,
+        enable: opts.culling,
         face: "back",
       },
     });
