@@ -1,6 +1,5 @@
 import { Regl, Buffer } from "regl";
-
-import { CandyGraph } from "..";
+import { CandyGraph } from "../candygraph";
 
 export type Factory = ReturnType<typeof factory>
 

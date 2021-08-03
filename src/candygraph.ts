@@ -1,6 +1,4 @@
 import REGL, { DrawCommand, Regl, Vec4 } from "regl";
-import * as scale from "./scales";
-import * as coordinate from "./coordinates";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
 import {
   Viewport,
@@ -41,8 +39,6 @@ const DEFAULT_OPTIONS = {
 export class CandyGraph {
   public readonly regl: Regl;
   public readonly canvas: HTMLCanvasElement;
-  public readonly scale = scale;
-  public readonly coordinate = coordinate;
 
   private commandCache: { [glsl: string]: Map<Function, DrawCommand> } = {};
   private coordinateScopeCache = new Map<CoordinateSystem, DrawCommand>();
@@ -73,8 +69,6 @@ export class CandyGraph {
         enable: false,
       },
     });
-    this.scale = scale;
-    this.coordinate = coordinate;
   }
 
   public clear = (color: [number, number, number, number]): void => {

@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, Vector4, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -18,12 +19,12 @@ type Props = {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
+export function factory(cg: CandyGraph) {
   return function createTriangles(
     vertices: NumberArray | Dataset,
     options?: Options
   ): Triangles {
-    return new Triangles(regl, vertices, options);
+    return new Triangles(cg.regl, vertices, options);
   };
 }
 

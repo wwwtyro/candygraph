@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -30,13 +31,13 @@ type Props = {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
+export function factory(cg: CandyGraph) {
   return function createInterleavedShapes(
     shape: NumberArray | Dataset,
     xys: NumberArray | Dataset,
     options?: Options
   ): InterleavedShapes {
-    return new InterleavedShapes(regl, shape, xys, options);
+    return new InterleavedShapes(cg.regl, shape, xys, options);
   };
 }
 

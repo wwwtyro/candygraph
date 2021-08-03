@@ -1,5 +1,5 @@
-import { CandyGraph } from "../candygraph";
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 

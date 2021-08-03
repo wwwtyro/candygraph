@@ -1,4 +1,5 @@
 import { Regl, DrawCommand, Buffer } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, Vector2, Vector4 } from "../common";
 import { Font } from "./font";
 
@@ -34,8 +35,8 @@ let uvBuffer = new Float32Array(1);
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
-  const quadGeometry = regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
+export function factory(cg: CandyGraph) {
+  const quadGeometry = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
 
   return function createText(
     font: Font,
@@ -43,7 +44,7 @@ export function factory(regl: Regl) {
     position: Vector2,
     options?: Options
   ) {
-    return new Text(regl, quadGeometry, font, text, position, options);
+    return new Text(cg.regl, quadGeometry, font, text, position, options);
   };
 }
 

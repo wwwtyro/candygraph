@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -31,11 +32,11 @@ type Props = {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
+export function factory(cg: CandyGraph) {
   // prettier-ignore
-  const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+  const positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   return function createInterleavedCircles(xys: NumberArray | Dataset, options?: Options) {
-    return new InterleavedCircles(regl, positionBuffer, xys, options);
+    return new InterleavedCircles(cg.regl, positionBuffer, xys, options);
   };
 }
 

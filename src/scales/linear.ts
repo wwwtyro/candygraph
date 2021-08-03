@@ -1,7 +1,7 @@
 import { Scale, Kind } from "./scale";
 import { Vector2 } from "../common";
 
-export function factory(domain: Vector2, range: Vector2): LinearScale {
+export function createLinearScale(domain: Vector2, range: Vector2): LinearScale {
   return new LinearScale(domain, range);
 }
 

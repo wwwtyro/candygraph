@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -32,15 +33,15 @@ type Props = {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
+export function factory(cg: CandyGraph) {
   // prettier-ignore
-  const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+  const positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   return function createCircles(
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
     options?: Options
   ) {
-    return new Circles(regl, positionBuffer, xs, ys, options);
+    return new Circles(cg.regl, positionBuffer, xs, ys, options);
   };
 }
 

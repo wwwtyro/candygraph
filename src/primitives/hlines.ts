@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -23,8 +24,8 @@ type Props = {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
-  const segmentGeometry = regl.buffer([
+export function factory(cg: CandyGraph) {
+  const segmentGeometry = cg.regl.buffer([
     [0, -0.5],
     [1, -0.5],
     [1, +0.5],
@@ -34,7 +35,7 @@ export function factory(regl: Regl) {
   ]);
 
   return function createHLines(lines: NumberArray | Dataset, options?: Options) {
-    return new HLines(regl, segmentGeometry, lines, options);
+    return new HLines(cg.regl, segmentGeometry, lines, options);
   };
 }
 

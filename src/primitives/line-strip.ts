@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -69,15 +70,15 @@ function roundCapJoinGeometry(resolution: number) {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
+export function factory(cg: CandyGraph) {
   const roundCapJoin = roundCapJoinGeometry(16);
-  const geometry = regl.buffer(roundCapJoin);
+  const geometry = cg.regl.buffer(roundCapJoin);
   return function createLineStrip(
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
     options?: Options
   ) {
-    return new LineStrip(regl, geometry, roundCapJoin.length, xs, ys, options);
+    return new LineStrip(cg.regl, geometry, roundCapJoin.length, xs, ys, options);
   };
 }
 

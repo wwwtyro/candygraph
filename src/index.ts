@@ -1,5 +1,11 @@
 export { CandyGraph } from "./candygraph";
 
+export { LinearScale, createLinearScale } from "./scales/linear";
+export { LogScale, createLogScale } from "./scales/log";
+
+export { CartesianCoordinateSystem, createCartesianCoordinateSystem } from "./coordinates/cartesian";
+export { PolarCoordinateSystem, createPolarCoordinateSystem } from "./coordinates/polar";
+
 export { Circles, factory as createCirclesFactory } from "./primitives/circles";
 export { Dataset, factory as createDatasetFactory } from "./primitives/dataset";
 export { Font, factory as createFontFactory } from "./primitives/font";
