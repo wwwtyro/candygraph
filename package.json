@@ -2,7 +2,8 @@
   "name": "candygraph",
   "version": "0.3.1",
   "description": "Fast by default, flexible 2D plotting library.",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
+  "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "keywords": [
     "2d",
@@ -15,7 +16,8 @@
   "author": "Rye Terrell <ryeterrell@ryeterrell.net> (https://wwwtyro.net)",
   "license": "Unlicense",
   "scripts": {
-    "build": "webpack && npm run build-tutorial && npm run build-examples",
+    "build": "npm run clean && npm run build-library && npm run build-tutorial && npm run build-examples",
+    "build-library": "tsc -p tsconfig.json && webpack",
     "build-tutorial": "webpack --config docs/tutorial/webpack.config.js",
     "build-examples": "webpack --config docs/examples/webpack.config.js",
     "start-tutorial": "webpack-dev-server --config docs/tutorial/webpack.config.js",
