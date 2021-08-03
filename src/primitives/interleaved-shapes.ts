@@ -31,7 +31,7 @@ type Props = {
 export type Factory = ReturnType<typeof factory>;
 
 export function factory(regl: Regl) {
-  return function (
+  return function createInterleavedShapes(
     shape: NumberArray | Dataset,
     xys: NumberArray | Dataset,
     options?: Options
@@ -70,11 +70,11 @@ export class InterleavedShapes extends Primitive {
           attribute vec2 xy, scale;
           attribute float rotation;
           attribute vec4 color;
-      
+
           varying vec4 vColor;
 
           ${glsl}
-    
+
           void main() {
             vec2 pos = scale * position;
             float sint = sin(rotation);
@@ -90,7 +90,7 @@ export class InterleavedShapes extends Primitive {
 
       frag: `
           precision highp float;
-          
+
           varying vec4 vColor;
 
           void main() {

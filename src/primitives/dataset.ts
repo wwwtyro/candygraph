@@ -1,5 +1,18 @@
 import { Regl, Buffer } from "regl";
 
+import { CandyGraph } from "..";
+
+export type Factory = ReturnType<typeof factory>
+
+export function factory(cg: CandyGraph) {
+  return function (
+    data: number | number[] | number[][] | Float32Array | Dataset,
+    auto = true
+  ) {
+    return createDataset(cg.regl, data, auto);
+  }
+}
+
 export function createDataset(
   regl: Regl,
   data: number | number[] | number[][] | Float32Array | Dataset,

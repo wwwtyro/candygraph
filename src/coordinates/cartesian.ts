@@ -11,7 +11,7 @@ type Props = {
   yrange: Vector2;
 };
 
-export function factory(
+export function createCartesianCoordinateSystem(
   xscale: LinearScale | LogScale,
   yscale: LinearScale | LogScale
 ) {
@@ -37,17 +37,17 @@ export class CartesianCoordinateSystem extends CoordinateSystem {
     this.glsl = `
     uniform vec2 xdomain, ydomain;
     uniform vec2 xrange, yrange;
-    
+
     ${xglsl}
     ${yglsl}
-    
+
     vec2 toRange(vec2 v) {
       return vec2(
         toXRange(v.x, xdomain, xrange),
         toYRange(v.y, ydomain, yrange)
       );
     }
-    
+
     vec2 toDomain(vec2 v) {
       return vec2(
         toXDomain(v.x, xdomain, xrange),

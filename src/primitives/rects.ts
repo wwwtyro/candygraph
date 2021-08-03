@@ -1,3 +1,4 @@
+import { CandyGraph } from "../candygraph";
 import { Regl, Buffer, DrawCommand } from "regl";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -19,11 +20,11 @@ type Props = {
 
 export type Factory = ReturnType<typeof factory>;
 
-export function factory(regl: Regl) {
+export function factory(cg: CandyGraph) {
   // prettier-ignore
-  const positionBuffer = regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
-  return function (rects: NumberArray | Dataset, options?: Options) {
-    return new Rects(regl, positionBuffer, rects, options);
+  const positionBuffer = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
+  return function createRects(rects: NumberArray | Dataset, options?: Options) {
+    return new Rects(cg.regl, positionBuffer, rects, options);
   };
 }
 
@@ -50,11 +51,11 @@ export class Rects extends Primitive {
           attribute vec2 position;
           attribute vec4 rect;
           attribute vec4 color;
-      
+
           varying vec4 vColor;
 
           ${glsl}
-    
+
           void main() {
             gl_Position = domainToClip(rect.xy + position.xy * rect.zw);
             vColor = color;

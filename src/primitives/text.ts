@@ -37,7 +37,7 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   const quadGeometry = regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
 
-  return function (
+  return function createText(
     font: Font,
     text: string,
     position: Vector2,

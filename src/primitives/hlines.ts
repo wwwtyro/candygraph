@@ -33,7 +33,7 @@ export function factory(regl: Regl) {
     [0, +0.5],
   ]);
 
-  return function (lines: NumberArray | Dataset, options?: Options) {
+  return function createHLines(lines: NumberArray | Dataset, options?: Options) {
     return new HLines(regl, segmentGeometry, lines, options);
   };
 }
@@ -66,9 +66,9 @@ export class HLines extends Primitive {
           attribute vec4 color;
 
           varying vec4 vColor;
-      
+
           ${glsl}
-    
+
           float round(float v) {
             return floor(v) + floor(2.0 * fract(v));
           }

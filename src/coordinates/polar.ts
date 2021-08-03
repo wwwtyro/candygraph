@@ -16,7 +16,7 @@ type Props = {
   yRange: Vector2;
 };
 
-export function factory(
+export function createPolarCoordinateSystem(
   radialScale: LinearScale | LogScale,
   angularScale: LinearScale | LogScale,
   xScale: LinearScale | LogScale,
@@ -54,12 +54,12 @@ export class PolarCoordinateSystem extends CoordinateSystem {
       uniform vec2 angularDomain, angularRange;
       uniform vec2 xDomain, xRange;
       uniform vec2 yDomain, yRange;
-      
+
       ${radialGLSL}
       ${angularGLSL}
       ${xGLSL}
       ${yGLSL}
-      
+
       vec2 toRange(vec2 v) {
         vec2 polar = vec2(
           toRadialRange(v.x, radialDomain, radialRange),
@@ -74,7 +74,7 @@ export class PolarCoordinateSystem extends CoordinateSystem {
           toYRange(cartesian.y, yDomain, yRange)
         );
       }
-      
+
       vec2 toDomain(vec2 v) {
         vec2 cartesian = vec2(
           toXDomain(v.x, xDomain, xRange),

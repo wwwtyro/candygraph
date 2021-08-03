@@ -1,9 +1,7 @@
 import REGL, { DrawCommand, Regl, Vec4 } from "regl";
 import * as scale from "./scales";
-import * as primitive from "./primitives";
 import * as coordinate from "./coordinates";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
-import * as composite from "./composites";
 import {
   Viewport,
   Renderable,
@@ -12,7 +10,6 @@ import {
   NumberArray,
 } from "./common";
 import { createDataset } from "./primitives/dataset";
-import { Font } from "./primitives/font";
 
 type Props = {
   resolution: [number, number];
@@ -44,23 +41,6 @@ const DEFAULT_OPTIONS = {
 export class CandyGraph {
   public readonly regl: Regl;
   public readonly canvas: HTMLCanvasElement;
-  public readonly lineSegments: primitive.lineSegments.Factory;
-  public readonly lineStrip: primitive.lineStrip.Factory;
-  public readonly font: primitive.font.Factory;
-  public readonly text: primitive.text.Factory;
-  public readonly triangles: primitive.triangles.Factory;
-  public readonly hlines: primitive.hlines.Factory;
-  public readonly vlines: primitive.vlines.Factory;
-  public readonly circles: primitive.circles.Factory;
-  public readonly interleavedCircles: primitive.interleavedCircles.Factory;
-  public readonly rects: primitive.rects.Factory;
-  public readonly wedges: primitive.wedges.Factory;
-  public readonly shapes: primitive.shapes.Factory;
-  public readonly interleavedShapes: primitive.interleavedShapes.Factory;
-  public readonly defaultFont: Promise<Font>;
-  public readonly axis: composite.axis.Factory;
-  public readonly orthoAxis: composite.orthoAxis.Factory;
-  public readonly grid: composite.grid.Factory;
   public readonly scale = scale;
   public readonly coordinate = coordinate;
 
@@ -93,38 +73,6 @@ export class CandyGraph {
         enable: false,
       },
     });
-
-    this.lineSegments = primitive.lineSegments.factory(this.regl);
-    this.lineStrip = primitive.lineStrip.factory(this.regl);
-    this.font = primitive.font.factory(this.regl);
-    this.text = primitive.text.factory(this.regl);
-    this.triangles = primitive.triangles.factory(this.regl);
-    this.hlines = primitive.hlines.factory(this.regl);
-    this.vlines = primitive.vlines.factory(this.regl);
-    this.circles = primitive.circles.factory(this.regl);
-    this.interleavedCircles = primitive.interleavedCircles.factory(this.regl);
-    this.rects = primitive.rects.factory(this.regl);
-    this.wedges = primitive.wedges.factory(this.regl);
-    this.shapes = primitive.shapes.factory(this.regl);
-    this.interleavedShapes = primitive.interleavedShapes.factory(this.regl);
-
-    this.defaultFont = new Promise<Font>(async (accept) => {
-      const image = await loadImage(
-        require("./assets/Lato-Regular.png").default
-      );
-      const json = require("./assets/Lato-Regular.json");
-      const font = this.font(image, json);
-      accept(font);
-    });
-
-    this.axis = composite.axis.factory(
-      this.text,
-      this.vlines,
-      this.hlines,
-      this.lineSegments
-    );
-    this.orthoAxis = composite.orthoAxis.factory(this.axis);
-    this.grid = composite.grid.factory(this.vlines, this.hlines);
     this.scale = scale;
     this.coordinate = coordinate;
   }
@@ -149,10 +97,6 @@ export class CandyGraph {
         }
       );
     });
-  };
-
-  public reusableData = (data: NumberArray) => {
-    return createDataset(this.regl, data, false);
   };
 
   public copyTo(
@@ -234,13 +178,4 @@ export class CandyGraph {
     }
     return scope;
   }
-}
-
-function loadImage(url: string) {
-  return new Promise<HTMLImageElement>((accept) => {
-    const image = new Image();
-    image.onload = () => accept(image);
-    image.crossOrigin = "anonymous";
-    image.src = url;
-  });
 }

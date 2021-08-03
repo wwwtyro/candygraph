@@ -35,7 +35,7 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   // prettier-ignore
   const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (
+  return function createCircles(
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
     options?: Options
@@ -76,10 +76,10 @@ export class Circles extends Primitive {
           attribute vec2 position;
           attribute float offsetX, offsetY;
           attribute vec4 color;
-          attribute vec4 borderColor; 
+          attribute vec4 borderColor;
           attribute float radius;
           attribute float borderWidth;
-      
+
           varying vec4 vColor;
           varying vec4 vBorderColor;
           varying vec2 vPosition;
@@ -87,7 +87,7 @@ export class Circles extends Primitive {
           varying float vBorderWidth;
 
           ${glsl}
-    
+
           void main() {
             vPosition = position * radius;
             vec2 offset = vec2(offsetX, offsetY);

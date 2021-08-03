@@ -5,7 +5,8 @@ import {
   Vector2,
   NumberArray,
 } from "../common";
-import * as primitives from "../primitives";
+import { Factory as VLinesFactory } from "../primitives/vlines";
+import { Factory as HLinesFactory } from "../primitives/hlines";
 
 type Options = {
   width?: number;
@@ -20,10 +21,10 @@ const DEFAULTS = {
 export type Factory = ReturnType<typeof factory>;
 
 export function factory(
-  vlines: primitives.vlines.Factory,
-  hlines: primitives.hlines.Factory
+  vlines: VLinesFactory,
+  hlines: HLinesFactory
 ) {
-  return function (
+  return function createGrid(
     xPositions: NumberArray,
     yPositions: NumberArray,
     xExtents: Vector2,
@@ -46,8 +47,8 @@ export class Grid extends Composite {
   private grid: Renderable = [];
 
   constructor(
-    vlines: primitives.vlines.Factory,
-    hlines: primitives.hlines.Factory,
+    vlines: VLinesFactory,
+    hlines: HLinesFactory,
     xPositions: NumberArray,
     yPositions: NumberArray,
     xExtents: Vector2,

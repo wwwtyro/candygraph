@@ -7,7 +7,10 @@ import {
   Vector2,
   NumberArray,
 } from "../common";
-import * as primitives from "../primitives";
+import { Factory as TextFactory } from "../primitives/text";
+import { Factory as VLinesFactory } from "../primitives/vlines";
+import { Factory as HLinesFactory } from "../primitives/hlines";
+import { Factory as LineSegmentsFactory } from "../primitives/line-segments";
 import { Font } from "../primitives/font";
 
 export type Options = {
@@ -52,12 +55,12 @@ const DEFAULTS = {
 export type Factory = ReturnType<typeof factory>;
 
 export function factory(
-  text: primitives.text.Factory,
-  vlines: primitives.vlines.Factory,
-  hlines: primitives.hlines.Factory,
-  lineSegments: primitives.lineSegments.Factory
+  text: TextFactory,
+  vlines: VLinesFactory,
+  hlines: HLinesFactory,
+  lineSegments: LineSegmentsFactory
 ) {
-  return function (
+  return function createAxis(
     coords: CoordinateSystem,
     start: Vector2,
     end: Vector2,
@@ -89,10 +92,10 @@ export class Axis extends Composite {
   private minorTicks: Renderable = [];
 
   constructor(
-    text: primitives.text.Factory,
-    vlines: primitives.vlines.Factory,
-    hlines: primitives.hlines.Factory,
-    lineSegments: primitives.lineSegments.Factory,
+    text: TextFactory,
+    vlines: VLinesFactory,
+    hlines: HLinesFactory,
+    lineSegments: LineSegmentsFactory,
     coords: CoordinateSystem,
     start: Vector2,
     end: Vector2,

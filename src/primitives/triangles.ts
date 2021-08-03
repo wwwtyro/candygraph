@@ -19,7 +19,7 @@ type Props = {
 export type Factory = ReturnType<typeof factory>;
 
 export function factory(regl: Regl) {
-  return function (
+  return function createTriangles(
     vertices: NumberArray | Dataset,
     options?: Options
   ): Triangles {
@@ -47,9 +47,9 @@ export class Triangles extends Primitive {
       vert: `
           precision highp float;
           attribute vec2 position;
-      
+
           ${glsl}
-    
+
           void main() {
             gl_Position = domainToClip(position);
           }`,

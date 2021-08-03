@@ -28,7 +28,7 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   // prettier-ignore
   const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (
+  return function createWedges(
     xys: NumberArray | Dataset,
     angles: NumberArray | Dataset,
     options?: Options
@@ -66,13 +66,13 @@ export class Wedges extends Primitive {
           attribute vec2 offset, angle;
           attribute vec4 color;
           attribute float radius;
-      
+
           varying vec4 vColor;
           varying vec2 vPosition, vAngle;
           varying float vRadius;
 
           ${glsl}
-    
+
           void main() {
             vPosition = position * radius;
             vec2 screenPosition = toRange(offset) + vPosition;

@@ -34,7 +34,7 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   // prettier-ignore
   const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (xys: NumberArray | Dataset, options?: Options) {
+  return function createInterleavedCircles(xys: NumberArray | Dataset, options?: Options) {
     return new InterleavedCircles(regl, positionBuffer, xys, options);
   };
 }
@@ -68,10 +68,10 @@ export class InterleavedCircles extends Primitive {
           attribute vec2 position;
           attribute vec2 offset;
           attribute vec4 color;
-          attribute vec4 borderColor; 
+          attribute vec4 borderColor;
           attribute float radius;
           attribute float borderWidth;
-      
+
           varying vec4 vColor;
           varying vec4 vBorderColor;
           varying vec2 vPosition;
@@ -79,7 +79,7 @@ export class InterleavedCircles extends Primitive {
           varying float vBorderWidth;
 
           ${glsl}
-    
+
           void main() {
             vPosition = position * radius;
             vec2 screenPosition = toRange(offset) + vPosition;

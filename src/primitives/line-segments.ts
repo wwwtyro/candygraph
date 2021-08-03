@@ -33,7 +33,7 @@ export function factory(regl: Regl) {
     [0, +0.5],
   ]);
 
-  return function (points: NumberArray | Dataset, options?: Options) {
+  return function createLineSegments(points: NumberArray | Dataset, options?: Options) {
     return new LineSegments(regl, segmentGeometry, points, options);
   };
 }
@@ -63,20 +63,20 @@ export class LineSegments extends Primitive {
           attribute vec2 position, pointA, pointB;
           attribute float width;
           attribute vec4 color;
-      
+
           varying vec4 vColor;
 
           ${glsl}
-    
+
           void main() {
             // Transform points A and B to screen space.
             vec2 screenA = toRange(pointA);
             vec2 screenB = toRange(pointB);
-    
+
             // Calculate the basis vectors for the line in screen space.
             vec2 xBasis = screenB - screenA;
             vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));
-    
+
             // Determine the screen space point position and convert it back to clip space.
             vec2 point = screenA + xBasis * position.x + yBasis * width * position.y;
             gl_Position = rangeToClip(point);

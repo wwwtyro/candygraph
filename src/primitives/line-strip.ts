@@ -72,7 +72,7 @@ export type Factory = ReturnType<typeof factory>;
 export function factory(regl: Regl) {
   const roundCapJoin = roundCapJoinGeometry(16);
   const geometry = regl.buffer(roundCapJoin);
-  return function (
+  return function createLineStrip(
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
     options?: Options

@@ -14,7 +14,7 @@ type Glyph = {
 export type Factory = ReturnType<typeof factory>;
 
 export function factory(regl: Regl) {
-  return function (image: HTMLImageElement, json: any) {
+  return function createFont(image: HTMLImageElement, json: any) {
     return new Font(regl, image, json);
   };
 }
