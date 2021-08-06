@@ -92,10 +92,6 @@ export class CandyGraph {
       depth: {
         enable: false,
       },
-      cull: {
-        enable: true,
-        face: "back",
-      },
     });
 
     this.lineSegments = primitive.lineSegments.factory(this.regl);
