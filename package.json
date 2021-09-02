@@ -17,7 +17,7 @@
   "license": "Unlicense",
   "scripts": {
     "build": "npm run clean && npm run build-library && npm run build-tutorial && npm run build-examples",
-    "build-library": "tsc -p tsconfig.json && webpack",
+    "build-library": "tsc -p tsconfig.json && cp src/assets/Lato* lib/assets/ && webpack",
     "build-tutorial": "webpack --config docs/tutorial/webpack.config.js",
     "build-examples": "webpack --config docs/examples/webpack.config.js",
     "start-tutorial": "webpack-dev-server --config docs/tutorial/webpack.config.js",
