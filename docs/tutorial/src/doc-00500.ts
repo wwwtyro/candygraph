@@ -1,4 +1,14 @@
-import { CandyGraph } from "../../.."; // skip-doc
+import CandyGraph, {
+  createCircles,
+  createLinearScale,
+  createLogScale,
+  createCartesianCoordinateSystem,
+  createLineStrip,
+  createDefaultFont,
+  createOrthoAxis,
+  createGrid,
+  createDataset,
+} from "../../.."; // skip-doc
 
 // ## Data Reuse
 
@@ -11,7 +21,7 @@ import { CandyGraph } from "../../.."; // skip-doc
 
 // skip-doc-start
 export default async function doc_00500(cg: CandyGraph) {
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   const primes = [1 / 2, 1 / 3, 1 / 5, 1 / 7, 1 / 11, 1 / 13, 1 / 17, 1 / 19];
   function primenoise(t: number) {
@@ -35,66 +45,62 @@ export default async function doc_00500(cg: CandyGraph) {
 
   // Previously we'd have fed `xsRaw` and `ysRaw` directly into functions like
   // `cg.lineStrip`. This time, however, we'll upload them to the GPU and keep a
-  // handle to them using the `cg.reusableData` function. Once we've done so, we
+  // handle to them using the `createDataset` function. Once we've done so, we
   // can continue to use them until we invoke their `dispose()` functions. The
-  // `cg.reusableData` function returns a `Dataset` object:
-  const xs = cg.reusableData(xsRaw);
-  const ys = cg.reusableData(ysRaw);
+  // `createDataset` function returns a `Dataset` object:
+  const xs = createDataset(cg, xsRaw);
+  const ys = createDataset(cg, ysRaw);
 
   const viewport = { x: 0, y: 0, width: 384, height: 384 }; // skip-doc
 
   // Next we'll create some scales and coordinate systems. In this example,
   // we're going to allow the user to switch between a linear and logarithmic
   // y-axis:
-  const linx = cg.scale.linear([0, 10000], [32, viewport.width - 16]);
-  const liny = cg.scale.linear([0, 10000], [24, viewport.height - 16]);
-  const logy = cg.scale.log(10, [1, 10000], [24, viewport.height - 16]);
+  const linx = createLinearScale([0, 10000], [32, viewport.width - 16]);
+  const liny = createLinearScale([0, 10000], [24, viewport.height - 16]);
+  const logy = createLogScale(10, [1, 10000], [24, viewport.height - 16]);
 
-  const linlin = cg.coordinate.cartesian(linx, liny);
-  const linlog = cg.coordinate.cartesian(linx, logy);
+  const linlin = createCartesianCoordinateSystem(linx, liny);
+  const linlog = createCartesianCoordinateSystem(linx, logy);
 
   // We can also retain higher level constructs, such as an `OrthoAxis`. To do
   // so, we simply invoke its `retain()` function. Doing so will allow us to
   // continue to use them until we invoke their `dispose()` functions. Let's
   // create a set of x and y axes for our linear-linear and linear-log plots:
   const linlinAxis = [
-    cg
-      .orthoAxis(linlin, "x", font, {
-        labelSide: 1,
-        tickStep: 1000,
-        tickLength: 5,
-        tickOffset: -2,
-        labelFormatter: (n) => `${n / 1000}K`,
-      })
-      .retain(),
-    cg
-      .orthoAxis(linlin, "y", font, {
-        tickStep: 1000,
-        tickLength: 5,
-        tickOffset: 2,
-        labelFormatter: (n) => `${n / 1000}K`,
-      })
-      .retain(),
+    createOrthoAxis(cg, linlin, "x", font, {
+      labelSide: 1,
+      tickStep: 1000,
+      tickLength: 5,
+      tickOffset: -2,
+      labelFormatter: (n) => `${n / 1000}K`,
+    })
+    .retain(),
+    createOrthoAxis(cg, linlin, "y", font, {
+      tickStep: 1000,
+      tickLength: 5,
+      tickOffset: 2,
+      labelFormatter: (n) => `${n / 1000}K`,
+    })
+    .retain(),
   ];
 
   const linlogAxis = [
-    cg
-      .orthoAxis(linlog, "x", font, {
-        labelSide: 1,
-        tickStep: 1000,
-        tickLength: 5,
-        tickOffset: -2,
-        labelFormatter: (n) => `${n / 1000}K`,
-      })
-      .retain(),
-    cg
-      .orthoAxis(linlog, "y", font, {
-        tickStep: 1,
-        tickLength: 5,
-        tickOffset: 2,
-        labelFormatter: (n) => (n >= 1000 ? `${n / 1000}K` : n.toString()),
-      })
-      .retain(),
+    createOrthoAxis(cg, linlog, "x", font, {
+      labelSide: 1,
+      tickStep: 1000,
+      tickLength: 5,
+      tickOffset: -2,
+      labelFormatter: (n) => `${n / 1000}K`,
+    })
+    .retain(),
+    createOrthoAxis(cg, linlog, "y", font, {
+      tickStep: 1,
+      tickLength: 5,
+      tickOffset: 2,
+      labelFormatter: (n) => (n >= 1000 ? `${n / 1000}K` : n.toString()),
+    })
+    .retain(),
   ];
 
   // Now we'll define a render function that will get invoked when the user
@@ -125,12 +131,12 @@ export default async function doc_00500(cg: CandyGraph) {
     // `cg.circles` or `cg.lineStrip` renderable according to the value of
     // `scatter`:
     const data = scatter
-      ? cg.circles(xs, ys, {
+      ? createCircles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
           radii: 3,
           borderWidths: 0,
         })
-      : cg.lineStrip(xs, ys, {
+      : createLineStrip(cg, xs, ys, {
           colors: [1, 0, 0, 1],
           widths: 0.25,
         });

@@ -2,7 +2,14 @@
 // <canvas id="ex-00350" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../../lib";
+import CandyGraph, {
+  createDefaultFont,
+  createCircles,
+  createFont,
+  createOrthoAxis,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function ScatterPlot(cg: CandyGraph) {
   // Generate some x & y data.
@@ -31,24 +38,24 @@ export default async function ScatterPlot(cg: CandyGraph) {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
-    cg.scale.linear([0, 1], [32 * dpr, viewport.height - 16 * dpr])
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
+    createLinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   // Clear the viewport.
   cg.clear([1, 1, 1, 1]);
 
   // Render the data as circles and the axes.
   cg.render(coords, viewport, [
-    cg.circles(xs, ys, {
+    createCircles(cg, xs, ys, {
       colors: [1, 0.5, 0.0, 1.0],
       radii: 1 * dpr,
       borderWidths: 0 * dpr,
     }),
-    cg.orthoAxis(coords, "x", font, {
+    createOrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickOffset: -2.5 * dpr,
       tickLength: 6 * dpr,
@@ -59,7 +66,7 @@ export default async function ScatterPlot(cg: CandyGraph) {
 
       labelFormatter: (n) => n.toFixed(1),
     }),
-    cg.orthoAxis(coords, "y", font, {
+    createOrthoAxis(cg, coords, "y", font, {
       tickOffset: 2.5 * dpr,
       tickLength: 6 * dpr,
       tickStep: 0.2,

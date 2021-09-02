@@ -2,7 +2,13 @@
 // <canvas id="ex-11000" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDataset,
+  createLineStrip,
+  createShapes,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default function Shapes(cg: CandyGraph) {
   // Scale the canvas by the device pixel ratio.
@@ -15,13 +21,13 @@ export default function Shapes(cg: CandyGraph) {
 
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 2 * Math.PI], [0, viewport.width]),
-    cg.scale.linear([-1, 1], [0, viewport.height])
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([0, 2 * Math.PI], [0, viewport.width]),
+    createLinearScale([-1, 1], [0, viewport.height])
   );
 
   // prettier-ignore
-  const shape = cg.reusableData([
+  const shape = createDataset(cg, [
     -1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1,
     1, -1, 4, 0, 1, 1,
     1, 1, 0, 4, -1, 1,
@@ -50,25 +56,25 @@ export default function Shapes(cg: CandyGraph) {
     rotations.push(Math.random() * 2 * Math.PI);
   }
 
-  const xData = cg.reusableData(xs);
+  const xData = createDataset(cg, xs);
 
   cg.clear([0, 0, 0.25, 1]);
 
   cg.render(coords, viewport, [
-    cg.lineStrip(xData, ys0, {
+    createLineStrip(cg, xData, ys0, {
       colors: [1, 1, 1, 1],
       widths: 2 * dpr,
     }),
-    cg.shapes(shape, xData, ys0, {
+    createShapes(cg, shape, xData, ys0, {
       colors,
       scales,
       rotations,
     }),
-    cg.lineStrip(xData, ys1, {
+    createLineStrip(cg, xData, ys1, {
       colors: [1, 1, 1, 1],
       widths: 2 * dpr,
     }),
-    cg.shapes(shape, xData, ys1, {
+    createShapes(cg, shape, xData, ys1, {
       colors,
       scales,
       rotations,

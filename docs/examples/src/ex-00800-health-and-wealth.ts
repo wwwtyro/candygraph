@@ -2,7 +2,17 @@
 // <canvas id="ex-00800" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=768></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDefaultFont,
+  createFont,
+  createText,
+  createGrid,
+  createInterleavedCircles,
+  createOrthoAxis,
+  createLinearScale,
+  createLogScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   // Create a canvas and add it to the page.
@@ -19,94 +29,89 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
 
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
 
-  const coords = cg.coordinate.cartesian(
-    cg.scale.log(10, [100, 100000], [64 * dpr, viewport.width - 20 * dpr]),
-    cg.scale.linear([10, 90], [48 * dpr, viewport.height - 60 * dpr])
+  const coords = createCartesianCoordinateSystem(
+    createLogScale(10, [100, 100000], [64 * dpr, viewport.width - 20 * dpr]),
+    createLinearScale([10, 90], [48 * dpr, viewport.height - 60 * dpr])
   );
 
-  const screenCoords = cg.coordinate.cartesian(
-    cg.scale.linear([0, canvas.width], [0, canvas.width]),
-    cg.scale.linear([0, canvas.height], [0, canvas.height])
+  const screenCoords = createCartesianCoordinateSystem(
+    createLinearScale([0, canvas.width], [0, canvas.width]),
+    createLinearScale([0, canvas.height], [0, canvas.height])
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   const axes = [
-    cg
-      .orthoAxis(coords, "x", font, {
-        labelSide: 1,
-        labelFormatter: (n) =>
-          n < 1000 ? n.toString() : Math.round(n / 1000).toString() + "K",
-        tickLength: 6 * dpr,
-        tickOffset: -3 * dpr,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
+    createOrthoAxis(cg, coords, "x", font, {
+      labelSide: 1,
+      labelFormatter: (n) =>
+        n < 1000 ? n.toString() : Math.round(n / 1000).toString() + "K",
+      tickLength: 6 * dpr,
+      tickOffset: -3 * dpr,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
 
-        minorTickCount: 10,
-        minorTickLength: 4 * dpr,
-        minorTickOffset: -2 * dpr,
-        minorTickWidth: 1 * dpr,
-      })
-      .retain(),
-    cg
-      .orthoAxis(coords, "y", font, {
-        tickStep: 10,
-        tickLength: 6 * dpr,
-        tickOffset: 3 * dpr,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
-      })
-      .retain(),
+      minorTickCount: 10,
+      minorTickLength: 4 * dpr,
+      minorTickOffset: -2 * dpr,
+      minorTickWidth: 1 * dpr,
+    })
+    .retain(),
+    createOrthoAxis(cg, coords, "y", font, {
+      tickStep: 10,
+      tickLength: 6 * dpr,
+      tickOffset: 3 * dpr,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+    })
+    .retain(),
   ];
 
   const Labels = [
-    cg
-      .text(font, "Income", [canvas.width / 2, 8 * dpr], {
-        anchor: [0, -1],
-        size: 16 * dpr,
-      })
-      .retain(),
-    cg
-      .text(font, "Life Expectancy", [8 * dpr, canvas.height / 2], {
-        anchor: [0, 1],
-        angle: Math.PI / 2,
-        size: 16 * dpr,
-      })
-      .retain(),
-    cg
-      .text(
-        font,
-        "The Health & Wealth of Nations",
-        [8 * dpr, canvas.height - 8 * dpr],
-        {
-          anchor: [-1, 1],
-          size: 32 * dpr,
-        }
-      )
-      .retain(),
+    createText(cg, font, "Income", [canvas.width / 2, 8 * dpr], {
+      anchor: [0, -1],
+      size: 16 * dpr,
+    })
+    .retain(),
+    createText(cg, font, "Life Expectancy", [8 * dpr, canvas.height / 2], {
+      anchor: [0, 1],
+      angle: Math.PI / 2,
+      size: 16 * dpr,
+    })
+    .retain(),
+    createText(cg,
+      font,
+      "The Health & Wealth of Nations",
+      [8 * dpr, canvas.height - 8 * dpr],
+      {
+        anchor: [-1, 1],
+        size: 32 * dpr,
+      }
+    )
+    .retain(),
   ];
 
   const grid = [
-    cg
-      .grid(
-        axes[0].info.ticks,
-        axes[1].info.ticks,
-        coords.xscale.domain,
-        coords.yscale.domain,
-        { width: 1 * dpr }
-      )
-      .retain(),
-    cg
-      .grid(
-        axes[0].info.minorTicks,
-        [],
-        coords.xscale.domain,
-        coords.yscale.domain,
-        { width: 1 * dpr }
-      )
-      .retain(),
+    createGrid(
+      cg,
+      axes[0].info.ticks,
+      axes[1].info.ticks,
+      coords.xscale.domain,
+      coords.yscale.domain,
+      { width: 1 * dpr }
+    )
+    .retain(),
+    createGrid(
+      cg,
+      axes[0].info.minorTicks,
+      [],
+      coords.xscale.domain,
+      coords.yscale.domain,
+      { width: 1 * dpr }
+    )
+    .retain(),
   ];
 
   const colors = [];
@@ -114,9 +119,9 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     colors.push(Math.random(), Math.random(), Math.random(), 0.5);
   }
 
-  const circles = cg
-    .interleavedCircles([0, 0], { colors, borderWidths: 0 })
-    .retain();
+  const circles = createInterleavedCircles(
+    cg, [0, 0], { colors, borderWidths: 0 }
+  ).retain();
 
   function render(year: number) {
     year = Math.max(nations.bounds.date.min, year);
@@ -135,7 +140,8 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     cg.render(coords, viewport, [grid, circles, axes]);
 
     cg.render(screenCoords, viewport, [
-      cg.text(
+      createText(
+        cg,
         font,
         year.toString(),
         [
