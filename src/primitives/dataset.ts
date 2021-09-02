@@ -1,26 +1,19 @@
 import { Regl, Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
 
-export type Factory = ReturnType<typeof factory>
+type Data = number | number[] | number[][] | Float32Array | Dataset;
 
-export function factory(cg: CandyGraph) {
-  return function (
-    data: number | number[] | number[][] | Float32Array | Dataset,
-    auto = true
-  ) {
-    return createDataset(cg.regl, data, auto);
-  }
-}
-
-export function createDataset(
-  regl: Regl,
-  data: number | number[] | number[][] | Float32Array | Dataset,
-  auto = true
-) {
+export function createDataset(regl: Regl, data: Data, auto = true) {
   if (isDataset(data)) {
     return data;
   }
   return new Dataset(regl, data, auto);
+}
+
+// Added to keep the public API the same. I.e., like createRects this function
+// expects CandyGraph as the first argument.
+export function createDatasetPublic(cg: CandyGraph, data: Data, auto = false) {
+  return createDataset(cg.regl, data, auto);
 }
 
 function isDataset(obj: any): obj is Dataset {

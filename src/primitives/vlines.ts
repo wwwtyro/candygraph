@@ -22,21 +22,30 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('vLines')) {
+    cg.setPositionBuffer(
+      'vLines',
+      [
+        [-0.5, 0],
+        [+0.5, 0],
+        [+0.5, 1],
+        [-0.5, 0],
+        [+0.5, 1],
+        [-0.5, 1],
+      ]
+    );
+  }
+  return cg.getPositionBuffer('vLines');
+}
 
-export function factory(cg: CandyGraph) {
-  const segmentGeometry = cg.regl.buffer([
-    [-0.5, 0],
-    [+0.5, 0],
-    [+0.5, 1],
-    [-0.5, 0],
-    [+0.5, 1],
-    [-0.5, 1],
-  ]);
-
-  return function createVLines(lines: NumberArray | Dataset, options?: Options) {
-    return new VLines(cg.regl, segmentGeometry, lines, options);
-  };
+export function createVLines(
+  cg: CandyGraph,
+  lines: NumberArray | Dataset,
+  options?: Options
+) {
+  const segmentGeometry = getPositionBuffer(cg)!;
+  return new VLines(cg.regl, segmentGeometry, lines, options);
 }
 
 export class VLines extends Primitive {

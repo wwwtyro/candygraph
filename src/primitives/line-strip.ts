@@ -68,18 +68,26 @@ function roundCapJoinGeometry(resolution: number) {
   return instanceRoundRound;
 }
 
-export type Factory = ReturnType<typeof factory>;
+// Set when the position buffer is created.
+let geometryCount: number;
 
-export function factory(cg: CandyGraph) {
-  const roundCapJoin = roundCapJoinGeometry(16);
-  const geometry = cg.regl.buffer(roundCapJoin);
-  return function createLineStrip(
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options?: Options
-  ) {
-    return new LineStrip(cg.regl, geometry, roundCapJoin.length, xs, ys, options);
-  };
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('lineStrip')) {
+    const geometry = roundCapJoinGeometry(16);
+    geometryCount = geometry.length;
+    cg.setPositionBuffer('lineStrip', geometry);
+  }
+  return cg.getPositionBuffer('lineStrip');
+}
+
+export function createLineStrip(
+  cg: CandyGraph,
+  xs: NumberArray | Dataset,
+  ys: NumberArray | Dataset,
+  options?: Options
+) {
+  const geometry = getPositionBuffer(cg)!;
+  return new LineStrip(cg.regl, geometry, geometryCount, xs, ys, options);
 }
 
 export class LineStrip extends Primitive {

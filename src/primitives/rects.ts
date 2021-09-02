@@ -18,14 +18,24 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('rects')) {
+    cg.setPositionBuffer(
+      'rects',
+      // prettier-ignore
+      [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
+    );
+  }
+  return cg.getPositionBuffer('rects');
+}
 
-export function factory(cg: CandyGraph) {
-  // prettier-ignore
-  const positionBuffer = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
-  return function createRects(rects: NumberArray | Dataset, options?: Options) {
-    return new Rects(cg.regl, positionBuffer, rects, options);
-  };
+export function createRects(
+  cg: CandyGraph,
+  rects: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new Rects(cg.regl, positionBuffer, rects, options);
 }
 
 export class Rects extends Primitive {

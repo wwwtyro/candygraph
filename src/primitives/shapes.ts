@@ -30,17 +30,14 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(cg: CandyGraph) {
-  return function createShapes(
-    shape: NumberArray | Dataset,
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options?: Options
-  ): Shapes {
-    return new Shapes(cg.regl, shape, xs, ys, options);
-  };
+export function createShapes(
+  cg: CandyGraph,
+  shape: NumberArray | Dataset,
+  xs: NumberArray | Dataset,
+  ys: NumberArray | Dataset,
+  options?: Options
+) {
+  return new Shapes(cg.regl, shape, xs, ys, options);
 }
 
 export class Shapes extends Primitive {

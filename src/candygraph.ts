@@ -1,4 +1,4 @@
-import REGL, { DrawCommand, Regl, Vec4 } from "regl";
+import REGL, { DrawCommand, Regl, Buffer, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
 import {
   Viewport,
@@ -43,6 +43,7 @@ export class CandyGraph {
   private commandCache: { [glsl: string]: Map<Function, DrawCommand> } = {};
   private coordinateScopeCache = new Map<CoordinateSystem, DrawCommand>();
   private scope: DrawCommand;
+  private positionBufferCache = new Map<string, Buffer>();
 
   constructor(options: CandyGraphOptions = {}) {
     const opts = { ...DEFAULT_OPTIONS, ...options };
@@ -73,6 +74,25 @@ export class CandyGraph {
 
   public clear = (color: [number, number, number, number]): void => {
     this.regl.clear({ color: color as Vec4 });
+  };
+
+  public hasPositionBuffer = (name: string): boolean => {
+    return this.positionBufferCache.has(name);
+  };
+
+  public getPositionBuffer = (name: string): Buffer | undefined => {
+    return this.positionBufferCache.get(name);
+  };
+
+  public setPositionBuffer = (
+    name: string,
+    data: number[] | number[][]
+  ): void => {
+    this.positionBufferCache.set(name, this.regl.buffer(data));
+  };
+
+  public clearPositionBufferCache = (): void => {
+    this.positionBufferCache.clear();
   };
 
   public render = (

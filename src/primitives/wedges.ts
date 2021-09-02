@@ -24,18 +24,25 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('wedges')) {
+    cg.setPositionBuffer(
+      'wedges',
+      // prettier-ignore
+      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
+    );
+  }
+  return cg.getPositionBuffer('wedges');
+}
 
-export function factory(cg: CandyGraph) {
-  // prettier-ignore
-  const positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function createWedges(
-    xys: NumberArray | Dataset,
-    angles: NumberArray | Dataset,
-    options?: Options
-  ) {
-    return new Wedges(cg.regl, positionBuffer, xys, angles, options);
-  };
+export function createWedges(
+  cg: CandyGraph,
+  xys: NumberArray | Dataset,
+  angles: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new Wedges(cg.regl, positionBuffer, xys, angles, options);
 }
 
 export class Wedges extends Primitive {

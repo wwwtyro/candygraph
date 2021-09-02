@@ -1,3 +1,4 @@
+import { CandyGraph } from "../candygraph";
 import {
   Composite,
   Renderable,
@@ -5,8 +6,8 @@ import {
   Vector2,
   NumberArray,
 } from "../common";
-import { Factory as VLinesFactory } from "../primitives/vlines";
-import { Factory as HLinesFactory } from "../primitives/hlines";
+import { createVLines } from "../primitives/vlines";
+import { createHLines } from "../primitives/hlines";
 
 type Options = {
   width?: number;
@@ -18,37 +19,29 @@ const DEFAULTS = {
   color: [0.75, 0.75, 0.75, 1.0],
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(
-  vlines: VLinesFactory,
-  hlines: HLinesFactory
-) {
-  return function createGrid(
-    xPositions: NumberArray,
-    yPositions: NumberArray,
-    xExtents: Vector2,
-    yExtents: Vector2,
-    options?: Options
-  ): Grid {
-    return new Grid(
-      vlines,
-      hlines,
-      xPositions,
-      yPositions,
-      xExtents,
-      yExtents,
-      options
-    );
-  };
+export function createGrid(
+  cg: CandyGraph,
+  xPositions: NumberArray,
+  yPositions: NumberArray,
+  xExtents: Vector2,
+  yExtents: Vector2,
+  options?: Options
+): Grid {
+  return new Grid(
+    cg,
+    xPositions,
+    yPositions,
+    xExtents,
+    yExtents,
+    options
+  );
 }
 
 export class Grid extends Composite {
   private grid: Renderable = [];
 
   constructor(
-    vlines: VLinesFactory,
-    hlines: HLinesFactory,
+    cg: CandyGraph,
     xPositions: NumberArray,
     yPositions: NumberArray,
     xExtents: Vector2,
@@ -65,14 +58,14 @@ export class Grid extends Composite {
       for (const xp of xPositions) {
         lines.push(xp, yExtents[0], yExtents[1]);
       }
-      this.grid.push(vlines(lines, { widths: width, colors: color }));
+      this.grid.push(createVLines(cg, lines, { widths: width, colors: color }));
     }
     if (yPositions.length > 0) {
       const lines = [];
       for (const yp of yPositions) {
         lines.push(xExtents[0], xExtents[1], yp);
       }
-      this.grid.push(hlines(lines, { widths: width, colors: color }));
+      this.grid.push(createHLines(cg, lines, { widths: width, colors: color }));
     }
   }
 

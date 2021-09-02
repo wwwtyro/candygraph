@@ -12,12 +12,12 @@ type Glyph = {
   uv: Vector2;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(cg: CandyGraph) {
-  return function createFont(image: HTMLImageElement, json: any) {
-    return new Font(cg.regl, image, json);
-  };
+export function createFont(
+  cg: CandyGraph,
+  image: HTMLImageElement,
+  json: any
+) {
+  return new Font(cg.regl, image, json);
 }
 
 export class Font {

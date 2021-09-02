@@ -29,16 +29,13 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(cg: CandyGraph) {
-  return function createInterleavedShapes(
-    shape: NumberArray | Dataset,
-    xys: NumberArray | Dataset,
-    options?: Options
-  ): InterleavedShapes {
-    return new InterleavedShapes(cg.regl, shape, xys, options);
-  };
+export function createInterleavedShapes(
+  cg: CandyGraph,
+  shape: NumberArray | Dataset,
+  xys: NumberArray | Dataset,
+  options?: Options
+) {
+  return new InterleavedShapes(cg.regl, shape, xys, options);
 }
 
 export class InterleavedShapes extends Primitive {

@@ -31,18 +31,25 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('circles')) {
+    cg.setPositionBuffer(
+      'circles',
+      // prettier-ignore
+      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
+    );
+  }
+  return cg.getPositionBuffer('circles');
+}
 
-export function factory(cg: CandyGraph) {
-  // prettier-ignore
-  const positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function createCircles(
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options?: Options
-  ) {
-    return new Circles(cg.regl, positionBuffer, xs, ys, options);
-  };
+export function createCircles(
+  cg: CandyGraph,
+  xs: NumberArray | Dataset,
+  ys: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new Circles(cg.regl, positionBuffer, xs, ys, options);
 }
 
 export class Circles extends Primitive {

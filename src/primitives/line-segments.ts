@@ -22,21 +22,30 @@ type Props = {
   colorDivisor: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('lineSegments')) {
+    cg.setPositionBuffer(
+      'lineSegments',
+      [
+        [0, -0.5],
+        [1, -0.5],
+        [1, +0.5],
+        [0, -0.5],
+        [1, +0.5],
+        [0, +0.5],
+      ]
+    );
+  }
+  return cg.getPositionBuffer('lineSegments');
+}
 
-export function factory(cg: CandyGraph) {
-  const segmentGeometry = cg.regl.buffer([
-    [0, -0.5],
-    [1, -0.5],
-    [1, +0.5],
-    [0, -0.5],
-    [1, +0.5],
-    [0, +0.5],
-  ]);
-
-  return function createLineSegments(points: NumberArray | Dataset, options?: Options) {
-    return new LineSegments(cg.regl, segmentGeometry, points, options);
-  };
+export function createLineSegments(
+  cg: CandyGraph,
+  points: NumberArray | Dataset,
+  options?: Options
+) {
+  const segmentGeometry = getPositionBuffer(cg)!;
+  return new LineSegments(cg.regl, segmentGeometry, points, options);
 }
 
 export class LineSegments extends Primitive {

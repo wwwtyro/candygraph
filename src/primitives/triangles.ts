@@ -17,15 +17,12 @@ type Props = {
   count: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(cg: CandyGraph) {
-  return function createTriangles(
-    vertices: NumberArray | Dataset,
-    options?: Options
-  ): Triangles {
-    return new Triangles(cg.regl, vertices, options);
-  };
+export function createTriangles(
+  cg: CandyGraph,
+  vertices: NumberArray | Dataset,
+  options?: Options
+) {
+  return new Triangles(cg.regl, vertices, options);
 }
 
 export class Triangles extends Primitive {

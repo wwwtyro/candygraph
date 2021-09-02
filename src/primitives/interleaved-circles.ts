@@ -30,14 +30,24 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('interleavedCircles')) {
+    cg.setPositionBuffer(
+      'interleavedCircles',
+      // prettier-ignore
+      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
+    );
+  }
+  return cg.getPositionBuffer('interleavedCircles');
+}
 
-export function factory(cg: CandyGraph) {
-  // prettier-ignore
-  const positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function createInterleavedCircles(xys: NumberArray | Dataset, options?: Options) {
-    return new InterleavedCircles(cg.regl, positionBuffer, xys, options);
-  };
+export function createInterleavedCircles(
+  cg: CandyGraph,
+  xys: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new InterleavedCircles(cg.regl, positionBuffer, xys, options);
 }
 
 export class InterleavedCircles extends Primitive {

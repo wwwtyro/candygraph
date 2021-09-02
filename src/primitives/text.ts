@@ -33,19 +33,25 @@ type Props = {
 let quadBuffer = new Float32Array(1);
 let uvBuffer = new Float32Array(1);
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('text')) {
+    cg.setPositionBuffer(
+      'text',
+      [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
+    );
+  }
+  return cg.getPositionBuffer('text');
+}
 
-export function factory(cg: CandyGraph) {
-  const quadGeometry = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
-
-  return function createText(
-    font: Font,
-    text: string,
-    position: Vector2,
-    options?: Options
-  ) {
-    return new Text(cg.regl, quadGeometry, font, text, position, options);
-  };
+export function createText(
+  cg: CandyGraph,
+  font: Font,
+  text: string,
+  position: Vector2,
+  options?: Options
+) {
+  const quadGeometry = getPositionBuffer(cg)!;
+  return new Text(cg.regl, quadGeometry, font, text, position, options);
 }
 
 export class Text extends Primitive {
