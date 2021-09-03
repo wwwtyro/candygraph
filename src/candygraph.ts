@@ -91,7 +91,10 @@ export class CandyGraph {
     this.positionBufferCache.set(name, this.regl.buffer(data));
   };
 
-  public clearPositionBufferCache = (): void => {
+  public clearPositionBuffers = (): void => {
+    this.positionBufferCache.forEach((buffer: Buffer) => {
+      buffer.destroy();
+    });
     this.positionBufferCache.clear();
   };
 
@@ -150,6 +153,11 @@ export class CandyGraph {
     );
 
     return dest;
+  }
+
+  public destroy() {
+    this.clearPositionBuffers();
+    this.regl.destroy();
   }
 
   private recursiveRender(coords: CoordinateSystem, renderable: Renderable) {
