@@ -28,7 +28,13 @@
 </p>
 
 ```typescript
-import { CandyGraph } from "candygraph";
+import CandyGraph, {
+  createDefaultFont,
+  createLinearScale,
+  createLineStrip,
+  createOrthoAxis,
+  createCartesianCoordinateSystem,
+} from "candygraph";
 
 async function main() {
   const cg = new CandyGraph();
@@ -53,30 +59,31 @@ async function main() {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 1], [32, viewport.width - 16]),
-    cg.scale.linear([0, 1], [32, viewport.height - 16])
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([0, 1], [32, viewport.width - 16]),
+    createLinearScale([0, 1], [32, viewport.height - 16])
   );
 
-  const font = await cg.defaultFont;
+  // Load the default Lato font
+  const font = await createDefaultFont(cg);
 
   // Clear the viewport.
   cg.clear([1, 1, 1, 1]);
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0.5, 0.0, 1.0],
       widths: 3,
     }),
-    cg.orthoAxis(coords, "x", font, {
+    createOrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickOffset: -2.5,
       tickLength: 6,
       tickStep: 0.2,
       labelFormatter: (n) => n.toFixed(1),
     }),
-    cg.orthoAxis(coords, "y", font, {
+    createOrthoAxis(cg, coords, "y", font, {
       tickOffset: 2.5,
       tickLength: 6,
       tickStep: 0.2,
