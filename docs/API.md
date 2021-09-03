@@ -1,7 +1,37 @@
 # CandyGraph API
 
 ```typescript
-import { CandyGraph } from "candygraph";
+import CandyGraph, {
+  // Scales
+  LinearScale, createLinearScale,
+  LogScale, createLogScale,
+
+  // Coordinate Systems
+  CartesianCoordinateSystem, createCartesianCoordinateSystem,
+  PolarCoordinateSystem, createPolarCoordinateSystem,
+
+  // Primitives
+  Circles, createCircles,
+  Font, createFont,
+  HLines, createHLines,
+  InterleavedCircles, createInterleavedCircles,
+  InterleavedShapes, createInterleavedShapes,
+  LineSegments, createLineSegments,
+  LineStrip, createLineStrip,
+  Rects, createRects,
+  Shapes, createShapes,
+  Text, createText,
+  Triangles, createTriangles,
+  VLines, createVLines,
+  Wedges, createWedges,
+  Axis, createAxis,
+  Grid, createGrid,
+  OrthoAxis, createOrthoAxis,
+
+  // Other
+  Dataset, createDataset,
+  createDefaultFont,
+} from "candygraph";
 ```
 
 ## CandyGraph Class
@@ -57,41 +87,18 @@ CoordinateSystem.
 const viewport = { x: 0, y: 0, width: 384, height: 384 };
 
 // Create a coordinate system.
-const coords = cg.coordinate.cartesian(
-  cg.scale.linear([0, 1], [32, viewport.width - 16]),
-  cg.scale.linear([0, 1], [32, viewport.height - 16])
+const coords = createCartesianCoordinateSystem(
+  createLinearScale([0, 1], [32, viewport.width - 16]),
+  createLinearScale([0, 1], [32, viewport.height - 16])
 );
 
 // Render a line segment to the viewport.
-cg.render(coords, viewport, cg.lineSegment([0, 0, 1, 1]));
+cg.render(coords, viewport, createLineSegments(cg, [0, 0, 1, 1]));
 
 // Render a couple more line segments to the viewport.
 cg.render(coords, viewport, [
-  cg.lineSegment([0.5, 0, 0.5, 1]),
-  cg.lineSegment([0, 1, 1, 0]),
-]);
-```
-
-#### `cg.reusableData(data: NumberArray): DataSet`
-
-Returns a reusable DataSet. These can be used to make some operations more
-efficient, such as rendering the same points many times but in different
-positions.
-
-| Parameter | Type        | Description                                                                                                 |
-| --------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
-| data      | NumberArray | Required. The data to convert to a DataSet. The DataSet will be stored on the GPU for extremely fast reuse. |
-
-##### Example
-
-```typescript
-// Create a reusable DataSet.
-const data = cg.reusableData([0, 0, 1, 1]);
-
-// Render a line segment to the viewport.
-cg.render(coords, viewport, [
-    cg.lineSegment(data, {colors: [1, 0, 0, 1], widths: 4]}), // red, width 4
-    cg.lineSegment(data, {colors: [0, 0, 1, 1], widths: 1]}), // blue, width 1
+  createLineSegments(cg, [0.5, 0, 0.5, 1]),
+  createLineSegments(cg, [0, 1, 1, 0]),
 ]);
 ```
 
@@ -105,12 +112,73 @@ Copies the contents of the CandyGraph canvas to another canvas. Returns the `HTM
 | destinationCanvas   | HTMLCanvasElement | Optional. The canvas that will be copied to. If not provided, one will be created with the dimensions of `destinationViewport`.     |
 | destinationViewport | Viewport          | Optional. If not provided, one will be created that is positioned at `[0, 0]` and with the width and height of the `sourceViewport` |
 
-#### `cg.lineSegments(points: NumberArray | Dataset, [options: {}]): LineSegments`
+#### `cg.hasPositionBuffer(name: string): boolean`
+
+This method tests if a specific Regl buffer is cached.
+
+| Parameter | Type   | Description                                           |
+| --------- | ------ | ----------------------------------------------------- |
+| name      | string | Required. The name of the buffer object to be tested. |
+
+#### `cg.getPositionBuffer(name: string): Buffer`
+
+This method returns a specific cached Regl buffer.
+
+| Parameter | Type   | Description                                     |
+| --------- | ------ | ----------------------------------------------- |
+| name      | string | Required. The name of the cached buffer object. |
+
+#### `cg.setPositionBuffer(name: string, data: number[] | number[][]): void`
+
+This method instatiates and caches position data as a Regl buffer. Useful for primitives that use instanced arrays.
+
+| Parameter | Type                   | Description                            |
+| --------- | ---------------------- | -------------------------------------- |
+| name      | string                 | Required. The name of the Regl buffer. |
+| data      | number[] or number[][] | Required. The data of the Regl buffer. |
+
+#### `cg.clearPositionBuffers(): void`
+
+This method clears all cached Regl buffers.
+
+#### `cg.destroy(): void`
+
+This method destroys the Regl instance and cached position buffers.
+
+## Factory Functions
+
+#### `createDataset(cg: CandyGraph, data: NumberArray, autoDispose?: boolean): DataSet`
+
+Returns a reusable DataSet. These can be used to make some operations more
+efficient, such as rendering the same points many times but in different
+positions.
+
+| Parameter   | Type        | Description                                                                                                 |
+| ----------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| cg          | CandyGraph  | Required. The CandyGraph instance for wich you want to create a DataSet.                                    |
+| data        | NumberArray | Required. The data to convert to a DataSet. The DataSet will be stored on the GPU for extremely fast reuse. |
+| autoDispose | boolean     | Optional. If `true` the DataSet instance will automatically be disposed.                                    |
+
+##### Example
+
+```typescript
+// Create a reusable DataSet.
+const data = createDataset(cg, [0, 0, 1, 1]);
+
+// Render a line segment to the viewport.
+cg.render(coords, viewport, [
+  createLineSegment(cg, data, {colors: [1, 0, 0, 1], widths: 4]}), // red, width 4
+  createLineSegment(cg, data, {colors: [0, 0, 1, 1], widths: 1]}), // blue, width 1
+]);
+```
+
+#### `createLineSegments(cg: CandyGraph, points: NumberArray | Dataset, [options: {}]): LineSegments`
 
 Creates a `LineSegments` that draws line segments when rendered.
 
 | Parameter | Type                   | Description                                                                                                                          |
 | --------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                                   |
 | points    | NumberArray or Dataset | Required. An array of points in the format `[x0, y0, x1, y1, ...]` that represent the endpoints of the line segments to be rendered. |
 | options   | Object                 | Optional. See below.                                                                                                                 |
 
@@ -119,12 +187,13 @@ Creates a `LineSegments` that draws line segments when rendered.
 | widths | number or NumberArray or Dataset | 1            | The width of the line segments. If this parameter is a single number, it will apply to all line segments.  |
 | colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the line segments. If this parameter is a single Vector4, it will apply to all line segments. |
 
-#### `cg.lineStrip(xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): LineStrip`
+#### `createLineStrip(cg: CandyGraph, xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): LineStrip`
 
 Returns a `LineStrip` that draws a line strip when rendered.
 
 | Parameter | Type                   | Description                                                                                                                   |
 | --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                            |
 | xs        | NumberArray or Dataset | Required. An array of points in the format `[x0, x1, ...]` that represent the x-coordinates of the line strip to be rendered. |
 | ys        | NumberArray or Dataset | Required. An array of points in the format `[y0, y1, ...]` that represent the y-coordinates of the line strip to be rendered. |
 | options   | Object                 | Optional. See below.                                                                                                          |
@@ -134,7 +203,7 @@ Returns a `LineStrip` that draws a line strip when rendered.
 | widths | number or NumberArray or Dataset | 1            | The width of the line strip segments. If this parameter is a single number, it will apply to all segments.  |
 | colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the line strip segments. If this parameter is a single Vector4, it will apply to all segments. |
 
-#### `cg.font(image: HTMLImageElement, json: {}): Font`
+#### `createFont(cg: CandyGraph, image: HTMLImageElement, json: {}): Font`
 
 Returns a `Font` object that can be used to render text.
 
@@ -149,19 +218,21 @@ Note that CandyGraph includes a default font, so generating your own is unnecess
 
 | Parameter | Type             | Description                                                                 |
 | --------- | ---------------- | --------------------------------------------------------------------------- |
+| cg        | CandyGraph       | Required. The CandyGraph instance for wich you want to create a DataSet.    |
 | image     | HTMLImageElement | Required. An `Image` object that contains an SDF texture of the font.       |
 | json      | Object           | Required. An object that contains information about how to render the font. |
 
-#### `cg.text(font: Font, text: string, position: Vector2, [options: {}]): Text`
+#### `createText(font: Font, text: string, position: Vector2, [options: {}]): Text`
 
 Returns a `Text` object that draws text when rendered.
 
-| Parameter | Type    | Description                                        |
-| --------- | ------- | -------------------------------------------------- |
-| font      | Font    | Required. A `Font` object used to render the text. |
-| text      | string  | Required. The text to render.                      |
-| position  | Vector2 | Required. The position of the text.                |
-| options   | Object  | Optional. See below.                               |
+| Parameter | Type       | Description                                        |
+| --------- | ---------- | -------------------------------------------------- |
+| cg        | CandyGraph | Required. The `CandyGraph` instance for rendering. |
+| font      | Font       | Required. A `Font` object used to render the text. |
+| text      | string     | Required. The text to render.                      |
+| position  | Vector2    | Required. The position of the text.                |
+| options   | Object     | Optional. See below.                               |
 
 | Option | Type    | Default      | Description                                                                                                                                                            |
 | ------ | ------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -171,12 +242,13 @@ Returns a `Text` object that draws text when rendered.
 | color  | Vector4 | [0, 0, 0, 1] | The color of the text.                                                                                                                                                 |
 | size   | number  | 12           | The size (in pixels) of the text.                                                                                                                                      |
 
-#### `cg.triangles(vertices: NumberArray or Dataset, [options: {}]): Triangles`
+#### `createTriangles(cg: CandyGraph, vertices: NumberArray or Dataset, [options: {}]): Triangles`
 
 Returns a `Triangles` object that draws triangles when rendered.
 
 | Parameter | Type                   | Description                                                                                                            |
 | --------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                     |
 | vertices  | NumberArray or Dataset | Required. Set of 2D points in the form [x0, y0, x1, y1, ...] that describe the (unindexed) set of triangles to render. |
 | options   | Object                 | Optional. See below.                                                                                                   |
 
@@ -184,7 +256,7 @@ Returns a `Triangles` object that draws triangles when rendered.
 | ------ | ------- | -------------- | --------------------------- |
 | color  | Vector4 | [0, 0, 0, 0.5] | The color of the triangles. |
 
-#### `cg.hlines(lines: NumberArray or Dataset, [options: {}]): HLines`
+#### `createHLines(cg: CandyGraph, lines: NumberArray or Dataset, [options: {}]): HLines`
 
 Returns an `HLines` object that draws clean horizontal lines when rendered. Line
 widths are rounded to the nearest pixel (with a minimum of 1) so that the lines
@@ -194,6 +266,7 @@ pixels and result in an inconsistent appearance.
 
 | Parameter | Type                   | Description                                                                                                       |
 | --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                |
 | lines     | NumberArray or Dataset | The line positions in the form [x0_0, x0_1, y0, x1_0, x1_1, y1, ...] where each line is defined by three numbers. |
 | options   | Object                 | Optional. See below.                                                                                              |
 
@@ -202,7 +275,7 @@ pixels and result in an inconsistent appearance.
 | colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the lines. If this value is a single Vector4, it will apply to all the lines. |
 | widths | number or NumberArray or Dataset | 1            | The width of the lines. If this value is a single number, it will apply to all the lines.  |
 
-#### `cg.vlines(lines: NumberArray or Dataset, [options: {}]): VLines`
+#### `createVLines(cg: CandyGraph, lines: NumberArray or Dataset, [options: {}]): VLines`
 
 Returns a `VLines` object that draws clean vertical lines when rendered. Line
 widths are rounded to the nearest pixel (with a minimum of 1) so that the lines
@@ -212,6 +285,7 @@ pixels and result in an inconsistent appearance.
 
 | Parameter | Type                   | Description                                                                                                                 |
 | --------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                          |
 | lines     | NumberArray or Dataset | Required. The line positions in the form [x0, y0_0, y0_1, x1, y1_0, y1_1, ...] where each line is defined by three numbers. |
 | options   | Object                 | Optional. See below.                                                                                                        |
 
@@ -220,12 +294,13 @@ pixels and result in an inconsistent appearance.
 | colors | NumberArray or Dataset           | [0, 0, 0, 1] | The color of the lines. If this value is a single Vector4, it will apply to all the lines. |
 | widths | number or NumberArray or Dataset | 1            | The width of the lines. If this value is a single number, it will apply to all the lines.  |
 
-#### `cg.circles(xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): Circles`
+#### `createCircles(cg: CandyGraph, xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): Circles`
 
 Renders colored circles with optional borders.
 
 | Parameter | Type                   | Description                                                                    |
 | --------- | ---------------------- | ------------------------------------------------------------------------------ |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                             |
 | xs        | NumberArray or Dataset | Required. The x coordinates of the circle centers in the form `[x0, x1, ...]`. |
 | ys        | NumberArray or Dataset | Required. The y coordinates of the circle centers in the form `[y0, y1, ...]`. |
 | options   | Object                 | Optional. See below.                                                           |
@@ -237,12 +312,13 @@ Renders colored circles with optional borders.
 | borderColors | NumberArray or Dataset           | [0, 0, 0, 1]   | The color of the borders. If this value is a single Vector4, it will apply to all the circles.                              |
 | borderWidths | number or NumberArray or Dataset | 3              | The width of the borders in pixels. If this value is a single number, it will apply to all the borders.                     |
 
-#### `cg.interleavedCircles(xys: NumberArray or Dataset, [options: {}]): Circles`
+#### `createInterleavedCircles(cg: CandyGraph, xys: NumberArray or Dataset, [options: {}]): Circles`
 
 Renders colored circles with optional borders.
 
 | Parameter | Type                   | Description                                                                                  |
 | --------- | ---------------------- | -------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                |
 | xys       | NumberArray or Dataset | Required. The x and y coordinates of the circle centers in the form `[x0, y0, x1, y1, ...]`. |
 | options   | Object                 | Optional. See below.                                                                         |
 
@@ -253,12 +329,13 @@ Renders colored circles with optional borders.
 | borderColors | NumberArray or Dataset           | [0, 0, 0, 1]   | The color of the borders. If this value is a single Vector4, it will apply to all the circles.                              |
 | borderWidths | number or NumberArray or Dataset | 3              | The width of the borders in pixels. If this value is a single number, it will apply to all the borders.                     |
 
-#### `cg.rects(rects: NumberArray or Dataset, [options: {}]): Rects`
+#### `createRects(cg: CandyGraph, rects: NumberArray or Dataset, [options: {}]): Rects`
 
 Renders colored rectangles.
 
 | Parameter | Type                   | Description                                                                                                                                        |
 | --------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                                                 |
 | rects     | NumberArray or Dataset | Required. The x, y position of the lower-left corner of the rectangle and its width and height in the form `[x0, y0, w0, h0, x1, y1, w1, h1, ...]` |
 | options   | Object                 | Optional. See below.                                                                                                                               |
 
@@ -266,12 +343,13 @@ Renders colored rectangles.
 | ------ | ---------------------- | -------------- | ---------------------------------------------------------------------------------------------------- |
 | colors | NumberArray or Dataset | [0, 0, 0, 0.5] | The color of the rectangles. If this value is a single Vector4, it will apply to all the rectangles. |
 
-#### `cg.wedges(xys: NumberArray or Dataset, angles: NumberArray or Dataset, [options: {}]): Wedges`
+#### `createWedges(cg: CandyGraph, xys: NumberArray or Dataset, angles: NumberArray or Dataset, [options: {}]): Wedges`
 
 Renders colored wedges. Useful for pie charts.
 
 | Parameter | Type                   | Description                                                                                                 |
 | --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                          |
 | xys       | NumberArray or Dataset | Required. The x, y coordinates of the wedge point in the form `[x0, y0, x1, y1, ...]`                       |
 | angles    | NumberArray or Dataset | Required. The angle and arclength of each wedge in the form `[angle0, arclength0, angle1, arclength1, ...]` |
 | options   | Object                 | Optional. See below.                                                                                        |
@@ -281,12 +359,13 @@ Renders colored wedges. Useful for pie charts.
 | colors | NumberArray or Dataset           | [0, 0, 0, 0.5] | The interior color of the wedges. If this value is a single Vector4, it will apply to all the wedges.  |
 | radii  | number or NumberArray or Dataset | 10             | The radius of the wedges in pixels. If this value is a single number, it will apply to all the wedges. |
 
-#### `cg.interleavedShapes(shape: NumberArray or Dataset, xys: NumberArray or Dataset, [options: {}]): Shapes`
+#### `createInterleavedShapes(cg: CandyGraph, shape: NumberArray or Dataset, xys: NumberArray or Dataset, [options: {}]): Shapes`
 
 Renders colored shapes. Useful for custom trace points.
 
 | Parameter | Type                   | Description                                                                                                                                     |
 | --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                                              |
 | shape     | NumberArray or Dataset | Required. Set of 2D points in the form `[x0, y0, x1, y1, ...]` that describe the (unindexed) set of triangles representing the shape to render. |
 | xys       | NumberArray or Dataset | Required. The x, y coordinates of the shape positions in the form `[x0, y0, x1, y1, ...]`                                                       |
 | options   | Object                 | Optional. See below.                                                                                                                            |
@@ -297,12 +376,13 @@ Renders colored shapes. Useful for custom trace points.
 | scales   | NumberArray or Dataset | [1, 1]         | The scale of the shapes. If this value is a single Vector2, it will apply to all the shapes.             |
 | rotation | NumberArray or Dataset | [0]            | The rotation of the shapes in radians. If this value is a single float, it will apply to all the shapes. |
 
-#### `cg.shapes(shape: NumberArray or Dataset, xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): Shapes`
+#### `createShapes(cg: CandyGraph, shape: NumberArray or Dataset, xs: NumberArray or Dataset, ys: NumberArray or Dataset, [options: {}]): Shapes`
 
 Renders colored shapes. Useful for custom trace points.
 
 | Parameter | Type                   | Description                                                                                                                                     |
 | --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                                              |
 | shape     | NumberArray or Dataset | Required. Set of 2D points in the form `[x0, y0, x1, y1, ...]` that describe the (unindexed) set of triangles representing the shape to render. |
 | xs        | NumberArray or Dataset | Required. The x coordinates of the shape positions in the form `[x0, x1, ...]`                                                                  |
 | ys        | NumberArray or Dataset | Required. The y coordinates of the shape positions in the form `[y0, y1, ...]`                                                                  |
@@ -314,12 +394,13 @@ Renders colored shapes. Useful for custom trace points.
 | scales   | NumberArray or Dataset | [1, 1]         | The scale of the shapes. If this value is a single Vector2, it will apply to all the shapes.             |
 | rotation | NumberArray or Dataset | [0]            | The rotation of the shapes in radians. If this value is a single float, it will apply to all the shapes. |
 
-#### `cg.axis(coords: CoordinateSystem, start: Vector2, end: Vector2, ticks: NumberArray, labels: string[], font: Font, [options: {}]): Axis`
+#### `createAxis(cg: CandyGraph, coords: CoordinateSystem, start: Vector2, end: Vector2, ticks: NumberArray, labels: string[], font: Font, [options: {}]): Axis`
 
 Returns an `Axis` object that draws an axis when rendered.
 
 | Parameter | Type             | Description                                                         |
 | --------- | ---------------- | ------------------------------------------------------------------- |
+| cg        | CandyGraph       | Required. The `CandyGraph` instance for rendering.                  |
 | coords    | CoordinateSystem | Required. The CoordinateSystem for which this axis will be created. |
 | start     | Vector2          | Required. One endpoint of the axis.                                 |
 | end       | Vector2          | Required. The other endpoint of the axis.                           |
@@ -348,12 +429,13 @@ Returns an `Axis` object that draws an axis when rendered.
 | minorTickOffset | number      | 0         | How far the minor ticks are shifted from centered on the primary axis line. Zero is centered, can be negative or positive.                                                                                     |
 | minorTickWidth  | number      | 1         | The width of the minor ticks.                                                                                                                                                                                  |
 
-#### `cg.orthoAxis(coords: CoordinateSystem, axis: "x" | "y", font: Font, [options: {}]): OrthoAxis`
+#### `createOrthoAxis(cg: CandyGraph, coords: CoordinateSystem, axis: "x" | "y", font: Font, [options: {}]): OrthoAxis`
 
 Returns an `OrthoAxis` object that draws an orthographic (x or y) axis when rendered.
 
 | Parameter | Type             | Description                                                         |
 | --------- | ---------------- | ------------------------------------------------------------------- |
+| cg        | CandyGraph       | Required. The `CandyGraph` instance for rendering.                  |
 | coords    | CoordinateSystem | Required. The CoordinateSystem for which this axis will be created. |
 | axis      | "x" or "y"       | Required. Selects the x or y axis.                                  |
 | font      | Font             | Required. The `Font` used to render the tick labels.                |
@@ -386,12 +468,13 @@ Returns an `OrthoAxis` object that draws an orthographic (x or y) axis when rend
 | minorTickOffset | number                | 0                           | How far the minor ticks are shifted from centered on the primary axis line. Zero is centered, can be negative or positive.                                                                                     |
 | minorTickWidth  | number                | 1                           | The width of the minor ticks.                                                                                                                                                                                  |
 
-#### `cg.grid(xPositions: NumberArray, yPositions: NumberArray, xExtents: Vector2, yExtents: Vector2, [options: {}]): Grid`
+#### `createGrid(cg: CandyGraph, xPositions: NumberArray, yPositions: NumberArray, xExtents: Vector2, yExtents: Vector2, [options: {}]): Grid`
 
 Will render a grid of `HLines` and `VLines`.
 
 | Parameter  | Type        | Description                                                                                      |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| cg         | CandyGraph  | Required. The `CandyGraph` instance for rendering.                                               |
 | xPositions | NumberArray | Required. The x-coordinates of all the vertical lines of the grid in the format [x0, x1, ...].   |
 | yPositions | NumberArray | Required. The y-coordinates of all the horizontal lines of the grid in the format [y0, y1, ...]. |
 | xExtents   | Vector2     | Required. The start and end points of all the horizontal lines of the grid.                      |
@@ -403,7 +486,7 @@ Will render a grid of `HLines` and `VLines`.
 | color  | Vector4 | [0.75,0.75,0.75,1] | The color of the grid lines. |
 | width  | number  | 1                  | The width of the grid lines. |
 
-#### `cg.scale.linear(domain: Vector2, range: Vector2): LinearScale`
+#### `createLinearScale(domain: Vector2, range: Vector2): LinearScale`
 
 Returns a `LinearScale` object.
 
@@ -412,7 +495,7 @@ Returns a `LinearScale` object.
 | domain    | Vector2 | The domain of this scale. |
 | range     | Vector2 | The range of this scale.  |
 
-#### `cg.scale.log(base: number, domain: Vector2, range: Vector2): LogScale`
+#### `createLogScale(base: number, domain: Vector2, range: Vector2): LogScale`
 
 Returns a `LogScale` object.
 
@@ -422,7 +505,7 @@ Returns a `LogScale` object.
 | domain    | Vector2 | The domain of this scale.   |
 | range     | Vector2 | The range of this scale.    |
 
-#### `cg.coordinate.cartesian(xscale: Scale, yscale: Scale): CartesianCoordinateSystem`
+#### `createCartesianCoordinateSystem(xscale: Scale, yscale: Scale): CartesianCoordinateSystem`
 
 Returns a `CartesianCoordinateSystem`.
 
@@ -431,7 +514,7 @@ Returns a `CartesianCoordinateSystem`.
 | xscale    | Scale | The scale for the x-axis. |
 | yscale    | Scale | The scale for the y-axis. |
 
-#### `cg.coordinate.polar(xscale: Scale, yscale: Scale): PolarCoordinateSystem`
+#### `createPolarCoordinateSystem(xscale: Scale, yscale: Scale): PolarCoordinateSystem`
 
 Returns a `PolarCoordinateSystem`.
 
