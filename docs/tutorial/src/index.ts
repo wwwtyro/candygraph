@@ -1,4 +1,4 @@
-import { CandyGraph } from "../../..";
+import CandyGraph from "../../../src";
 import doc_00100 from "./doc-00100";
 import doc_00200 from "./doc-00200";
 import doc_00300 from "./doc-00300";

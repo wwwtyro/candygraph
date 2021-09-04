@@ -1,3 +1,4 @@
+// skip-doc-start
 import CandyGraph, {
   createCircles,
   createLinearScale,
@@ -6,9 +7,9 @@ import CandyGraph, {
   createLineStrip,
   createDefaultFont,
   createOrthoAxis,
-  createGrid,
   createDataset,
-} from "../../.."; // skip-doc
+} from "../../../src";
+// skip-doc-stop
 
 // ## Data Reuse
 
@@ -74,15 +75,13 @@ export default async function doc_00500(cg: CandyGraph) {
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) => `${n / 1000}K`,
-    })
-    .retain(),
+    }).retain(),
     createOrthoAxis(cg, linlin, "y", font, {
       tickStep: 1000,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) => `${n / 1000}K`,
-    })
-    .retain(),
+    }).retain(),
   ];
 
   const linlogAxis = [
@@ -92,15 +91,13 @@ export default async function doc_00500(cg: CandyGraph) {
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) => `${n / 1000}K`,
-    })
-    .retain(),
+    }).retain(),
     createOrthoAxis(cg, linlog, "y", font, {
       tickStep: 1,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) => (n >= 1000 ? `${n / 1000}K` : n.toString()),
-    })
-    .retain(),
+    }).retain(),
   ];
 
   // Now we'll define a render function that will get invoked when the user

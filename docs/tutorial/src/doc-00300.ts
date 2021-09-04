@@ -1,3 +1,4 @@
+// skip-doc-start
 import CandyGraph, {
   createLinearScale,
   createLogScale,
@@ -6,7 +7,8 @@ import CandyGraph, {
   createDefaultFont,
   createOrthoAxis,
   createGrid,
-} from "../../.."; // skip-doc
+} from "../../../src";
+// skip-doc-stop
 
 // ## Semi-Log Plot
 
