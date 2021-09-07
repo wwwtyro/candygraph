@@ -1,8 +1,10 @@
+// skip-doc-start
 import CandyGraph, {
   createLinearScale,
   createCartesianCoordinateSystem,
   createLineStrip,
-} from "../../.."; // skip-doc
+} from "../../../src";
+// skip-doc-stop
 
 // ## Viewport, Scale, and Coordinates
 

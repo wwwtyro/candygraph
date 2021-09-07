@@ -39,11 +39,6 @@ async function main() {
 
 main();
 </code></pre>
-<pre><code class="language-typescript">import CandyGraph, {
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
-</code></pre>
 <h2>Viewport, Scale, and Coordinates</h2>
 <p>Let’s dive into CandyGraph with a line plot example. We’ll start by simply
 rendering the line without any extra “chrome” like axes. Before we create our
@@ -107,13 +102,6 @@ utility function to copy it to the canvas we mentioned earlier, which has
 <canvas id="doc_00100" style="box-shadow: 0px 0px 8px #ccc;" width=512 height=384>
 </canvas>
 </div>
-<pre><code class="language-typescript">import CandyGraph, {
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
-  createDefaultFont,
-  createOrthoAxis,
-</code></pre>
 <h2>Axes</h2>
 <p>Congratulations, you’ve just rendered your first CandyGraph plot! There’s
 some stuff missing, though. Let’s add some axes.</p>
@@ -256,15 +244,6 @@ appealing. Let’s fix that:</p>
 <p>There are a lot more ways to configure axes. Take a look at the <code>OrthoAxis</code>
 and <code>Axis</code> API documentation for more details, or keep reading, we’ll hit
 more use cases below!</p>
-<pre><code class="language-typescript">import CandyGraph, {
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
-  createDefaultFont,
-  createOrthoAxis,
-  createGrid,
-</code></pre>
 <h2>Semi-Log Plot</h2>
 <p>A semilogarithmic plot is one in which one axis uses a log scale and the
 other a linear scale. Let’s take a look at how we’d do that in CandyGraph.</p>
@@ -432,15 +411,6 @@ y-axis, so we’ll pass an empty array for the x-axis ticks:</p>
 <canvas id="doc_00300-003" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384>
 </canvas>
 </div>
-<pre><code class="language-typescript">import CandyGraph, {
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
-  createDefaultFont,
-  createOrthoAxis,
-  createGrid,
-</code></pre>
 <h2>Animation</h2>
 <p>Now we’ll cover basic animation in CandyGraph. It’s nothing surprising - each
 animation frame we’ll clear the canvas, update the data we’re going to
@@ -582,17 +552,6 @@ added to this document:</p>
 <canvas id="doc_00400" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=384>
 </canvas>
 </div>
-<pre><code class="language-typescript">import CandyGraph, {
-  createCircles,
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
-  createDefaultFont,
-  createOrthoAxis,
-  createGrid,
-  createDataset,
-</code></pre>
 <h2>Data Reuse</h2>
 <p>The default memory management scheme in CandyGraph is to destroy any GPU-side
 data immediately after it’s been rendered once. This is handy for ensuring
@@ -639,15 +598,13 @@ create a set of x and y axes for our linear-linear and linear-log plots:</p>
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) =&gt; `${n / 1000}K`,
-    })
-    .retain(),
+    }).retain(),
     createOrthoAxis(cg, linlin, &quot;y&quot;, font, {
       tickStep: 1000,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) =&gt; `${n / 1000}K`,
-    })
-    .retain(),
+    }).retain(),
   ];
 
   const linlogAxis = [
@@ -657,15 +614,13 @@ create a set of x and y axes for our linear-linear and linear-log plots:</p>
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) =&gt; `${n / 1000}K`,
-    })
-    .retain(),
+    }).retain(),
     createOrthoAxis(cg, linlog, &quot;y&quot;, font, {
       tickStep: 1,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) =&gt; (n &gt;= 1000 ? `${n / 1000}K` : n.toString()),
-    })
-    .retain(),
+    }).retain(),
   ];
 </code></pre>
 <p>Now we’ll define a render function that will get invoked when the user

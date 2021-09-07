@@ -1,10 +1,12 @@
+// skip-doc-start
 import CandyGraph, {
   createLinearScale,
   createCartesianCoordinateSystem,
   createLineStrip,
   createDefaultFont,
   createOrthoAxis,
-} from "../../.."; // skip-doc
+} from "../../../src";
+// skip-doc-stop
 
 // ## Axes
 
