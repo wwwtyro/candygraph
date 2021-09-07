@@ -13,7 +13,7 @@ module.exports = {
     filename: "bundle.js",
   },
   devServer: {
-    contentBase: path.resolve(root, "dist"),
+    static: path.resolve(root, "dist"),
     host: "0.0.0.0",
   },
   plugins: [
