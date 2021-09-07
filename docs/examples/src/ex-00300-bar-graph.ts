@@ -2,7 +2,14 @@
 // <canvas id="ex-00300" style="box-shadow: 0px 0px 8px #888;" width=512 height=1024></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../../lib";
+import CandyGraph, {
+  createDefaultFont,
+  createRects,
+  createFont,
+  createOrthoAxis,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function BarGraph(cg: CandyGraph) {
   // Population data.
@@ -77,20 +84,20 @@ export default async function BarGraph(cg: CandyGraph) {
 
   const viewport = { x: 0, y: 0, width: 512 * dpr, height: 1024 * dpr };
 
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
-    cg.scale.linear(
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
+    createLinearScale(
       [-0.75, keys.length - 1],
       [32 * dpr, viewport.height - 48 * dpr]
     )
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   cg.clear([0, 0, 0.25, 1]);
 
   cg.render(coords, viewport, [
-    cg.rects(
+    createRects(cg,
       keys.flatMap((key, index): number[] => {
         return [0, index - 0.25, pops[key], 0.5];
       }),
@@ -100,7 +107,7 @@ export default async function BarGraph(cg: CandyGraph) {
         ),
       }
     ),
-    cg.orthoAxis(coords, "x", font, {
+    createOrthoAxis(cg, coords, "x", font, {
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],
       labelSide: 1,
@@ -114,7 +121,7 @@ export default async function BarGraph(cg: CandyGraph) {
 
       labelFormatter: (n) => (n > 0 ? `${n / 1000000}M` : "0"),
     }),
-    cg.orthoAxis(coords, "x", font, {
+    createOrthoAxis(cg, coords, "x", font, {
       axisIntercept: keys.length - 0.25,
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],
@@ -128,7 +135,7 @@ export default async function BarGraph(cg: CandyGraph) {
 
       labelFormatter: (n) => (n > 0 ? `${n / 1000000}M` : "0"),
     }),
-    cg.orthoAxis(coords, "y", font, {
+    createOrthoAxis(cg, coords, "y", font, {
       axisHigh: keys.length - 0.25,
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],

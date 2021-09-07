@@ -57,13 +57,13 @@ utilizing the scale in both javascript/typescript <em>and</em> on the GPU in GLS
 We’re going to render a simple sine wave, so the domain for our x-scale
 will be from 0 to 2π, and for our y-scale from -1 to 1. At first we’ll map these
 to the full width and height of our viewport. Here they are:</p>
-<pre><code class="language-typescript">  const xscale = cg.scale.linear([0, 2 * Math.PI], [0, viewport.width]);
-  const yscale = cg.scale.linear([-1, 1], [0, viewport.height]);
+<pre><code class="language-typescript">  const xscale = createLinearScale([0, 2 * Math.PI], [0, viewport.width]);
+  const yscale = createLinearScale([-1, 1], [0, viewport.height]);
 </code></pre>
 <p>Now that we have our scales, we can create a coordinate system. Coordinate
 systems in CandyGraph wrap scales and add a little more GLSL glue code for
 use on the GPU. Here we’ll create a cartesian coordinate system:</p>
-<pre><code class="language-typescript">  const coords = cg.coordinate.cartesian(xscale, yscale);
+<pre><code class="language-typescript">  const coords = createCartesianCoordinateSystem(xscale, yscale);
 </code></pre>
 <p>Next we’re going to make some data for our plot. We’ll loop through 0 to 2π
 with a small increment for our x-values, and calculate the sine of each of
@@ -83,7 +83,7 @@ canvas - it is not influenced by the viewport we just defined.</p>
 render a line strip. We’ll render it with width 2 pixels and in red
 (<code>colors</code> format is [red, green, blue, alpha]).</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
@@ -113,16 +113,16 @@ axes with our line plot. This is simply an arbitrary artistic choice we’re
 making, but the point is that CandyGraph uses the painter’s algorithm to
 render items - whatever you render first can be occluded by what you render
 later. First we’ll grab the default font:</p>
-<pre><code class="language-typescript">  const font = await cg.defaultFont;
+<pre><code class="language-typescript">  const font = await createDefaultFont(cg);
 </code></pre>
 <p>Then render our data and axes:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font),
-    cg.orthoAxis(coords, &quot;y&quot;, font),
+    createOrthoAxis(cg, coords, &quot;x&quot;, font),
+    createOrthoAxis(cg, coords, &quot;y&quot;, font),
   ]);
 </code></pre>
 <div style="text-align: center">
@@ -146,12 +146,12 @@ labels for the x-axis are in an inconvenient place. We can adjust that with
 the <code>labelSide</code> option, which takes a 1 or -1 to indicate which side of the
 axis we want to place the labels.</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, { labelSide: 1 }),
-    cg.orthoAxis(coords, &quot;y&quot;, font),
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, { labelSide: 1 }),
+    createOrthoAxis(cg, coords, &quot;y&quot;, font),
   ]);
 </code></pre>
 <div style="text-align: center">
@@ -164,12 +164,12 @@ something more dense than the default of one:</p>
 <pre><code class="language-typescript">  xscale.range = [40, viewport.width - 16];
 
   cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, { labelSide: 1 }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, { tickStep: 0.25 }),
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, { labelSide: 1 }),
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, { tickStep: 0.25 }),
   ]);
 </code></pre>
 <div style="text-align: center">
@@ -179,12 +179,12 @@ something more dense than the default of one:</p>
 <p>Hmm. The format of the numbers on the y-axis is inconsistent. Let’s provide
 a function to the <code>labelFormatter</code> parameter to clean that up:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, { labelSide: 1 }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, { labelSide: 1 }),
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       tickStep: 0.25,
       labelFormatter: (n: number) =&gt; n.toFixed(2),
     }),
@@ -197,16 +197,16 @@ a function to the <code>labelFormatter</code> parameter to clean that up:</p>
 <p>The way the end of the x-axis hangs off the last tick isn’t particularly
 appealing. Let’s fix that:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, {
       labelSide: 1,
       tickStep: 0.25 * Math.PI,
       labelFormatter: (n: number) =&gt; n.toFixed(2),
     }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       tickStep: 0.25,
       labelFormatter: (n: number) =&gt; n.toFixed(2),
     }),
@@ -218,18 +218,18 @@ appealing. Let’s fix that:</p>
 </div>
 <p>Think the default ticks are a little <em>meh</em>? We can adjust those too:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, {
       labelSide: 1,
       tickStep: 0.25 * Math.PI,
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n: number) =&gt; n.toFixed(2),
     }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       tickStep: 0.25,
       tickLength: 5,
       tickOffset: 2,
@@ -260,30 +260,30 @@ magnitude and our x-coordinates we’ll keep between zero and one:</p>
 </code></pre>
 <p>Then we’ll set up our scales. The x-scale should be linear and have a
 domain of 0 to 1:</p>
-<pre><code class="language-typescript">  const xscale = cg.scale.linear([0, 1], [40, viewport.width - 16]);
+<pre><code class="language-typescript">  const xscale = createLinearScale([0, 1], [40, viewport.width - 16]);
 </code></pre>
 <p>The y-scale should be logarighmic. Here we’ll use a base of 10 and a domain
 of 1 to 100000:</p>
-<pre><code class="language-typescript">  const yscale = cg.scale.log(10, [1, 100000], [24, viewport.height - 16]);
+<pre><code class="language-typescript">  const yscale = createLogScale(10, [1, 100000], [24, viewport.height - 16]);
 </code></pre>
 <p>Then we’ll create our coordinate system, grab the default font, clear the
 canvas, and render our data with axes:</p>
-<pre><code class="language-typescript">  const coords = cg.coordinate.cartesian(xscale, yscale);
-  const font = await cg.defaultFont;
+<pre><code class="language-typescript">  const coords = createCartesianCoordinateSystem(xscale, yscale);
+  const font = await createDefaultFont(cg);
 
   cg.clear([1, 1, 1, 1]);
 
   cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
     }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       tickLength: 5,
       tickOffset: 2,
     }),
@@ -299,18 +299,18 @@ improve the axis rendering, though. Let’s make the y-axis more human
 readable with a <code>labelFormatter</code> function and create more dense ticks on
 the x-axis:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
       tickStep: 0.2,
       labelFormatter: (n) =&gt; n.toFixed(1),
     }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) =&gt;
@@ -325,18 +325,18 @@ the x-axis:</p>
 <p>We can make the logarithmic nature of the y-axis a little more obvious by
 adding some minor ticks:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    cg.orthoAxis(coords, &quot;x&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
       tickStep: 0.2,
       labelFormatter: (n) =&gt; n.toFixed(1),
     }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       minorTickCount: 5,
       minorTickLength: 3,
       minorTickOffset: 2,
@@ -355,14 +355,14 @@ adding some minor ticks:</p>
 estimate data values. Let’s add one here. First we’ll pull out the axes
 from the render function into a separate variable:</p>
 <pre><code class="language-typescript">  const axes = [
-    cg.orthoAxis(coords, &quot;x&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;x&quot;, font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
       tickStep: 0.2,
       labelFormatter: (n) =&gt; n.toFixed(1),
     }),
-    cg.orthoAxis(coords, &quot;y&quot;, font, {
+    createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       minorTickCount: 5,
       minorTickLength: 3,
       minorTickOffset: 2,
@@ -376,7 +376,8 @@ from the render function into a separate variable:</p>
 <p>Then we’ll access the <code>info</code> objects on that variable to build grids with
 the <code>Grid</code> helper CandyGraph provides. First we’ll make a grid with our
 major ticks on both the x- and y-axes:</p>
-<pre><code class="language-typescript">  const majorGrid = cg.grid(
+<pre><code class="language-typescript">  const majorGrid = createGrid(
+    cg,
     axes[0].info.ticks,
     axes[1].info.ticks,
     coords.xscale.domain,
@@ -386,7 +387,8 @@ major ticks on both the x- and y-axes:</p>
 </code></pre>
 <p>Then we’ll create a grid for the minor ticks, which we only have on the
 y-axis, so we’ll pass an empty array for the x-axis ticks:</p>
-<pre><code class="language-typescript">  const minorGrid = cg.grid(
+<pre><code class="language-typescript">  const minorGrid = createGrid(
+    cg,
     [],
     axes[1].info.minorTicks,
     coords.xscale.domain,
@@ -398,7 +400,7 @@ y-axis, so we’ll pass an empty array for the x-axis ticks:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
     minorGrid,
     majorGrid,
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
@@ -436,9 +438,9 @@ of data:</p>
 <p>We’ll define a wide viewport and a linear/linear cartesian coordinate
 system with a bit of padding for our axes:</p>
 <pre><code class="language-typescript">  const viewport = { x: 0, y: 0, width: 1024, height: 384 };
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([-history, 0], [40, viewport.width - 16]),
-    cg.scale.linear([-1, 1], [32, viewport.height - 16])
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([-history, 0], [40, viewport.width - 16]),
+    createLinearScale([-1, 1], [32, viewport.height - 16])
   );
 </code></pre>
 <p>Next we’ll create some arrays to store our plot data:</p>
@@ -451,7 +453,7 @@ system with a bit of padding for our axes:</p>
   let lastTime = performance.now() / 1000;
 </code></pre>
 <p>Grab the default font.</p>
-<pre><code class="language-typescript">  const font = await cg.defaultFont;
+<pre><code class="language-typescript">  const font = await createDefaultFont(cg);
 </code></pre>
 <p>Next up is our render function. We’ll track the wall-clock time in order to
 handle displays that don’t update at a fixed 60 fps, but we’ll clamp to a
@@ -482,35 +484,35 @@ keep the last <code>history</code> seconds in view:</p>
 and <code>ys1</code>. We’ll get a little fancy and render a black border around
 each trace by first rendering a thick black line, then a thinner line
 in our desired color. First the <code>ys0</code> trace in ~orange:</p>
-<pre><code class="language-typescript">      cg.lineStrip(xs, ys0, {
+<pre><code class="language-typescript">      createLineStrip(cg, xs, ys0, {
         colors: [0, 0, 0, 1],
         widths: 7,
       }),
-      cg.lineStrip(xs, ys0, {
+      createLineStrip(cg, xs, ys0, {
         colors: [1, 0.5, 0, 1],
         widths: 3,
       }),
 </code></pre>
 <p>Then our <code>ys1</code> trace in ~blue:</p>
-<pre><code class="language-typescript">      cg.lineStrip(xs, ys1, {
+<pre><code class="language-typescript">      createLineStrip(cg, xs, ys1, {
         colors: [0, 0, 0, 1],
         widths: 7,
       }),
-      cg.lineStrip(xs, ys1, {
+      createLineStrip(cg, xs, ys1, {
         colors: [0, 0.5, 1, 1],
         widths: 3,
       }),
 </code></pre>
 <p>Then we’ll render our axes. Note that for the y-axis we’re shifting the
 <code>axisIntercept</code> to keep up with the current time:</p>
-<pre><code class="language-typescript">      cg.orthoAxis(coords, &quot;x&quot;, font, {
+<pre><code class="language-typescript">      createOrthoAxis(cg, coords, &quot;x&quot;, font, {
         labelSide: 1,
         tickLength: 5,
         tickOffset: -2,
         tickStep: 1,
         labelFormatter: (n) =&gt; n.toFixed(0),
       }),
-      cg.orthoAxis(coords, &quot;y&quot;, font, {
+      createOrthoAxis(cg, coords, &quot;y&quot;, font, {
         axisIntercept: time - history,
         tickStep: 0.5,
         tickLength: 5,
@@ -569,64 +571,56 @@ destroyed.</p>
 </code></pre>
 <p>Previously we’d have fed <code>xsRaw</code> and <code>ysRaw</code> directly into functions like
 <code>cg.lineStrip</code>. This time, however, we’ll upload them to the GPU and keep a
-handle to them using the <code>cg.reusableData</code> function. Once we’ve done so, we
+handle to them using the <code>createDataset</code> function. Once we’ve done so, we
 can continue to use them until we invoke their <code>dispose()</code> functions. The
-<code>cg.reusableData</code> function returns a <code>Dataset</code> object:</p>
-<pre><code class="language-typescript">  const xs = cg.reusableData(xsRaw);
-  const ys = cg.reusableData(ysRaw);
+<code>createDataset</code> function returns a <code>Dataset</code> object:</p>
+<pre><code class="language-typescript">  const xs = createDataset(cg, xsRaw);
+  const ys = createDataset(cg, ysRaw);
 </code></pre>
 <p>Next we’ll create some scales and coordinate systems. In this example,
 we’re going to allow the user to switch between a linear and logarithmic
 y-axis:</p>
-<pre><code class="language-typescript">  const linx = cg.scale.linear([0, 10000], [32, viewport.width - 16]);
-  const liny = cg.scale.linear([0, 10000], [24, viewport.height - 16]);
-  const logy = cg.scale.log(10, [1, 10000], [24, viewport.height - 16]);
+<pre><code class="language-typescript">  const linx = createLinearScale([0, 10000], [32, viewport.width - 16]);
+  const liny = createLinearScale([0, 10000], [24, viewport.height - 16]);
+  const logy = createLogScale(10, [1, 10000], [24, viewport.height - 16]);
 
-  const linlin = cg.coordinate.cartesian(linx, liny);
-  const linlog = cg.coordinate.cartesian(linx, logy);
+  const linlin = createCartesianCoordinateSystem(linx, liny);
+  const linlog = createCartesianCoordinateSystem(linx, logy);
 </code></pre>
 <p>We can also retain higher level constructs, such as an <code>OrthoAxis</code>. To do
 so, we simply invoke its <code>retain()</code> function. Doing so will allow us to
 continue to use them until we invoke their <code>dispose()</code> functions. Let’s
 create a set of x and y axes for our linear-linear and linear-log plots:</p>
 <pre><code class="language-typescript">  const linlinAxis = [
-    cg
-      .orthoAxis(linlin, &quot;x&quot;, font, {
-        labelSide: 1,
-        tickStep: 1000,
-        tickLength: 5,
-        tickOffset: -2,
-        labelFormatter: (n) =&gt; `${n / 1000}K`,
-      })
-      .retain(),
-    cg
-      .orthoAxis(linlin, &quot;y&quot;, font, {
-        tickStep: 1000,
-        tickLength: 5,
-        tickOffset: 2,
-        labelFormatter: (n) =&gt; `${n / 1000}K`,
-      })
-      .retain(),
+    createOrthoAxis(cg, linlin, &quot;x&quot;, font, {
+      labelSide: 1,
+      tickStep: 1000,
+      tickLength: 5,
+      tickOffset: -2,
+      labelFormatter: (n) =&gt; `${n / 1000}K`,
+    }).retain(),
+    createOrthoAxis(cg, linlin, &quot;y&quot;, font, {
+      tickStep: 1000,
+      tickLength: 5,
+      tickOffset: 2,
+      labelFormatter: (n) =&gt; `${n / 1000}K`,
+    }).retain(),
   ];
 
   const linlogAxis = [
-    cg
-      .orthoAxis(linlog, &quot;x&quot;, font, {
-        labelSide: 1,
-        tickStep: 1000,
-        tickLength: 5,
-        tickOffset: -2,
-        labelFormatter: (n) =&gt; `${n / 1000}K`,
-      })
-      .retain(),
-    cg
-      .orthoAxis(linlog, &quot;y&quot;, font, {
-        tickStep: 1,
-        tickLength: 5,
-        tickOffset: 2,
-        labelFormatter: (n) =&gt; (n &gt;= 1000 ? `${n / 1000}K` : n.toString()),
-      })
-      .retain(),
+    createOrthoAxis(cg, linlog, &quot;x&quot;, font, {
+      labelSide: 1,
+      tickStep: 1000,
+      tickLength: 5,
+      tickOffset: -2,
+      labelFormatter: (n) =&gt; `${n / 1000}K`,
+    }).retain(),
+    createOrthoAxis(cg, linlog, &quot;y&quot;, font, {
+      tickStep: 1,
+      tickLength: 5,
+      tickOffset: 2,
+      labelFormatter: (n) =&gt; (n &gt;= 1000 ? `${n / 1000}K` : n.toString()),
+    }).retain(),
   ];
 </code></pre>
 <p>Now we’ll define a render function that will get invoked when the user
@@ -657,12 +651,12 @@ function is called.</p>
 <code>cg.circles</code> or <code>cg.lineStrip</code> renderable according to the value of
 <code>scatter</code>:</p>
 <pre><code class="language-typescript">    const data = scatter
-      ? cg.circles(xs, ys, {
+      ? createCircles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
           radii: 3,
           borderWidths: 0,
         })
-      : cg.lineStrip(xs, ys, {
+      : createLineStrip(cg, xs, ys, {
           colors: [1, 0, 0, 1],
           widths: 0.25,
         });

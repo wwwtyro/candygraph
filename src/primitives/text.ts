@@ -1,4 +1,5 @@
 import { Regl, DrawCommand, Buffer } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, Vector2, Vector4 } from "../common";
 import { Font } from "./font";
 
@@ -32,19 +33,25 @@ type Props = {
 let quadBuffer = new Float32Array(1);
 let uvBuffer = new Float32Array(1);
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('text')) {
+    cg.setPositionBuffer(
+      'text',
+      [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
+    );
+  }
+  return cg.getPositionBuffer('text');
+}
 
-export function factory(regl: Regl) {
-  const quadGeometry = regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
-
-  return function (
-    font: Font,
-    text: string,
-    position: Vector2,
-    options?: Options
-  ) {
-    return new Text(regl, quadGeometry, font, text, position, options);
-  };
+export function createText(
+  cg: CandyGraph,
+  font: Font,
+  text: string,
+  position: Vector2,
+  options?: Options
+) {
+  const quadGeometry = getPositionBuffer(cg)!;
+  return new Text(cg.regl, quadGeometry, font, text, position, options);
 }
 
 export class Text extends Primitive {

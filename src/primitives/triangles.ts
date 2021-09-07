@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, Vector4, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -16,15 +17,12 @@ type Props = {
   count: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(regl: Regl) {
-  return function (
-    vertices: NumberArray | Dataset,
-    options?: Options
-  ): Triangles {
-    return new Triangles(regl, vertices, options);
-  };
+export function createTriangles(
+  cg: CandyGraph,
+  vertices: NumberArray | Dataset,
+  options?: Options
+) {
+  return new Triangles(cg.regl, vertices, options);
 }
 
 export class Triangles extends Primitive {
@@ -47,9 +45,9 @@ export class Triangles extends Primitive {
       vert: `
           precision highp float;
           attribute vec2 position;
-      
+
           ${glsl}
-    
+
           void main() {
             gl_Position = domainToClip(position);
           }`,

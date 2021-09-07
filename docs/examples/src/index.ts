@@ -1,4 +1,4 @@
-import { CandyGraph } from "../../..";
+import { CandyGraph } from "../../../src";
 import RelativeTime from "./ex-00500-relative-time";
 import TimeAndState from "./ex-00600-time-and-state";
 import LinearLog from "./ex-00400-linear-log";

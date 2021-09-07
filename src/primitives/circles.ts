@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -30,18 +31,25 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('circles')) {
+    cg.setPositionBuffer(
+      'circles',
+      // prettier-ignore
+      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
+    );
+  }
+  return cg.getPositionBuffer('circles');
+}
 
-export function factory(regl: Regl) {
-  // prettier-ignore
-  const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options?: Options
-  ) {
-    return new Circles(regl, positionBuffer, xs, ys, options);
-  };
+export function createCircles(
+  cg: CandyGraph,
+  xs: NumberArray | Dataset,
+  ys: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new Circles(cg.regl, positionBuffer, xs, ys, options);
 }
 
 export class Circles extends Primitive {
@@ -76,10 +84,10 @@ export class Circles extends Primitive {
           attribute vec2 position;
           attribute float offsetX, offsetY;
           attribute vec4 color;
-          attribute vec4 borderColor; 
+          attribute vec4 borderColor;
           attribute float radius;
           attribute float borderWidth;
-      
+
           varying vec4 vColor;
           varying vec4 vBorderColor;
           varying vec2 vPosition;
@@ -87,7 +95,7 @@ export class Circles extends Primitive {
           varying float vBorderWidth;
 
           ${glsl}
-    
+
           void main() {
             vPosition = position * radius;
             vec2 offset = vec2(offsetX, offsetY);

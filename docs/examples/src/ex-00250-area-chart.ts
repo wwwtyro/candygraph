@@ -2,7 +2,14 @@
 // <canvas id="ex-00250" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDefaultFont,
+  createTriangles,
+  createLineStrip,
+  createOrthoAxis,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function Area(cg: CandyGraph) {
   // Generate some x & y data.
@@ -37,24 +44,24 @@ export default async function Area(cg: CandyGraph) {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 100], [32 * dpr, viewport.width - 16 * dpr]),
-    cg.scale.linear([0, 100], [32 * dpr, viewport.height - 16 * dpr])
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([0, 100], [32 * dpr, viewport.width - 16 * dpr]),
+    createLinearScale([0, 100], [32 * dpr, viewport.height - 16 * dpr])
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   // Clear the viewport.
   cg.clear([1, 1, 1, 1]);
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    cg.triangles(triangles, { color: [0, 0.5, 1, 0.125] }),
-    cg.lineStrip(xs, ys, {
+    createTriangles(cg, triangles, { color: [0, 0.5, 1, 0.125] }),
+    createLineStrip(cg, xs, ys, {
       colors: [0, 0.25, 0.5, 1],
       widths: 1 * dpr,
     }),
-    cg.orthoAxis(coords, "x", font, {
+    createOrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickOffset: -2.5 * dpr,
       tickLength: 6 * dpr,
@@ -63,7 +70,7 @@ export default async function Area(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    cg.orthoAxis(coords, "y", font, {
+    createOrthoAxis(cg, coords, "y", font, {
       tickOffset: 2.5 * dpr,
       tickLength: 6 * dpr,
       tickStep: 10,

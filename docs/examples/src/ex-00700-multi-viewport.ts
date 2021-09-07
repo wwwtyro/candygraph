@@ -2,7 +2,15 @@
 // <canvas id="ex-00700" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=512></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDataset,
+  createDefaultFont,
+  createFont,
+  createLineStrip,
+  createOrthoAxis,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function MultiViewport(cg: CandyGraph) {
   const canvas = document.getElementById("ex-00700") as HTMLCanvasElement;
@@ -14,67 +22,63 @@ export default async function MultiViewport(cg: CandyGraph) {
   canvas.width *= dpr;
   canvas.height *= dpr;
 
-  const coordstop = cg.coordinate.cartesian(
-    cg.scale.linear([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
-    cg.scale.linear([0, 10], [16 * dpr, 256 * dpr - 40 * dpr])
+  const coordstop = createCartesianCoordinateSystem(
+    createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
+    createLinearScale([0, 10], [16 * dpr, 256 * dpr - 40 * dpr])
   );
 
-  const coordsbottom = cg.coordinate.cartesian(
-    cg.scale.linear([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
-    cg.scale.linear([0, 10], [40 * dpr, 256 * dpr - 16 * dpr])
+  const coordsbottom = createCartesianCoordinateSystem(
+    createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
+    createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr])
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   const miniaxestop = [
-    cg
-      .orthoAxis(coordstop, "x", font, {
-        axisIntercept: 10.5,
-        tickStep: 2,
-        tickLength: 5 * dpr,
-        tickOffset: 2.5 * dpr,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
-      })
-      .retain(),
-    cg
-      .orthoAxis(coordstop, "y", font, {
-        axisIntercept: -0.5,
-        tickStep: 2,
-        tickLength: 5 * dpr,
-        tickOffset: 2 * dpr,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
-      })
-      .retain(),
+    createOrthoAxis(cg, coordstop, "x", font, {
+      axisIntercept: 10.5,
+      tickStep: 2,
+      tickLength: 5 * dpr,
+      tickOffset: 2.5 * dpr,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+    })
+    .retain(),
+    createOrthoAxis(cg, coordstop, "y", font, {
+      axisIntercept: -0.5,
+      tickStep: 2,
+      tickLength: 5 * dpr,
+      tickOffset: 2 * dpr,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+    })
+    .retain(),
   ];
 
   const miniaxesbottom = [
-    cg
-      .orthoAxis(coordsbottom, "x", font, {
-        axisIntercept: -0.5,
-        tickStep: 2,
-        tickLength: 5 * dpr,
-        tickOffset: -2 * dpr,
-        labelSide: 1,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
-      })
-      .retain(),
-    cg
-      .orthoAxis(coordsbottom, "y", font, {
-        axisIntercept: -0.5,
-        tickStep: 2,
-        tickLength: 5 * dpr,
-        tickOffset: 2 * dpr,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
-      })
-      .retain(),
+    createOrthoAxis(cg, coordsbottom, "x", font, {
+      axisIntercept: -0.5,
+      tickStep: 2,
+      tickLength: 5 * dpr,
+      tickOffset: -2 * dpr,
+      labelSide: 1,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+    })
+    .retain(),
+    createOrthoAxis(cg, coordsbottom, "y", font, {
+      axisIntercept: -0.5,
+      tickStep: 2,
+      tickLength: 5 * dpr,
+      tickOffset: 2 * dpr,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+    })
+    .retain(),
   ];
 
   function primenoise(t: number) {
@@ -90,7 +94,7 @@ export default async function MultiViewport(cg: CandyGraph) {
   for (let x = 0; x < 10; x += 0.01) {
     xData.push(x);
   }
-  const xs = cg.reusableData(xData);
+  const xs = createDataset(cg, xData);
 
   function randomTraces() {
     const ys = [];
@@ -100,7 +104,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       const y = 5 + 5 * primenoise(x * rate + offset);
       ys.push(y);
     }
-    return cg.lineStrip(xs, ys, {
+    return createLineStrip(cg, xs, ys, {
       colors: [Math.random(), Math.random(), Math.random(), 1],
       widths: dpr * (Math.random() * 2 + 1),
     });
@@ -134,16 +138,16 @@ export default async function MultiViewport(cg: CandyGraph) {
     ]
   );
 
-  const coordsbig = cg.coordinate.cartesian(
-    cg.scale.linear([0, 10], [40 * dpr, 512 * dpr - 40 * dpr]),
-    cg.scale.linear([0, 10], [32 * dpr, 512 * dpr - 32 * dpr])
+  const coordsbig = createCartesianCoordinateSystem(
+    createLinearScale([0, 10], [40 * dpr, 512 * dpr - 40 * dpr]),
+    createLinearScale([0, 10], [32 * dpr, 512 * dpr - 32 * dpr])
   );
 
   cg.render(
     coordsbig,
     { x: 512 * dpr, y: 0, width: 512 * dpr, height: 512 * dpr },
     [
-      cg.orthoAxis(coordsbig, "x", font, {
+      createOrthoAxis(cg, coordsbig, "x", font, {
         axisIntercept: 0,
         tickStep: 2,
         tickLength: 5 * dpr,
@@ -157,7 +161,7 @@ export default async function MultiViewport(cg: CandyGraph) {
         axisWidth: 1 * dpr,
         labelSize: 12 * dpr,
       }),
-      cg.orthoAxis(coordsbig, "y", font, {
+      createOrthoAxis(cg, coordsbig, "y", font, {
         axisIntercept: 0,
         tickStep: 0.5,
         tickLength: 5 * dpr,
@@ -168,7 +172,7 @@ export default async function MultiViewport(cg: CandyGraph) {
         axisWidth: 1 * dpr,
         labelSize: 12 * dpr,
       }),
-      cg.orthoAxis(coordsbig, "x", font, {
+      createOrthoAxis(cg, coordsbig, "x", font, {
         axisIntercept: 10,
         tickStep: 1,
         tickLength: 5 * dpr,
@@ -178,7 +182,7 @@ export default async function MultiViewport(cg: CandyGraph) {
         axisWidth: 1 * dpr,
         labelSize: 12 * dpr,
       }),
-      cg.orthoAxis(coordsbig, "y", font, {
+      createOrthoAxis(cg, coordsbig, "y", font, {
         axisIntercept: 10,
         tickStep: 0.5,
         tickLength: 5 * dpr,

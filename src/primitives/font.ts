@@ -1,4 +1,5 @@
 import { Regl, Texture } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Vector2 } from "../common";
 
 type Glyph = {
@@ -11,12 +12,12 @@ type Glyph = {
   uv: Vector2;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(regl: Regl) {
-  return function (image: HTMLImageElement, json: any) {
-    return new Font(regl, image, json);
-  };
+export function createFont(
+  cg: CandyGraph,
+  image: HTMLImageElement,
+  json: any
+) {
+  return new Font(cg.regl, image, json);
 }
 
 export class Font {

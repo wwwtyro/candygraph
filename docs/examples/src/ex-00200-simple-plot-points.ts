@@ -2,9 +2,18 @@
 // <canvas id="ex-00200" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDefaultFont,
+  createCircles,
+  createLineStrip,
+  createOrthoAxis,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function SimplePlotPoints(cg: CandyGraph) {
+  const font = await createDefaultFont(cg);
+
   // Generate some x & y data.
   const xs = [];
   const ys = [];
@@ -27,33 +36,31 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = cg.coordinate.cartesian(
-    cg.scale.linear([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
-    cg.scale.linear([0, 1], [32 * dpr, viewport.height - 16 * dpr])
+  const coords = createCartesianCoordinateSystem(
+    createLinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
+    createLinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );
-
-  const font = await cg.defaultFont;
 
   // Clear the viewport.
   cg.clear([0, 0, 0.25, 1]);
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    cg.lineStrip(xs, ys, {
+    createLineStrip(cg, xs, ys, {
       colors: [1, 0.5, 0, 1],
       widths: 3 * dpr,
     }),
-    cg.circles(xs, ys, {
+    createCircles(cg, xs, ys, {
       colors: [1, 0.5, 0, 1],
       radii: 6.0 * dpr,
       borderWidths: 0 * dpr,
     }),
-    cg.circles(xs, ys, {
+    createCircles(cg, xs, ys, {
       colors: [0, 0, 0.25, 1],
       radii: 3.0 * dpr,
       borderWidths: 0 * dpr,
     }),
-    cg.orthoAxis(coords, "x", font, {
+    createOrthoAxis(cg, coords, "x", font, {
       axisColor: [1, 1, 1, 1],
       labelSide: 1,
       labelColor: [1, 1, 1, 1],
@@ -66,7 +73,7 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    cg.orthoAxis(coords, "y", font, {
+    createOrthoAxis(cg, coords, "y", font, {
       axisColor: [1, 1, 1, 1],
       tickOffset: 2.5 * dpr,
       tickLength: 6 * dpr,

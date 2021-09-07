@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -23,18 +24,25 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('wedges')) {
+    cg.setPositionBuffer(
+      'wedges',
+      // prettier-ignore
+      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
+    );
+  }
+  return cg.getPositionBuffer('wedges');
+}
 
-export function factory(regl: Regl) {
-  // prettier-ignore
-  const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (
-    xys: NumberArray | Dataset,
-    angles: NumberArray | Dataset,
-    options?: Options
-  ) {
-    return new Wedges(regl, positionBuffer, xys, angles, options);
-  };
+export function createWedges(
+  cg: CandyGraph,
+  xys: NumberArray | Dataset,
+  angles: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new Wedges(cg.regl, positionBuffer, xys, angles, options);
 }
 
 export class Wedges extends Primitive {
@@ -66,13 +74,13 @@ export class Wedges extends Primitive {
           attribute vec2 offset, angle;
           attribute vec4 color;
           attribute float radius;
-      
+
           varying vec4 vColor;
           varying vec2 vPosition, vAngle;
           varying float vRadius;
 
           ${glsl}
-    
+
           void main() {
             vPosition = position * radius;
             vec2 screenPosition = toRange(offset) + vPosition;

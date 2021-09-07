@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -21,21 +22,30 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('vLines')) {
+    cg.setPositionBuffer(
+      'vLines',
+      [
+        [-0.5, 0],
+        [+0.5, 0],
+        [+0.5, 1],
+        [-0.5, 0],
+        [+0.5, 1],
+        [-0.5, 1],
+      ]
+    );
+  }
+  return cg.getPositionBuffer('vLines');
+}
 
-export function factory(regl: Regl) {
-  const segmentGeometry = regl.buffer([
-    [-0.5, 0],
-    [+0.5, 0],
-    [+0.5, 1],
-    [-0.5, 0],
-    [+0.5, 1],
-    [-0.5, 1],
-  ]);
-
-  return function (lines: NumberArray | Dataset, options?: Options) {
-    return new VLines(regl, segmentGeometry, lines, options);
-  };
+export function createVLines(
+  cg: CandyGraph,
+  lines: NumberArray | Dataset,
+  options?: Options
+) {
+  const segmentGeometry = getPositionBuffer(cg)!;
+  return new VLines(cg.regl, segmentGeometry, lines, options);
 }
 
 export class VLines extends Primitive {
@@ -66,9 +76,9 @@ export class VLines extends Primitive {
           attribute vec4 color;
 
           varying vec4 vColor;
-      
+
           ${glsl}
-    
+
           float round(float v) {
             return floor(v) + floor(2.0 * fract(v));
           }

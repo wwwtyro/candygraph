@@ -1,7 +1,8 @@
+import { CandyGraph } from "../candygraph";
 import { Composite, Renderable, NumberArray } from "../common";
 import { CartesianCoordinateSystem } from "../coordinates/cartesian";
 import { Kind as ScaleKind } from "../scales/scale";
-import { axis as Axis } from ".";
+import { createAxis, Options as AxisOptions } from "./axis";
 import { Font } from "../primitives/font";
 
 type Options = {
@@ -12,7 +13,7 @@ type Options = {
   minorTickCount?: number;
   tickOrigin?: number;
   tickStep?: number;
-} & Axis.Options;
+} & AxisOptions;
 
 const DEFAULTS = {
   labelFormatter: (n: number) => n.toString(),
@@ -25,17 +26,14 @@ type Info = {
   minorTicks: NumberArray;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(axisFactory: Axis.Factory) {
-  return function (
-    coords: CartesianCoordinateSystem,
-    axis: "x" | "y",
-    font: Font,
-    options?: Options
-  ): OrthoAxis {
-    return new OrthoAxis(axisFactory, coords, axis, font, options);
-  };
+export function createOrthoAxis(
+  cg: CandyGraph,
+  coords: CartesianCoordinateSystem,
+  axis: "x" | "y",
+  font: Font,
+  options?: Options
+): OrthoAxis {
+  return new OrthoAxis(cg, coords, axis, font, options);
 }
 
 export class OrthoAxis extends Composite {
@@ -43,7 +41,7 @@ export class OrthoAxis extends Composite {
   private axis: Renderable = [];
 
   constructor(
-    axisFactory: Axis.Factory,
+    cg: CandyGraph,
     coords: CartesianCoordinateSystem,
     axis: "x" | "y",
     font: Font,
@@ -132,7 +130,8 @@ export class OrthoAxis extends Composite {
       labelFormatter(tick + resolvedAxisLow)
     );
 
-    this.axis = axisFactory(
+    this.axis = createAxis(
+      cg,
       coords,
       isx
         ? [resolvedAxisLow, resolvedAxisIntercept]

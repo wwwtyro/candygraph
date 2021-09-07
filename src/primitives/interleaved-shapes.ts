@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -28,16 +29,13 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(regl: Regl) {
-  return function (
-    shape: NumberArray | Dataset,
-    xys: NumberArray | Dataset,
-    options?: Options
-  ): InterleavedShapes {
-    return new InterleavedShapes(regl, shape, xys, options);
-  };
+export function createInterleavedShapes(
+  cg: CandyGraph,
+  shape: NumberArray | Dataset,
+  xys: NumberArray | Dataset,
+  options?: Options
+) {
+  return new InterleavedShapes(cg.regl, shape, xys, options);
 }
 
 export class InterleavedShapes extends Primitive {
@@ -70,11 +68,11 @@ export class InterleavedShapes extends Primitive {
           attribute vec2 xy, scale;
           attribute float rotation;
           attribute vec4 color;
-      
+
           varying vec4 vColor;
 
           ${glsl}
-    
+
           void main() {
             vec2 pos = scale * position;
             float sint = sin(rotation);
@@ -90,7 +88,7 @@ export class InterleavedShapes extends Primitive {
 
       frag: `
           precision highp float;
-          
+
           varying vec4 vColor;
 
           void main() {

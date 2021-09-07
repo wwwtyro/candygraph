@@ -2,7 +2,15 @@
 // <canvas id="ex-00900" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDefaultFont,
+  createFont,
+  createText,
+  createLineStrip,
+  createLineSegments,
+  createLinearScale,
+  createPolarCoordinateSystem,
+} from "../../../src";
 
 export default async function PolarPlot(cg: CandyGraph) {
   // Generate some polar data.
@@ -27,14 +35,14 @@ export default async function PolarPlot(cg: CandyGraph) {
   // Create a polar coordinate system. The first two scales map input data to
   // polar distance and angle (in radians), the next two map the resulting
   // cartesian coordinates to pixels.
-  const coords = cg.coordinate.polar(
-    cg.scale.linear([0, 1], [0, 1]), // radial scale
-    cg.scale.linear([0, 1], [0, 1]), // angular scale
-    cg.scale.linear([-1.1, 1.1], [16 * dpr, viewport.width - 16 * dpr]), // x scale
-    cg.scale.linear([-1.1, 1.1], [16 * dpr, viewport.height - 16 * dpr]) // y scale
+  const coords = createPolarCoordinateSystem(
+    createLinearScale([0, 1], [0, 1]), // radial scale
+    createLinearScale([0, 1], [0, 1]), // angular scale
+    createLinearScale([-1.1, 1.1], [16 * dpr, viewport.width - 16 * dpr]), // x scale
+    createLinearScale([-1.1, 1.1], [16 * dpr, viewport.height - 16 * dpr]) // y scale
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   // Clear the viewport.
   cg.clear([1, 1, 1, 1]);
@@ -59,7 +67,7 @@ export default async function PolarPlot(cg: CandyGraph) {
       axisLineColors.push(0, 0, 0, 1.0);
     }
     axisLabels.push(
-      cg.text(font, Math.round(turn * 360).toString(), [1.05, theta], {
+      createText(cg, font, Math.round(turn * 360).toString(), [1.05, theta], {
         anchor: turn < 0.25 || turn > 0.75 ? [-1, 0] : [1, 0],
         angle: turn < 0.25 || turn > 0.75 ? theta : theta + Math.PI,
         size: 12 * dpr,
@@ -87,12 +95,12 @@ export default async function PolarPlot(cg: CandyGraph) {
 
   // Render the a line strip representing the polar data.
   cg.render(coords, viewport, [
-    cg.lineSegments(axisLinePositions, {
+    createLineSegments(cg, axisLinePositions, {
       widths: axisLineWidths,
       colors: axisLineColors,
     }),
     ...axisLabels,
-    cg.lineStrip(rhos, thetas, {
+    createLineStrip(cg, rhos, thetas, {
       colors: [1, 0.5, 0, 1],
       widths: 2.5 * dpr,
     }),

@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -21,21 +22,30 @@ type Props = {
   colorDivisor: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('lineSegments')) {
+    cg.setPositionBuffer(
+      'lineSegments',
+      [
+        [0, -0.5],
+        [1, -0.5],
+        [1, +0.5],
+        [0, -0.5],
+        [1, +0.5],
+        [0, +0.5],
+      ]
+    );
+  }
+  return cg.getPositionBuffer('lineSegments');
+}
 
-export function factory(regl: Regl) {
-  const segmentGeometry = regl.buffer([
-    [0, -0.5],
-    [1, -0.5],
-    [1, +0.5],
-    [0, -0.5],
-    [1, +0.5],
-    [0, +0.5],
-  ]);
-
-  return function (points: NumberArray | Dataset, options?: Options) {
-    return new LineSegments(regl, segmentGeometry, points, options);
-  };
+export function createLineSegments(
+  cg: CandyGraph,
+  points: NumberArray | Dataset,
+  options?: Options
+) {
+  const segmentGeometry = getPositionBuffer(cg)!;
+  return new LineSegments(cg.regl, segmentGeometry, points, options);
 }
 
 export class LineSegments extends Primitive {
@@ -63,20 +73,20 @@ export class LineSegments extends Primitive {
           attribute vec2 position, pointA, pointB;
           attribute float width;
           attribute vec4 color;
-      
+
           varying vec4 vColor;
 
           ${glsl}
-    
+
           void main() {
             // Transform points A and B to screen space.
             vec2 screenA = toRange(pointA);
             vec2 screenB = toRange(pointB);
-    
+
             // Calculate the basis vectors for the line in screen space.
             vec2 xBasis = screenB - screenA;
             vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));
-    
+
             // Determine the screen space point position and convert it back to clip space.
             vec2 point = screenA + xBasis * position.x + yBasis * width * position.y;
             gl_Position = rangeToClip(point);

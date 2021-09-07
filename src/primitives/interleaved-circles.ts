@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -29,14 +30,24 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
+function getPositionBuffer(cg: CandyGraph) {
+  if (!cg.hasPositionBuffer('interleavedCircles')) {
+    cg.setPositionBuffer(
+      'interleavedCircles',
+      // prettier-ignore
+      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
+    );
+  }
+  return cg.getPositionBuffer('interleavedCircles');
+}
 
-export function factory(regl: Regl) {
-  // prettier-ignore
-  const positionBuffer = regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  return function (xys: NumberArray | Dataset, options?: Options) {
-    return new InterleavedCircles(regl, positionBuffer, xys, options);
-  };
+export function createInterleavedCircles(
+  cg: CandyGraph,
+  xys: NumberArray | Dataset,
+  options?: Options
+) {
+  const positionBuffer = getPositionBuffer(cg)!;
+  return new InterleavedCircles(cg.regl, positionBuffer, xys, options);
 }
 
 export class InterleavedCircles extends Primitive {
@@ -68,10 +79,10 @@ export class InterleavedCircles extends Primitive {
           attribute vec2 position;
           attribute vec2 offset;
           attribute vec4 color;
-          attribute vec4 borderColor; 
+          attribute vec4 borderColor;
           attribute float radius;
           attribute float borderWidth;
-      
+
           varying vec4 vColor;
           varying vec4 vBorderColor;
           varying vec2 vPosition;
@@ -79,7 +90,7 @@ export class InterleavedCircles extends Primitive {
           varying float vBorderWidth;
 
           ${glsl}
-    
+
           void main() {
             vPosition = position * radius;
             vec2 screenPosition = toRange(offset) + vPosition;

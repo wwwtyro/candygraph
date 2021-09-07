@@ -1,7 +1,7 @@
 import { Scale, Kind } from "./scale";
 import { Vector2 } from "../common";
 
-export function factory(
+export function createLogScale(
   base: number,
   domain: Vector2,
   range: Vector2
@@ -28,7 +28,7 @@ export class LogScale extends Scale {
         float logValue = logDomain.x + qDomain * (v - range.x);
         return pow(base, logValue);
       }
-  
+
       float toRange(float v, vec2 domain, vec2 range) {
         const float conversion = ${this.conversion.toExponential()};
         float logv = log(v) * conversion;

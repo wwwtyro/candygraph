@@ -1,4 +1,5 @@
 import { Regl, Buffer, DrawCommand } from "regl";
+import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
@@ -29,17 +30,14 @@ type Props = {
   instances: number;
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(regl: Regl) {
-  return function (
-    shape: NumberArray | Dataset,
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options?: Options
-  ): Shapes {
-    return new Shapes(regl, shape, xs, ys, options);
-  };
+export function createShapes(
+  cg: CandyGraph,
+  shape: NumberArray | Dataset,
+  xs: NumberArray | Dataset,
+  ys: NumberArray | Dataset,
+  options?: Options
+) {
+  return new Shapes(cg.regl, shape, xs, ys, options);
 }
 
 export class Shapes extends Primitive {
@@ -75,11 +73,11 @@ export class Shapes extends Primitive {
           attribute vec2 scale;
           attribute float xs, ys, rotation;
           attribute vec4 color;
-      
+
           varying vec4 vColor;
 
           ${glsl}
-    
+
           void main() {
             vec2 xy = vec2(xs, ys);
             vec2 pos = scale * position;
@@ -96,7 +94,7 @@ export class Shapes extends Primitive {
 
       frag: `
           precision highp float;
-          
+
           varying vec4 vColor;
 
           void main() {

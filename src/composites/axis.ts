@@ -1,3 +1,4 @@
+import { CandyGraph } from "../candygraph";
 import { vec2 } from "gl-matrix";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
 import {
@@ -7,7 +8,10 @@ import {
   Vector2,
   NumberArray,
 } from "../common";
-import * as primitives from "../primitives";
+import { createText } from "../primitives/text";
+import { createVLines } from "../primitives/vlines";
+import { createHLines } from "../primitives/hlines";
+import { createLineSegments } from "../primitives/line-segments";
 import { Font } from "../primitives/font";
 
 export type Options = {
@@ -49,37 +53,26 @@ const DEFAULTS = {
   minorTicks: [],
 };
 
-export type Factory = ReturnType<typeof factory>;
-
-export function factory(
-  text: primitives.text.Factory,
-  vlines: primitives.vlines.Factory,
-  hlines: primitives.hlines.Factory,
-  lineSegments: primitives.lineSegments.Factory
-) {
-  return function (
-    coords: CoordinateSystem,
-    start: Vector2,
-    end: Vector2,
-    ticks: NumberArray,
-    labels: string[],
-    font: Font,
-    options?: Options
-  ): Axis {
-    return new Axis(
-      text,
-      vlines,
-      hlines,
-      lineSegments,
-      coords,
-      start,
-      end,
-      ticks,
-      labels,
-      font,
-      options
-    );
-  };
+export function createAxis(
+  cg: CandyGraph,
+  coords: CoordinateSystem,
+  start: Vector2,
+  end: Vector2,
+  ticks: NumberArray,
+  labels: string[],
+  font: Font,
+  options?: Options
+): Axis {
+  return new Axis(
+    cg,
+    coords,
+    start,
+    end,
+    ticks,
+    labels,
+    font,
+    options
+  );
 }
 
 export class Axis extends Composite {
@@ -89,10 +82,7 @@ export class Axis extends Composite {
   private minorTicks: Renderable = [];
 
   constructor(
-    text: primitives.text.Factory,
-    vlines: primitives.vlines.Factory,
-    hlines: primitives.hlines.Factory,
-    lineSegments: primitives.lineSegments.Factory,
+    cg: CandyGraph,
     coords: CoordinateSystem,
     start: Vector2,
     end: Vector2,
@@ -197,7 +187,9 @@ export class Axis extends Composite {
       );
 
       this.texts.push(
-        text(font, label, coords.toDomain(labelPosition as Vector2), labelOpts)
+        createText(
+          cg, font, label, coords.toDomain(labelPosition as Vector2), labelOpts
+        )
       );
     }
 
@@ -247,17 +239,17 @@ export class Axis extends Composite {
 
     if (axisPoints.length > 0) {
       if (verticalAxis) {
-        this.axis = vlines(segmentsToVlines(axisPoints), {
+        this.axis = createVLines(cg, segmentsToVlines(axisPoints), {
           widths: axisWidth,
           colors: axisColor,
         });
       } else if (horizontalAxis) {
-        this.axis = hlines(segmentsToHlines(axisPoints), {
+        this.axis = createHLines(cg, segmentsToHlines(axisPoints), {
           widths: axisWidth,
           colors: axisColor,
         });
       } else {
-        this.axis = lineSegments(axisPoints, {
+        this.axis = createLineSegments(cg, axisPoints, {
           widths: axisWidth,
           colors: axisColor,
         });
@@ -266,17 +258,17 @@ export class Axis extends Composite {
 
     if (tickPoints.length > 0) {
       if (verticalAxis) {
-        this.ticks = hlines(segmentsToHlines(tickPoints), {
+        this.ticks = createHLines(cg, segmentsToHlines(tickPoints), {
           widths: tickWidth,
           colors: tickColor,
         });
       } else if (horizontalAxis) {
-        this.ticks = vlines(segmentsToVlines(tickPoints), {
+        this.ticks = createVLines(cg, segmentsToVlines(tickPoints), {
           widths: tickWidth,
           colors: tickColor,
         });
       } else {
-        this.ticks = lineSegments(tickPoints, {
+        this.ticks = createLineSegments(cg, tickPoints, {
           widths: tickWidth,
           colors: tickColor,
         });
@@ -285,17 +277,17 @@ export class Axis extends Composite {
 
     if (minorTickPoints.length > 0) {
       if (verticalAxis) {
-        this.minorTicks = hlines(segmentsToHlines(minorTickPoints), {
+        this.minorTicks = createHLines(cg, segmentsToHlines(minorTickPoints), {
           widths: minorTickWidth,
           colors: minorTickColor,
         });
       } else if (horizontalAxis) {
-        this.minorTicks = vlines(segmentsToVlines(minorTickPoints), {
+        this.minorTicks = createVLines(cg, segmentsToVlines(minorTickPoints), {
           widths: minorTickWidth,
           colors: minorTickColor,
         });
       } else {
-        this.minorTicks = lineSegments(minorTickPoints, {
+        this.minorTicks = createLineSegments(cg, minorTickPoints, {
           widths: tickWidth,
           colors: tickColor,
         });

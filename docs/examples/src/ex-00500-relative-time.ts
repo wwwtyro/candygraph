@@ -4,7 +4,15 @@
 // <canvas id="ex-00500" style="box-shadow: 0px 0px 8px #ccc;" width=512 height=384></canvas>
 
 // skip-doc-start
-import { CandyGraph } from "../../..";
+import CandyGraph, {
+  createDefaultFont,
+  createFont,
+  createGrid,
+  createLineStrip,
+  createOrthoAxis,
+  createLinearScale,
+  createCartesianCoordinateSystem,
+} from "../../../src";
 
 export default async function RelativeTime(cg: CandyGraph) {
   const HISTORY = 1.0; // Seconds of history to keep
@@ -30,58 +38,56 @@ export default async function RelativeTime(cg: CandyGraph) {
   // We'll make two coordinate systems; one for the x-axis, which is relative time,
   // and one for the traces, which are in real time. We'll share the y scale between
   // them.
-  const yScale = cg.scale.linear(
+  const yScale = createLinearScale(
     [0, 25],
     [32 * dpr, viewport.height - 16 * dpr]
   );
-  const axisCoords = cg.coordinate.cartesian(
-    cg.scale.linear([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
+  const axisCoords = createCartesianCoordinateSystem(
+    createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
-  const timeCoords = cg.coordinate.cartesian(
-    cg.scale.linear([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
+  const timeCoords = createCartesianCoordinateSystem(
+    createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
 
-  const font = await cg.defaultFont;
+  const font = await createDefaultFont(cg);
 
   // Make our two axes.
   const axes = [
-    cg
-      .orthoAxis(axisCoords, "x", font, {
-        labelSide: 1,
-        tickOffset: -3 * dpr,
-        tickLength: 6 * dpr,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
-      })
-      .retain(),
-    cg
-      .orthoAxis(axisCoords, "y", font, {
-        axisIntercept: 0,
-        labelAnchor: [1, 1.25],
-        tickOrigin: 0,
-        tickStep: 5,
-        tickLength: 0,
-        tickWidth: 1 * dpr,
-        axisWidth: 1 * dpr,
-        labelSize: 12 * dpr,
+    createOrthoAxis(cg, axisCoords, "x", font, {
+      labelSide: 1,
+      tickOffset: -3 * dpr,
+      tickLength: 6 * dpr,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
+    })
+    .retain(),
+    createOrthoAxis(cg, axisCoords, "y", font, {
+      axisIntercept: 0,
+      labelAnchor: [1, 1.25],
+      tickOrigin: 0,
+      tickStep: 5,
+      tickLength: 0,
+      tickWidth: 1 * dpr,
+      axisWidth: 1 * dpr,
+      labelSize: 12 * dpr,
 
-        labelFormatter: (n: number) => (n === 0 ? "" : n.toString()),
-      })
-      .retain(),
+      labelFormatter: (n: number) => (n === 0 ? "" : n.toString()),
+    })
+    .retain(),
   ];
 
-  const grid = cg
-    .grid(
-      axes[0].info.ticks,
-      axes[1].info.ticks,
-      axisCoords.xscale.domain,
-      axisCoords.yscale.domain,
-      { width: 1 * dpr }
-    )
-    .retain();
+  const grid = createGrid(
+    cg,
+    axes[0].info.ticks,
+    axes[1].info.ticks,
+    axisCoords.xscale.domain,
+    axisCoords.yscale.domain,
+    { width: 1 * dpr }
+  )
+  .retain();
 
   function primenoise(t: number) {
     const primes = [2, 3, 5, 7, 11, 13, 17, 19];
@@ -107,12 +113,11 @@ export default async function RelativeTime(cg: CandyGraph) {
     }
     return {
       timestamp: time,
-      trace: cg
-        .lineStrip(xs, ys, {
-          colors: [1, 0, 1, 1],
-          widths: 3.0 * dpr,
-        })
-        .retain(),
+      trace: createLineStrip(cg, xs, ys, {
+        colors: [1, 0, 1, 1],
+        widths: 3.0 * dpr,
+      })
+      .retain(),
     };
   }
 
