@@ -14,6 +14,9 @@
     "regl"
   ],
   "author": "Rye Terrell <ryeterrell@ryeterrell.net> (https://wwwtyro.net)",
+  "contributors": [
+    "Fritz Lekschas (https://lekschas.de)"
+  ],
   "license": "Unlicense",
   "scripts": {
     "build": "npm run clean && npm run build-library && npm run build-tutorial && npm run build-examples",
