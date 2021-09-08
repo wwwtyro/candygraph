@@ -26,20 +26,7 @@ module.exports = {
     },
   ],
   module: {
-    rules: [
-      { test: /\.tsx?$/, loader: "ts-loader" },
-      {
-        test: /\.png$/,
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              mimetype: "image/png",
-            },
-          },
-        ],
-      },
-    ],
+    rules: [{ test: /\.ts$/, loader: "ts-loader" }],
   },
   resolve: {
     extensions: [".ts", ".js", ".md"],
