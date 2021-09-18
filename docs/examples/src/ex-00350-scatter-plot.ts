@@ -5,7 +5,6 @@
 import CandyGraph, {
   createDefaultFont,
   createCircles,
-  createFont,
   createOrthoAxis,
   createLinearScale,
   createCartesianCoordinateSystem,
