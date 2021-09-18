@@ -29,10 +29,10 @@ backing canvas to be large enough for all our later examples. Note that the
 canvas element has not been added to the DOM. If you wish to display it
 directly, that’s fine (there’s reason to in many cases!), but you’ll need to add
 it to the DOM yourself, it’s not automatic.</p>
-<pre><code class="language-ts">import { createCandyGraph } from &quot;candygraph&quot;;
+<pre><code class="language-ts">import CandyGraph from &quot;candygraph&quot;;
 
 async function main() {
-  const cg = await createCandyGraph();
+  const cg = new CandyGraph();
   cg.canvas.width = 1024;
   cg.canvas.height = 1024;
 }
