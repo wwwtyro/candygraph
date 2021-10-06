@@ -1,4 +1,4 @@
-// ### Multiple vieports [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
+// ### Multiple viewports [(source)](https://github.com/wwwtyro/candygraph/blob/master/docs/examples/src/{{filename}})
 // <canvas id="ex-00700" style="box-shadow: 0px 0px 8px #ccc;" width=1024 height=512></canvas>
 
 // skip-doc-start
