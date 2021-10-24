@@ -3,33 +3,54 @@
 ```typescript
 import CandyGraph, {
   // Scales
-  LinearScale, createLinearScale,
-  LogScale, createLogScale,
+  LinearScale,
+  createLinearScale,
+  LogScale,
+  createLogScale,
 
   // Coordinate Systems
-  CartesianCoordinateSystem, createCartesianCoordinateSystem,
-  PolarCoordinateSystem, createPolarCoordinateSystem,
+  CartesianCoordinateSystem,
+  createCartesianCoordinateSystem,
+  PolarCoordinateSystem,
+  createPolarCoordinateSystem,
 
   // Primitives
-  Circles, createCircles,
-  Font, createFont,
-  HLines, createHLines,
-  InterleavedCircles, createInterleavedCircles,
-  InterleavedShapes, createInterleavedShapes,
-  LineSegments, createLineSegments,
-  LineStrip, createLineStrip,
-  Rects, createRects,
-  Shapes, createShapes,
-  Text, createText,
-  Triangles, createTriangles,
-  VLines, createVLines,
-  Wedges, createWedges,
-  Axis, createAxis,
-  Grid, createGrid,
-  OrthoAxis, createOrthoAxis,
+  Circles,
+  createCircles,
+  Font,
+  createFont,
+  HLines,
+  createHLines,
+  InterleavedCircles,
+  createInterleavedCircles,
+  InterleavedShapes,
+  createInterleavedShapes,
+  LineSegments,
+  createLineSegments,
+  LineStrip,
+  createLineStrip,
+  Rects,
+  createRects,
+  Shapes,
+  createShapes,
+  Text,
+  createText,
+  Triangles,
+  createTriangles,
+  VLines,
+  createVLines,
+  Wedges,
+  createWedges,
+  Axis,
+  createAxis,
+  Grid,
+  createGrid,
+  OrthoAxis,
+  createOrthoAxis,
 
   // Other
-  Dataset, createDataset,
+  Dataset,
+  createDataset,
   createDefaultFont,
 } from "candygraph";
 ```
@@ -96,10 +117,7 @@ const coords = createCartesianCoordinateSystem(
 cg.render(coords, viewport, createLineSegments(cg, [0, 0, 1, 1]));
 
 // Render a couple more line segments to the viewport.
-cg.render(coords, viewport, [
-  createLineSegments(cg, [0.5, 0, 0.5, 1]),
-  createLineSegments(cg, [0, 1, 1, 0]),
-]);
+cg.render(coords, viewport, [createLineSegments(cg, [0.5, 0, 0.5, 1]), createLineSegments(cg, [0, 1, 1, 0])]);
 ```
 
 #### `cg.copyTo(sourceViewport: Viewport, destinationCanvas?: HTMLCanvasElement, destinationViewport?: Viewport): HTMLCanvasElement`
@@ -318,7 +336,7 @@ Renders colored circles with optional borders.
 
 | Parameter | Type                   | Description                                                                                  |
 | --------- | ---------------------- | -------------------------------------------------------------------------------------------- |
-| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                                                |
+| cg        | CandyGraph             | Required. The `CandyGraph` instance for rendering.                                           |
 | xys       | NumberArray or Dataset | Required. The x and y coordinates of the circle centers in the form `[x0, y0, x1, y1, ...]`. |
 | options   | Object                 | Optional. See below.                                                                         |
 
@@ -485,6 +503,52 @@ Will render a grid of `HLines` and `VLines`.
 | ------ | ------- | ------------------ | ---------------------------- |
 | color  | Vector4 | [0.75,0.75,0.75,1] | The color of the grid lines. |
 | width  | number  | 1                  | The width of the grid lines. |
+
+#### `createScissor(cg: CandyGraph, x: number, y: number, width: number, height: number, screenSpace: boolean, children: Renderable): Scissor`
+
+Returns a `Scissor` object. All children will be clipped to the provided bounds.
+
+| Parameter   | Type       | Description                                                                  |
+| ----------- | ---------- | ---------------------------------------------------------------------------- |
+| cg          | CandyGraph | Required. The `CandyGraph` instance for rendering.                           |
+| x           | number     | Required. The x-coordinates of the bottom-left corner of the scissor region. |
+| y           | number     | Required. The y-coordinates of the bottom-left corner of the scissor region. |
+| width       | number     | Required. The width of the scissor region.                                   |
+| height      | number     | Required. The height of the scissor region.                                  |
+| screenSpace | boolean    | Required. Whether or not the scissor region is defined in screen space.      |
+| children    | Renderable | Required. One or more objects to be rendered with the scissor.               |
+
+##### Examples
+
+```typescript
+// Not in screen space, with an array of renderables.
+createScissor(cg, 0, 0, 1, 1, false, [
+  createLineStrip(cg, xs, ys, {
+    colors: [1, 0.5, 0, 1],
+    widths: 3 * dpr,
+  }),
+  createCircles(cg, xs, ys, {
+    colors: [1, 0.5, 0, 1],
+    radii: 6.0 * dpr,
+    borderWidths: 0 * dpr,
+  }),
+  createCircles(cg, xs, ys, {
+    colors: [0, 0, 0.25, 1],
+    radii: 3.0 * dpr,
+    borderWidths: 0 * dpr,
+  }),
+]),
+```
+
+```typescript
+// In screen space, with a single renderable (not an array).
+createScissor(cg, 32 * dpr, 32 * dpr, viewport.width - 48 * dpr, viewport.width - 48 * dpr, true,
+  createLineStrip(cg, xs, ys, {
+      colors: [1, 0.5, 0, 1],
+      widths: 3 * dpr,
+    }),
+),
+```
 
 #### `createLinearScale(domain: Vector2, range: Vector2): LinearScale`
 

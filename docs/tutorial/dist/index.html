@@ -483,25 +483,28 @@ keep the last <code>history</code> seconds in view:</p>
 <p>First we’ll render our plot data. We have two traces to render, <code>ys0</code>
 and <code>ys1</code>. We’ll get a little fancy and render a black border around
 each trace by first rendering a thick black line, then a thinner line
-in our desired color. First the <code>ys0</code> trace in ~orange:</p>
-<pre><code class="language-typescript">      createLineStrip(cg, xs, ys0, {
-        colors: [0, 0, 0, 1],
-        widths: 7,
-      }),
-      createLineStrip(cg, xs, ys0, {
-        colors: [1, 0.5, 0, 1],
-        widths: 3,
-      }),
+in our desired color. We’ll also apply a scissor in screen space to
+confine the lines to the plot region. First the <code>ys0</code> trace in ~orange:</p>
+<pre><code class="language-typescript">      createScissor(cg, 40, 32, viewport.width - 56, viewport.height - 48, true, [
+        createLineStrip(cg, xs, ys0, {
+          colors: [0, 0, 0, 1],
+          widths: 17,
+        }),
+        createLineStrip(cg, xs, ys0, {
+          colors: [1, 0.5, 0, 1],
+          widths: 9,
+        }),
 </code></pre>
 <p>Then our <code>ys1</code> trace in ~blue:</p>
-<pre><code class="language-typescript">      createLineStrip(cg, xs, ys1, {
-        colors: [0, 0, 0, 1],
-        widths: 7,
-      }),
-      createLineStrip(cg, xs, ys1, {
-        colors: [0, 0.5, 1, 1],
-        widths: 3,
-      }),
+<pre><code class="language-typescript">        createLineStrip(cg, xs, ys1, {
+          colors: [0, 0, 0, 1],
+          widths: 17,
+        }),
+        createLineStrip(cg, xs, ys1, {
+          colors: [0, 0.5, 1, 1],
+          widths: 9,
+        }),
+      ]),
 </code></pre>
 <p>Then we’ll render our axes. Note that for the y-axis we’re shifting the
 <code>axisIntercept</code> to keep up with the current time:</p>
@@ -523,10 +526,7 @@ in our desired color. First the <code>ys0</code> trace in ~orange:</p>
 </code></pre>
 <p>Finally, we’ll copy our rendered plot to a canvas that’s already been
 added to this document:</p>
-<pre><code class="language-typescript">    cg.copyTo(
-      viewport,
-      document.getElementById(&quot;doc_00400&quot;) as HTMLCanvasElement
-    );
+<pre><code class="language-typescript">    cg.copyTo(viewport, document.getElementById(&quot;doc_00400&quot;) as HTMLCanvasElement);
   }
 </code></pre>
 <p>Here’s some interaction and animation loop odds and ends to tie everything up:</p>

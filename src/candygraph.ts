@@ -1,13 +1,6 @@
 import REGL, { DrawCommand, Regl, Buffer, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
-import {
-  Viewport,
-  Renderable,
-  RenderableType,
-  Primitive,
-  NumberArray,
-} from "./common";
-import { createDataset } from "./primitives/dataset";
+import { Viewport, Renderable, RenderableType, Primitive, Composite } from "./common";
 
 type Props = {
   resolution: [number, number];
@@ -42,6 +35,7 @@ export class CandyGraph {
 
   private commandCache: { [glsl: string]: Map<Function, DrawCommand> } = {};
   private coordinateScopeCache = new Map<CoordinateSystem, DrawCommand>();
+  private compositeScopeCache = new Map<Function, DrawCommand | null>();
   private scope: DrawCommand;
   private positionBufferCache = new Map<string, Buffer>();
 
@@ -84,10 +78,7 @@ export class CandyGraph {
     return this.positionBufferCache.get(name);
   };
 
-  public setPositionBuffer = (
-    name: string,
-    data: number[] | number[][]
-  ): void => {
+  public setPositionBuffer = (name: string, data: number[] | number[][]): void => {
     this.positionBufferCache.set(name, this.regl.buffer(data));
   };
 
@@ -98,11 +89,7 @@ export class CandyGraph {
     this.positionBufferCache.clear();
   };
 
-  public render = (
-    coords: CoordinateSystem,
-    viewport: Viewport,
-    renderable: Renderable
-  ): void => {
+  public render = (coords: CoordinateSystem, viewport: Viewport, renderable: Renderable): void => {
     this.getCoordinateScope(coords)({ ...coords.props() }, () => {
       this.scope(
         {
@@ -116,11 +103,7 @@ export class CandyGraph {
     });
   };
 
-  public copyTo(
-    sourceViewport: Viewport,
-    destinationCanvas?: HTMLCanvasElement,
-    destinationViewport?: Viewport
-  ) {
+  public copyTo(sourceViewport: Viewport, destinationCanvas?: HTMLCanvasElement, destinationViewport?: Viewport) {
     // If we're not provided a canvas, make one.
     const dest = destinationCanvas ?? document.createElement("canvas");
 
@@ -173,7 +156,14 @@ export class CandyGraph {
           renderable.dispose();
         }
       } else if (renderable.kind === RenderableType.Composite) {
-        this.recursiveRender(coords, renderable.children());
+        const scope = this.getCompositeScope(renderable);
+        if (scope) {
+          scope(renderable.props(coords), () => {
+            this.recursiveRender(coords, renderable.children());
+          });
+        } else {
+          this.recursiveRender(coords, renderable.children());
+        }
       }
     }
   }
@@ -197,6 +187,15 @@ export class CandyGraph {
     if (!scope) {
       scope = coords.scope(this.regl);
       this.coordinateScopeCache.set(coords, scope);
+    }
+    return scope;
+  }
+
+  private getCompositeScope(composite: Composite) {
+    let scope = this.compositeScopeCache.get(composite.constructor);
+    if (!scope) {
+      scope = composite.scope();
+      this.compositeScopeCache.set(composite.constructor, scope);
     }
     return scope;
   }

@@ -10,7 +10,8 @@
     "moduleResolution": "node",
     "target": "es6",
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true
   },
   "include": ["./src/**/*"]
 }

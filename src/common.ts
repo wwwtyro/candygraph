@@ -1,4 +1,5 @@
 import { DrawCommand } from "regl";
+import { CoordinateSystem } from "./coordinates/coordinate-system";
 
 export type UnpackPromise<T> = T extends Promise<infer U> ? U : never;
 
@@ -31,6 +32,14 @@ export abstract class Primitive {
 export abstract class Composite {
   public readonly kind = RenderableType.Composite;
   public abstract children(): Renderable;
+
+  public scope(): DrawCommand | null {
+    return null;
+  }
+
+  public props(coords: CoordinateSystem) {
+    return {};
+  }
 
   public retain() {
     function recurse(renderable: Renderable) {

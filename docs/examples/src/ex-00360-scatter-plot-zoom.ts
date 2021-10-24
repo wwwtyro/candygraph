@@ -10,6 +10,7 @@ import CandyGraph, {
   createOrthoAxis,
   createLinearScale,
   createCartesianCoordinateSystem,
+  createScissor,
 } from "../../../src";
 
 export default async function ScatterPlotZoomPan(cg: CandyGraph) {
@@ -125,7 +126,7 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
 
     // Render the data as circles and the axes.
     cg.render(coords, viewport, [
-      circles,
+      createScissor(cg, 32 * dpr, 32 * dpr, viewport.width - 48 * dpr, viewport.width - 48 * dpr, true, circles),
       createOrthoAxis(cg, coords, "x", font, {
         labelSide: 1,
         tickOffset: -2.5 * dpr,
@@ -153,10 +154,7 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
       }),
     ]);
 
-    cg.copyTo(
-      viewport,
-      document.getElementById("ex-00360") as HTMLCanvasElement
-    );
+    cg.copyTo(viewport, document.getElementById("ex-00360") as HTMLCanvasElement);
   }
 
   render();

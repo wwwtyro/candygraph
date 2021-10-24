@@ -26,5 +26,6 @@ export { Wedges, createWedges } from "./primitives/wedges";
 export { Axis, createAxis } from "./composites/axis";
 export { Grid, createGrid } from "./composites/grid";
 export { OrthoAxis, createOrthoAxis } from "./composites/ortho-axis";
+export { Scissor, createScissor } from "./composites/scissor";
 
 export { createDefaultFont } from "./assets/default-font";

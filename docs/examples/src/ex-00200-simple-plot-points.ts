@@ -9,6 +9,7 @@ import CandyGraph, {
   createOrthoAxis,
   createLinearScale,
   createCartesianCoordinateSystem,
+  createScissor,
 } from "../../../src";
 
 export default async function SimplePlotPoints(cg: CandyGraph) {
@@ -46,20 +47,22 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
-      colors: [1, 0.5, 0, 1],
-      widths: 3 * dpr,
-    }),
-    createCircles(cg, xs, ys, {
-      colors: [1, 0.5, 0, 1],
-      radii: 6.0 * dpr,
-      borderWidths: 0 * dpr,
-    }),
-    createCircles(cg, xs, ys, {
-      colors: [0, 0, 0.25, 1],
-      radii: 3.0 * dpr,
-      borderWidths: 0 * dpr,
-    }),
+    createScissor(cg, 0, 0, 1, 1, false, [
+      createLineStrip(cg, xs, ys, {
+        colors: [1, 0.5, 0, 1],
+        widths: 3 * dpr,
+      }),
+      createCircles(cg, xs, ys, {
+        colors: [1, 0.5, 0, 1],
+        radii: 6.0 * dpr,
+        borderWidths: 0 * dpr,
+      }),
+      createCircles(cg, xs, ys, {
+        colors: [0, 0, 0.25, 1],
+        radii: 3.0 * dpr,
+        borderWidths: 0 * dpr,
+      }),
+    ]),
     createOrthoAxis(cg, coords, "x", font, {
       axisColor: [1, 1, 1, 1],
       labelSide: 1,

@@ -5,6 +5,7 @@ import CandyGraph, {
   createLineStrip,
   createDefaultFont,
   createOrthoAxis,
+  createScissor,
 } from "../../../src";
 // skip-doc-stop
 
@@ -83,24 +84,27 @@ export default async function doc_00400(cg: CandyGraph) {
       // First we'll render our plot data. We have two traces to render, `ys0`
       // and `ys1`. We'll get a little fancy and render a black border around
       // each trace by first rendering a thick black line, then a thinner line
-      // in our desired color. First the `ys0` trace in ~orange:
-      createLineStrip(cg, xs, ys0, {
-        colors: [0, 0, 0, 1],
-        widths: 7,
-      }),
-      createLineStrip(cg, xs, ys0, {
-        colors: [1, 0.5, 0, 1],
-        widths: 3,
-      }),
-      // Then our `ys1` trace in ~blue:
-      createLineStrip(cg, xs, ys1, {
-        colors: [0, 0, 0, 1],
-        widths: 7,
-      }),
-      createLineStrip(cg, xs, ys1, {
-        colors: [0, 0.5, 1, 1],
-        widths: 3,
-      }),
+      // in our desired color. We'll also apply a scissor in screen space to
+      // confine the lines to the plot region. First the `ys0` trace in ~orange:
+      createScissor(cg, 40, 32, viewport.width - 56, viewport.height - 48, true, [
+        createLineStrip(cg, xs, ys0, {
+          colors: [0, 0, 0, 1],
+          widths: 17,
+        }),
+        createLineStrip(cg, xs, ys0, {
+          colors: [1, 0.5, 0, 1],
+          widths: 9,
+        }),
+        // Then our `ys1` trace in ~blue:
+        createLineStrip(cg, xs, ys1, {
+          colors: [0, 0, 0, 1],
+          widths: 17,
+        }),
+        createLineStrip(cg, xs, ys1, {
+          colors: [0, 0.5, 1, 1],
+          widths: 9,
+        }),
+      ]),
       // Then we'll render our axes. Note that for the y-axis we're shifting the
       // `axisIntercept` to keep up with the current time:
       createOrthoAxis(cg, coords, "x", font, {
@@ -121,10 +125,7 @@ export default async function doc_00400(cg: CandyGraph) {
 
     // Finally, we'll copy our rendered plot to a canvas that's already been
     // added to this document:
-    cg.copyTo(
-      viewport,
-      document.getElementById("doc_00400") as HTMLCanvasElement
-    );
+    cg.copyTo(viewport, document.getElementById("doc_00400") as HTMLCanvasElement);
   }
 
   // Here's some interaction and animation loop odds and ends to tie everything up:
