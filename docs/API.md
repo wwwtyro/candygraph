@@ -240,7 +240,7 @@ Note that CandyGraph includes a default font, so generating your own is unnecess
 | image     | HTMLImageElement | Required. An `Image` object that contains an SDF texture of the font.       |
 | json      | Object           | Required. An object that contains information about how to render the font. |
 
-#### `createText(font: Font, text: string, position: Vector2, [options: {}]): Text`
+#### `createText(cg: CandyGraph, font: Font, text: string, position: Vector2, [options: {}]): Text`
 
 Returns a `Text` object that draws text when rendered.
 
