@@ -77,7 +77,7 @@ export class Text extends Primitive {
     const opts = { ...DEFAULTS, ...options };
 
     // Get a count of the actual number of characters we'll be creating quads for.
-    const charCount = text.replace(" ", "").replace("\n", "").length;
+    const charCount = text.replace(/ /g, "").replace(/\n/g, "").length;
 
     // Keep track of the current character.
     let charIndex = 0;
