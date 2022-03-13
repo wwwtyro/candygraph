@@ -15,6 +15,7 @@ import Area from "./ex-00250-area-chart";
 import Shapes from "./ex-01100-shapes";
 import InterleavedShapes from "./ex-01200-interleaved-shapes";
 import Polar from "./ex-00900-polar-plot";
+import PrecisionPlot from "./ex-01300-precision";
 
 const cg = new CandyGraph();
 cg.canvas.width = cg.canvas.height = 1024 * window.devicePixelRatio;
@@ -34,3 +35,4 @@ PieChart(cg);
 Area(cg);
 Shapes(cg);
 InterleavedShapes(cg);
+PrecisionPlot(cg);
