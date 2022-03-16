@@ -19,21 +19,17 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('rects')) {
+  if (!cg.hasPositionBuffer("rects")) {
     cg.setPositionBuffer(
-      'rects',
+      "rects",
       // prettier-ignore
       [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
     );
   }
-  return cg.getPositionBuffer('rects');
+  return cg.getPositionBuffer("rects");
 }
 
-export function createRects(
-  cg: CandyGraph,
-  rects: NumberArray | Dataset,
-  options?: Options
-) {
+export function createRects(cg: CandyGraph, rects: NumberArray | Dataset, options?: Options) {
   const positionBuffer = getPositionBuffer(cg)!;
   return new Rects(cg.regl, positionBuffer, rects, options);
 }
@@ -42,12 +38,7 @@ export class Rects extends Primitive {
   public readonly rects: Dataset;
   public readonly colors: Dataset;
 
-  constructor(
-    private regl: Regl,
-    private positionBuffer: Buffer,
-    rects: NumberArray | Dataset,
-    options: Options = {}
-  ) {
+  constructor(private regl: Regl, private positionBuffer: Buffer, rects: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.rects = createDataset(regl, rects);
@@ -111,7 +102,7 @@ export class Rects extends Primitive {
   }
 
   public dispose(): void {
-    this.rects.disposeIfAuto();
-    this.colors.disposeIfAuto();
+    this.rects.dispose();
+    this.colors.dispose();
   }
 }

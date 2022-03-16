@@ -152,9 +152,6 @@ export class CandyGraph {
       if (renderable.kind === RenderableType.Primitive) {
         const command = this.getCommand(coords, renderable);
         renderable.render(command);
-        if (!renderable.retained) {
-          renderable.dispose();
-        }
       } else if (renderable.kind === RenderableType.Composite) {
         const scope = this.getCompositeScope(renderable);
         if (scope) {

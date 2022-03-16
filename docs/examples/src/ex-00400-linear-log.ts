@@ -4,7 +4,6 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createFont,
   createGrid,
   createLineStrip,
   createOrthoAxis,
@@ -65,30 +64,19 @@ export default async function LinearLog(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
 
-      labelFormatter: (n) =>
-        n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString(),
+      labelFormatter: (n) => (n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString()),
     }),
   ];
 
   const grid = [
-    createGrid(
-      cg,
-      axes[0].info.ticks,
-      axes[1].info.ticks,
-      coords.xscale.domain,
-      coords.yscale.domain,
-      { color: [0.25, 0.25, 0.25, 1], width: 1 * dpr }
-    )
-    .retain(),
-    createGrid(
-      cg,
-      [],
-      axes[1].info.minorTicks,
-      coords.xscale.domain,
-      coords.yscale.domain,
-      { color: [0.75, 0.75, 0.75, 1], width: 1 * dpr }
-    )
-    .retain(),
+    createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+      color: [0.25, 0.25, 0.25, 1],
+      width: 1 * dpr,
+    }),
+    createGrid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+      color: [0.75, 0.75, 0.75, 1],
+      width: 1 * dpr,
+    }),
   ];
 
   cg.clear([1, 1, 1, 1]);

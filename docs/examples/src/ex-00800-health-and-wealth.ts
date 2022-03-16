@@ -4,7 +4,6 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createFont,
   createText,
   createGrid,
   createInterleavedCircles,
@@ -44,8 +43,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   const axes = [
     createOrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
-      labelFormatter: (n) =>
-        n < 1000 ? n.toString() : Math.round(n / 1000).toString() + "K",
+      labelFormatter: (n) => (n < 1000 ? n.toString() : Math.round(n / 1000).toString() + "K"),
       tickLength: 6 * dpr,
       tickOffset: -3 * dpr,
       tickWidth: 1 * dpr,
@@ -56,8 +54,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
       minorTickLength: 4 * dpr,
       minorTickOffset: -2 * dpr,
       minorTickWidth: 1 * dpr,
-    })
-    .retain(),
+    }),
     createOrthoAxis(cg, coords, "y", font, {
       tickStep: 10,
       tickLength: 6 * dpr,
@@ -65,53 +62,30 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
       tickWidth: 1 * dpr,
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
-    })
-    .retain(),
+    }),
   ];
 
   const Labels = [
     createText(cg, font, "Income", [canvas.width / 2, 8 * dpr], {
       anchor: [0, -1],
       size: 16 * dpr,
-    })
-    .retain(),
+    }),
     createText(cg, font, "Life Expectancy", [8 * dpr, canvas.height / 2], {
       anchor: [0, 1],
       angle: Math.PI / 2,
       size: 16 * dpr,
-    })
-    .retain(),
-    createText(cg,
-      font,
-      "The Health & Wealth of Nations",
-      [8 * dpr, canvas.height - 8 * dpr],
-      {
-        anchor: [-1, 1],
-        size: 32 * dpr,
-      }
-    )
-    .retain(),
+    }),
+    createText(cg, font, "The Health & Wealth of Nations", [8 * dpr, canvas.height - 8 * dpr], {
+      anchor: [-1, 1],
+      size: 32 * dpr,
+    }),
   ];
 
   const grid = [
-    createGrid(
-      cg,
-      axes[0].info.ticks,
-      axes[1].info.ticks,
-      coords.xscale.domain,
-      coords.yscale.domain,
-      { width: 1 * dpr }
-    )
-    .retain(),
-    createGrid(
-      cg,
-      axes[0].info.minorTicks,
-      [],
-      coords.xscale.domain,
-      coords.yscale.domain,
-      { width: 1 * dpr }
-    )
-    .retain(),
+    createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+      width: 1 * dpr,
+    }),
+    createGrid(cg, axes[0].info.minorTicks, [], coords.xscale.domain, coords.yscale.domain, { width: 1 * dpr }),
   ];
 
   const colors = [];
@@ -119,9 +93,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     colors.push(Math.random(), Math.random(), Math.random(), 0.5);
   }
 
-  const circles = createInterleavedCircles(
-    cg, [0, 0], { colors, borderWidths: 0 }
-  ).retain();
+  const circles = createInterleavedCircles(cg, [0, 0], { colors, borderWidths: 0 });
 
   function render(year: number) {
     year = Math.max(nations.bounds.date.min, year);
@@ -144,10 +116,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
         cg,
         font,
         year.toString(),
-        [
-          screenCoords.xscale.domain[1] - 32 * dpr,
-          screenCoords.yscale.domain[0] + 32 * dpr,
-        ],
+        [screenCoords.xscale.domain[1] - 32 * dpr, screenCoords.yscale.domain[0] + 32 * dpr],
         {
           anchor: [1, -1],
           size: 128 * dpr,
@@ -163,12 +132,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
 
   canvas.addEventListener("mousemove", (e) => {
     const dx = e.offsetX / (<HTMLCanvasElement>e.target).clientWidth;
-    render(
-      Math.floor(
-        nations.bounds.date.min +
-          dx * (nations.bounds.date.max - nations.bounds.date.min)
-      )
-    );
+    render(Math.floor(nations.bounds.date.min + dx * (nations.bounds.date.max - nations.bounds.date.min)));
   });
 }
 

@@ -37,32 +37,16 @@ function roundCapJoinGeometry(resolution: number) {
     const theta0 = Math.PI / 2 + ((step + 0) * Math.PI) / resolution;
     const theta1 = Math.PI / 2 + ((step + 1) * Math.PI) / resolution;
     instanceRoundRound.push([0, 0, 0]);
-    instanceRoundRound.push([
-      0.5 * Math.cos(theta0),
-      0.5 * Math.sin(theta0),
-      0,
-    ]);
-    instanceRoundRound.push([
-      0.5 * Math.cos(theta1),
-      0.5 * Math.sin(theta1),
-      0,
-    ]);
+    instanceRoundRound.push([0.5 * Math.cos(theta0), 0.5 * Math.sin(theta0), 0]);
+    instanceRoundRound.push([0.5 * Math.cos(theta1), 0.5 * Math.sin(theta1), 0]);
   }
   // Add the right cap.
   for (let step = 0; step < resolution; step++) {
     const theta0 = (3 * Math.PI) / 2 + ((step + 0) * Math.PI) / resolution;
     const theta1 = (3 * Math.PI) / 2 + ((step + 1) * Math.PI) / resolution;
     instanceRoundRound.push([0, 0, 1]);
-    instanceRoundRound.push([
-      0.5 * Math.cos(theta0),
-      0.5 * Math.sin(theta0),
-      1,
-    ]);
-    instanceRoundRound.push([
-      0.5 * Math.cos(theta1),
-      0.5 * Math.sin(theta1),
-      1,
-    ]);
+    instanceRoundRound.push([0.5 * Math.cos(theta0), 0.5 * Math.sin(theta0), 1]);
+    instanceRoundRound.push([0.5 * Math.cos(theta1), 0.5 * Math.sin(theta1), 1]);
   }
 
   return instanceRoundRound;
@@ -72,12 +56,12 @@ function roundCapJoinGeometry(resolution: number) {
 let geometryCount: number;
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('lineStrip')) {
+  if (!cg.hasPositionBuffer("lineStrip")) {
     const geometry = roundCapJoinGeometry(16);
     geometryCount = geometry.length;
-    cg.setPositionBuffer('lineStrip', geometry);
+    cg.setPositionBuffer("lineStrip", geometry);
   }
-  return cg.getPositionBuffer('lineStrip');
+  return cg.getPositionBuffer("lineStrip");
 }
 
 export function createLineStrip(
@@ -201,9 +185,9 @@ export class LineStrip extends Primitive {
   }
 
   public dispose(): void {
-    this.xs.disposeIfAuto();
-    this.ys.disposeIfAuto();
-    this.widths.disposeIfAuto();
-    this.colors.disposeIfAuto();
+    this.xs.dispose();
+    this.ys.dispose();
+    this.widths.dispose();
+    this.colors.dispose();
   }
 }

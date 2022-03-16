@@ -16,17 +16,11 @@ export enum RenderableType {
 }
 
 export abstract class Primitive {
-  public retained = false;
   public readonly kind = RenderableType.Primitive;
 
   public abstract command(glsl: string): DrawCommand;
   public abstract render(command: DrawCommand): void;
   public abstract dispose(): void;
-
-  public retain() {
-    this.retained = true;
-    return this;
-  }
 }
 
 export abstract class Composite {
@@ -41,22 +35,6 @@ export abstract class Composite {
     return {};
   }
 
-  public retain() {
-    function recurse(renderable: Renderable) {
-      if (Array.isArray(renderable)) {
-        for (const element of renderable) {
-          recurse(element);
-        }
-      } else if (renderable.kind === RenderableType.Composite) {
-        recurse(renderable.children());
-      } else if (renderable.kind === RenderableType.Primitive) {
-        renderable.retained = true;
-      }
-    }
-    recurse(this.children());
-    return this;
-  }
-
   public dispose(): void {
     function recurse(renderable: Renderable) {
       if (Array.isArray(renderable)) {
@@ -66,7 +44,6 @@ export abstract class Composite {
       } else if (renderable.kind === RenderableType.Composite) {
         recurse(renderable.children());
       } else if (renderable.kind === RenderableType.Primitive) {
-        renderable.retained = false;
         renderable.dispose();
       }
     }

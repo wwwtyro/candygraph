@@ -23,27 +23,20 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('vLines')) {
-    cg.setPositionBuffer(
-      'vLines',
-      [
-        [-0.5, 0],
-        [+0.5, 0],
-        [+0.5, 1],
-        [-0.5, 0],
-        [+0.5, 1],
-        [-0.5, 1],
-      ]
-    );
+  if (!cg.hasPositionBuffer("vLines")) {
+    cg.setPositionBuffer("vLines", [
+      [-0.5, 0],
+      [+0.5, 0],
+      [+0.5, 1],
+      [-0.5, 0],
+      [+0.5, 1],
+      [-0.5, 1],
+    ]);
   }
-  return cg.getPositionBuffer('vLines');
+  return cg.getPositionBuffer("vLines");
 }
 
-export function createVLines(
-  cg: CandyGraph,
-  lines: NumberArray | Dataset,
-  options?: Options
-) {
+export function createVLines(cg: CandyGraph, lines: NumberArray | Dataset, options?: Options) {
   const segmentGeometry = getPositionBuffer(cg)!;
   return new VLines(cg.regl, segmentGeometry, lines, options);
 }
@@ -160,8 +153,8 @@ export class VLines extends Primitive {
   }
 
   public dispose(): void {
-    this.lines.disposeIfAuto();
-    this.colors.disposeIfAuto();
-    this.widths.disposeIfAuto();
+    this.lines.dispose();
+    this.colors.dispose();
+    this.widths.dispose();
   }
 }

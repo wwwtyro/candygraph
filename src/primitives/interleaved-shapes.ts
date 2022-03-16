@@ -45,12 +45,7 @@ export class InterleavedShapes extends Primitive {
   public rotations: Dataset;
   public colors: Dataset;
 
-  constructor(
-    private regl: Regl,
-    shape: NumberArray | Dataset,
-    xys: NumberArray | Dataset,
-    options: Options = {}
-  ) {
+  constructor(private regl: Regl, shape: NumberArray | Dataset, xys: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.shape = createDataset(regl, shape);
@@ -140,10 +135,10 @@ export class InterleavedShapes extends Primitive {
   }
 
   public dispose(): void {
-    this.xys.disposeIfAuto();
-    this.shape.disposeIfAuto();
-    this.scales.disposeIfAuto();
-    this.rotations.disposeIfAuto();
-    this.colors.disposeIfAuto();
+    this.xys.dispose();
+    this.shape.dispose();
+    this.scales.dispose();
+    this.rotations.dispose();
+    this.colors.dispose();
   }
 }

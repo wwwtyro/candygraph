@@ -553,12 +553,13 @@ added to this document:</p>
 </canvas>
 </div>
 <h2>Data Reuse</h2>
-<p>The default memory management scheme in CandyGraph is to destroy any GPU-side
-data immediately after it’s been rendered once. This is handy for ensuring
-that we’re not leaking data, but it’s not the best for performance if you’re
-re-uploading unchanged data to the GPU. In this example we’ll take a look at
-a couple of mechanisms for <em>retaining</em> this data so that it’s not immediately
-destroyed.</p>
+<p>So far we’ve been uploading our data to the GPU each time we render a plot.
+If we’re rendering a single, static plot that doesn’t change, this works out
+fine: the data and associated buffers on the GPU will be garbage collected
+and we’re only paying the cost of the upload once. Sometimes, however, we’ll
+want to reuse the same data and render it in a different way, e.g. on a log
+scale instead of a linear one, or for an animated or interactive plot. Let’s
+take a look at how to do that.</p>
 <p>First we’ll create some data. Nothing exciting here, just noise added to the line
 <code>y = x</code>.</p>
 <pre><code class="language-typescript">  const xsRaw: number[] = [];
@@ -570,7 +571,7 @@ destroyed.</p>
   }
 </code></pre>
 <p>Previously we’d have fed <code>xsRaw</code> and <code>ysRaw</code> directly into functions like
-<code>cg.lineStrip</code>. This time, however, we’ll upload them to the GPU and keep a
+<code>createLineStrip</code>. This time, however, we’ll upload them to the GPU and keep a
 handle to them using the <code>createDataset</code> function. Once we’ve done so, we
 can continue to use them until we invoke their <code>dispose()</code> functions. The
 <code>createDataset</code> function returns a <code>Dataset</code> object:</p>
@@ -587,10 +588,8 @@ y-axis:</p>
   const linlin = createCartesianCoordinateSystem(linx, liny);
   const linlog = createCartesianCoordinateSystem(linx, logy);
 </code></pre>
-<p>We can also retain higher level constructs, such as an <code>OrthoAxis</code>. To do
-so, we simply invoke its <code>retain()</code> function. Doing so will allow us to
-continue to use them until we invoke their <code>dispose()</code> functions. Let’s
-create a set of x and y axes for our linear-linear and linear-log plots:</p>
+<p>We’ll also hold onto our higher-level constructs by assigning them to a
+variable and keeping that reference to them, preventing garbage collection.</p>
 <pre><code class="language-typescript">  const linlinAxis = [
     createOrthoAxis(cg, linlin, &quot;x&quot;, font, {
       labelSide: 1,
@@ -598,13 +597,13 @@ create a set of x and y axes for our linear-linear and linear-log plots:</p>
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) =&gt; `${n / 1000}K`,
-    }).retain(),
+    }),
     createOrthoAxis(cg, linlin, &quot;y&quot;, font, {
       tickStep: 1000,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) =&gt; `${n / 1000}K`,
-    }).retain(),
+    }),
   ];
 
   const linlogAxis = [
@@ -614,13 +613,13 @@ create a set of x and y axes for our linear-linear and linear-log plots:</p>
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) =&gt; `${n / 1000}K`,
-    }).retain(),
+    }),
     createOrthoAxis(cg, linlog, &quot;y&quot;, font, {
       tickStep: 1,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) =&gt; (n &gt;= 1000 ? `${n / 1000}K` : n.toString()),
-    }).retain(),
+    }),
   ];
 </code></pre>
 <p>Now we’ll define a render function that will get invoked when the user
@@ -628,28 +627,21 @@ changes plot settings. First we’ll grab the setting for whether or not the
 y-axis is linear or logarithmic:</p>
 <pre><code class="language-typescript">  function render() {
     const linear =
-      Array.prototype.filter.call(
-        document.getElementsByName(&quot;radio-y-axis-500&quot;),
-        (e) =&gt; e.checked
-      )[0].value === &quot;linear&quot;;
+      Array.prototype.filter.call(document.getElementsByName(&quot;radio-y-axis-500&quot;), (e) =&gt; e.checked)[0].value ===
+      &quot;linear&quot;;
 </code></pre>
 <p>Then we’ll determine whether or not this is a scatter plot or a line plot:</p>
 <pre><code class="language-typescript">    const scatter =
-      Array.prototype.filter.call(
-        document.getElementsByName(&quot;radio-plot-type-500&quot;),
-        (e) =&gt; e.checked
-      )[0].value === &quot;scatter&quot;;
+      Array.prototype.filter.call(document.getElementsByName(&quot;radio-plot-type-500&quot;), (e) =&gt; e.checked)[0].value ===
+      &quot;scatter&quot;;
 </code></pre>
 <p>We’ll use the value of <code>linear</code> to get the correct coordinate system and
-axes renderable. Note that since we invoked <code>retain()</code> on the elements of
-each axes renderable, we can simply reuse them each time the <code>render</code>
-function is called.</p>
+axes renderable.</p>
 <pre><code class="language-typescript">    const coords = linear ? linlin : linlog;
     const axes = linear ? linlinAxis : linlogAxis;
 </code></pre>
 <p>Next we’ll use (and reuse!) our <code>xs</code> and <code>ys</code> <code>Dataset</code> objects in a
-<code>cg.circles</code> or <code>cg.lineStrip</code> renderable according to the value of
-<code>scatter</code>:</p>
+<code>Circles</code> or <code>LineStrip</code> renderable according to the value of <code>scatter</code>:</p>
 <pre><code class="language-typescript">    const data = scatter
       ? createCircles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
@@ -666,10 +658,7 @@ copy them to a conveniently prepared canvas:</p>
 <pre><code class="language-typescript">    cg.clear([1, 1, 1, 1]);
     cg.render(coords, viewport, [data, axes]);
 
-    cg.copyTo(
-      viewport,
-      document.getElementById(&quot;doc_00500&quot;) as HTMLCanvasElement
-    );
+    cg.copyTo(viewport, document.getElementById(&quot;doc_00500&quot;) as HTMLCanvasElement);
   }
 </code></pre>
 <p>When the user changes the form, re-render:</p>

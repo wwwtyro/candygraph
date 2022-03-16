@@ -13,12 +13,13 @@ import CandyGraph, {
 
 // ## Data Reuse
 
-// The default memory management scheme in CandyGraph is to destroy any GPU-side
-// data immediately after it's been rendered once. This is handy for ensuring
-// that we're not leaking data, but it's not the best for performance if you're
-// re-uploading unchanged data to the GPU. In this example we'll take a look at
-// a couple of mechanisms for _retaining_ this data so that it's not immediately
-// destroyed.
+// So far we've been uploading our data to the GPU each time we render a plot.
+// If we're rendering a single, static plot that doesn't change, this works out
+// fine: the data and associated buffers on the GPU will be garbage collected
+// and we're only paying the cost of the upload once. Sometimes, however, we'll
+// want to reuse the same data and render it in a different way, e.g. on a log
+// scale instead of a linear one, or for an animated or interactive plot. Let's
+// take a look at how to do that.
 
 // skip-doc-start
 export default async function doc_00500(cg: CandyGraph) {
@@ -45,7 +46,7 @@ export default async function doc_00500(cg: CandyGraph) {
   }
 
   // Previously we'd have fed `xsRaw` and `ysRaw` directly into functions like
-  // `cg.lineStrip`. This time, however, we'll upload them to the GPU and keep a
+  // `createLineStrip`. This time, however, we'll upload them to the GPU and keep a
   // handle to them using the `createDataset` function. Once we've done so, we
   // can continue to use them until we invoke their `dispose()` functions. The
   // `createDataset` function returns a `Dataset` object:
@@ -64,10 +65,8 @@ export default async function doc_00500(cg: CandyGraph) {
   const linlin = createCartesianCoordinateSystem(linx, liny);
   const linlog = createCartesianCoordinateSystem(linx, logy);
 
-  // We can also retain higher level constructs, such as an `OrthoAxis`. To do
-  // so, we simply invoke its `retain()` function. Doing so will allow us to
-  // continue to use them until we invoke their `dispose()` functions. Let's
-  // create a set of x and y axes for our linear-linear and linear-log plots:
+  // We'll also hold onto our higher-level constructs by assigning them to a
+  // variable and keeping that reference to them, preventing garbage collection.
   const linlinAxis = [
     createOrthoAxis(cg, linlin, "x", font, {
       labelSide: 1,
@@ -75,13 +74,13 @@ export default async function doc_00500(cg: CandyGraph) {
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) => `${n / 1000}K`,
-    }).retain(),
+    }),
     createOrthoAxis(cg, linlin, "y", font, {
       tickStep: 1000,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) => `${n / 1000}K`,
-    }).retain(),
+    }),
   ];
 
   const linlogAxis = [
@@ -91,13 +90,13 @@ export default async function doc_00500(cg: CandyGraph) {
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n) => `${n / 1000}K`,
-    }).retain(),
+    }),
     createOrthoAxis(cg, linlog, "y", font, {
       tickStep: 1,
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) => (n >= 1000 ? `${n / 1000}K` : n.toString()),
-    }).retain(),
+    }),
   ];
 
   // Now we'll define a render function that will get invoked when the user
@@ -105,28 +104,21 @@ export default async function doc_00500(cg: CandyGraph) {
   // y-axis is linear or logarithmic:
   function render() {
     const linear =
-      Array.prototype.filter.call(
-        document.getElementsByName("radio-y-axis-500"),
-        (e) => e.checked
-      )[0].value === "linear";
+      Array.prototype.filter.call(document.getElementsByName("radio-y-axis-500"), (e) => e.checked)[0].value ===
+      "linear";
 
     // Then we'll determine whether or not this is a scatter plot or a line plot:
     const scatter =
-      Array.prototype.filter.call(
-        document.getElementsByName("radio-plot-type-500"),
-        (e) => e.checked
-      )[0].value === "scatter";
+      Array.prototype.filter.call(document.getElementsByName("radio-plot-type-500"), (e) => e.checked)[0].value ===
+      "scatter";
 
     // We'll use the value of `linear` to get the correct coordinate system and
-    // axes renderable. Note that since we invoked `retain()` on the elements of
-    // each axes renderable, we can simply reuse them each time the `render`
-    // function is called.
+    // axes renderable.
     const coords = linear ? linlin : linlog;
     const axes = linear ? linlinAxis : linlogAxis;
 
     // Next we'll use (and reuse!) our `xs` and `ys` `Dataset` objects in a
-    // `cg.circles` or `cg.lineStrip` renderable according to the value of
-    // `scatter`:
+    // `Circles` or `LineStrip` renderable according to the value of `scatter`:
     const data = scatter
       ? createCircles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
@@ -143,10 +135,7 @@ export default async function doc_00500(cg: CandyGraph) {
     cg.clear([1, 1, 1, 1]);
     cg.render(coords, viewport, [data, axes]);
 
-    cg.copyTo(
-      viewport,
-      document.getElementById("doc_00500") as HTMLCanvasElement
-    );
+    cg.copyTo(viewport, document.getElementById("doc_00500") as HTMLCanvasElement);
   }
 
   // When the user changes the form, re-render:

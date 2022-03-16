@@ -7,7 +7,6 @@
 import CandyGraph, {
   createDefaultFont,
   createTriangles,
-  createFont,
   createGrid,
   createLineStrip,
   createOrthoAxis,
@@ -32,10 +31,7 @@ export default async function TimeAndState(cg: CandyGraph) {
   // We'll make two coordinate systems; one for the x-axis, which is relative time,
   // and one for the traces, which are in real time. We'll share the y scale between
   // them.
-  const yScale = createLinearScale(
-    [0, 25],
-    [32 * dpr, viewport.height - 16 * dpr]
-  );
+  const yScale = createLinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
   const axisCoords = createCartesianCoordinateSystem(
     createLinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
     yScale
@@ -60,8 +56,7 @@ export default async function TimeAndState(cg: CandyGraph) {
       tickWidth: 1 * dpr,
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
-    })
-    .retain(),
+    }),
     createOrthoAxis(cg, axisCoords, "y", font, {
       axisIntercept: 0,
       labelSide: 1,
@@ -76,20 +71,14 @@ export default async function TimeAndState(cg: CandyGraph) {
       tickWidth: 1 * dpr,
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
-    })
-    .retain(),
+    }),
   ];
 
   const grid = [
-    createGrid(
-      cg,
-      axes[0].info.ticks,
-      axes[1].info.ticks,
-      axisCoords.xscale.domain,
-      axisCoords.yscale.domain,
-      { color: [0.5, 0.5, 0.5, 1], width: 1 * dpr }
-    )
-    .retain(),
+    createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
+      color: [0.5, 0.5, 0.5, 1],
+      width: 1 * dpr,
+    }),
     createGrid(
       cg,
       axes[0].info.minorTicks,
@@ -97,8 +86,7 @@ export default async function TimeAndState(cg: CandyGraph) {
       axisCoords.xscale.domain,
       axisCoords.yscale.domain,
       { color: [0.75, 0.75, 0.75, 1], width: 1 * dpr }
-    )
-    .retain(),
+    ),
   ];
 
   const xs: number[] = [];
@@ -138,19 +126,11 @@ export default async function TimeAndState(cg: CandyGraph) {
 
     if (Math.random() < 1 / 150) {
       states.push({
-        color: [
-          Math.random() * 0.5 + 0.5,
-          Math.random() * 0.5 + 0.5,
-          Math.random() * 0.5 + 0.5,
-          0.5,
-        ],
+        color: [Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, 0.5],
         timestamp: time,
       });
     }
-    states = states.filter(
-      (_, index) =>
-        index === states.length - 1 || states[index + 1].timestamp > time - 5
-    );
+    states = states.filter((_, index) => index === states.length - 1 || states[index + 1].timestamp > time - 5);
 
     // Update the timeCoords.
     timeCoords.xscale.domain = [time - 5, time];

@@ -5,7 +5,6 @@
 import CandyGraph, {
   createDefaultFont,
   createRects,
-  createFont,
   createOrthoAxis,
   createLinearScale,
   createCartesianCoordinateSystem,
@@ -86,10 +85,7 @@ export default async function BarGraph(cg: CandyGraph) {
 
   const coords = createCartesianCoordinateSystem(
     createLinearScale([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
-    createLinearScale(
-      [-0.75, keys.length - 1],
-      [32 * dpr, viewport.height - 48 * dpr]
-    )
+    createLinearScale([-0.75, keys.length - 1], [32 * dpr, viewport.height - 48 * dpr])
   );
 
   const font = await createDefaultFont(cg);
@@ -97,14 +93,13 @@ export default async function BarGraph(cg: CandyGraph) {
   cg.clear([0, 0, 0.25, 1]);
 
   cg.render(coords, viewport, [
-    createRects(cg,
+    createRects(
+      cg,
       keys.flatMap((key, index): number[] => {
         return [0, index - 0.25, pops[key], 0.5];
       }),
       {
-        colors: keys.flatMap((_, i) =>
-          i % 2 === 0 ? [1, 0.5, 0, 1] : [0, 0.5, 1, 1]
-        ),
+        colors: keys.flatMap((_, i) => (i % 2 === 0 ? [1, 0.5, 0, 1] : [0, 0.5, 1, 1])),
       }
     ),
     createOrthoAxis(cg, coords, "x", font, {

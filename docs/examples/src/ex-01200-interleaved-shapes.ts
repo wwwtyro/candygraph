@@ -4,7 +4,6 @@
 // skip-doc-start
 import CandyGraph, {
   createDataset,
-  createOrthoAxis,
   createLinearScale,
   createInterleavedShapes,
   createCartesianCoordinateSystem,

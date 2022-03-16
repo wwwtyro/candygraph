@@ -3,17 +3,17 @@ import { CandyGraph } from "../candygraph";
 
 type Data = number | number[] | number[][] | Float32Array | Dataset;
 
-export function createDataset(regl: Regl, data: Data, auto = true) {
+export function createDataset(regl: Regl, data: Data) {
   if (isDataset(data)) {
     return data;
   }
-  return new Dataset(regl, data, auto);
+  return new Dataset(regl, data);
 }
 
 // Added to keep the public API the same. I.e., like createRects this function
 // expects CandyGraph as the first argument.
-export function createDatasetPublic(cg: CandyGraph, data: Data, auto = false) {
-  return createDataset(cg.regl, data, auto);
+export function createDatasetPublic(cg: CandyGraph, data: Data) {
+  return createDataset(cg.regl, data);
 }
 
 function isDataset(obj: any): obj is Dataset {
@@ -22,36 +22,30 @@ function isDataset(obj: any): obj is Dataset {
 
 export class Dataset {
   public readonly buffer: Buffer;
-  private _length = 0;
-  private _disposed = false;
+  private length = 0;
+  private disposed = false;
 
-  constructor(
-    regl: Regl,
-    data: number | number[] | number[][] | Float32Array,
-    private auto: boolean
-  ) {
+  constructor(regl: Regl, data: number | number[] | number[][] | Float32Array) {
     this.buffer = regl.buffer(1);
     this.update(data);
   }
 
   public update = (data: number | number[] | number[][] | Float32Array) => {
-    if (this._disposed) {
-      throw new Error(
-        "This DataSet cannot be updated, it's already been disposed."
-      );
+    if (this.disposed) {
+      throw new Error("This DataSet cannot be updated, it's already been disposed.");
     }
     if (typeof data === "number") {
       this.buffer([data]);
-      this._length = 1;
+      this.length = 1;
     } else if (ArrayBuffer.isView(data)) {
       this.buffer(data);
-      this._length = data.length;
+      this.length = data.length;
     } else if (Array.isArray(data)) {
       this.buffer(data);
       if (typeof data[0] === "number") {
-        this._length = data.length;
+        this.length = data.length;
       } else {
-        this._length = data.length * data[0].length;
+        this.length = data.length * data[0].length;
       }
     }
     return this;
@@ -59,18 +53,12 @@ export class Dataset {
 
   public dispose() {
     this.buffer.destroy();
-    this._disposed = true;
-  }
-
-  public disposeIfAuto() {
-    if (this.auto) {
-      this.dispose();
-    }
+    this.disposed = true;
   }
 
   public count(size: number) {
     this.assertFits(size);
-    return this._length / size;
+    return this.length / size;
   }
 
   public divisor(instances: number, size: number) {
@@ -82,10 +70,8 @@ export class Dataset {
   }
 
   private assertFits(size: number) {
-    if (this._length % size !== 0) {
-      throw new Error(
-        `Attempted to use incompatible size ${size} with data of length ${this._length}.`
-      );
+    if (this.length % size !== 0) {
+      throw new Error(`Attempted to use incompatible size ${size} with data of length ${this.length}.`);
     }
   }
 }

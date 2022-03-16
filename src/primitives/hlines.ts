@@ -23,9 +23,9 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('hLines')) {
+  if (!cg.hasPositionBuffer("hLines")) {
     cg.setPositionBuffer(
-      'hLines',
+      "hLines",
       // prettier-ignore
       [
         [0, -0.5],
@@ -37,14 +37,10 @@ function getPositionBuffer(cg: CandyGraph) {
       ]
     );
   }
-  return cg.getPositionBuffer('hLines');
+  return cg.getPositionBuffer("hLines");
 }
 
-export function createHLines(
-  cg: CandyGraph,
-  lines: NumberArray | Dataset,
-  options?: Options
-) {
+export function createHLines(cg: CandyGraph, lines: NumberArray | Dataset, options?: Options) {
   const segmentGeometry = getPositionBuffer(cg)!;
   return new HLines(cg.regl, segmentGeometry, lines, options);
 }
@@ -161,8 +157,8 @@ export class HLines extends Primitive {
   }
 
   public dispose(): void {
-    this.lines.disposeIfAuto();
-    this.colors.disposeIfAuto();
-    this.widths.disposeIfAuto();
+    this.lines.dispose();
+    this.colors.dispose();
+    this.widths.dispose();
   }
 }

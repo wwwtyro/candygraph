@@ -38,8 +38,8 @@ export default async function PrecisionPlot(cg: CandyGraph) {
 
   // Create a coordinate system from two linear scales.
   const coords = createCartesianCoordinateSystem(
-    createLinearScale([0, 1], [48 * dpr, viewport.width - 16 * dpr]),
-    createLinearScale([0, 1], [108 * dpr, viewport.height - 16 * dpr])
+    createLinearScale([0, 1], [56 * dpr, viewport.width - 16 * dpr]),
+    createLinearScale([0, 1], [108 * dpr, viewport.height - 24 * dpr])
   );
 
   const font = await createDefaultFont(cg);
@@ -64,7 +64,7 @@ export default async function PrecisionPlot(cg: CandyGraph) {
       labelAnchor: [1, 0],
       labelAngle: 0.35 * Math.PI,
       // Correct the labels appropriate for our -t0 offset:
-      labelFormatter: (n) => (n + t0).toString(),
+      labelFormatter: (n) => (n + t0).toFixed(1),
     }),
     createOrthoAxis(cg, coords, "y", font, {
       tickOffset: 2.5 * dpr,

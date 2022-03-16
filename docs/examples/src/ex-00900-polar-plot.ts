@@ -4,7 +4,6 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createFont,
   createText,
   createLineStrip,
   createLineSegments,

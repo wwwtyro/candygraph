@@ -31,21 +31,17 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('interleavedCircles')) {
+  if (!cg.hasPositionBuffer("interleavedCircles")) {
     cg.setPositionBuffer(
-      'interleavedCircles',
+      "interleavedCircles",
       // prettier-ignore
       [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
     );
   }
-  return cg.getPositionBuffer('interleavedCircles');
+  return cg.getPositionBuffer("interleavedCircles");
 }
 
-export function createInterleavedCircles(
-  cg: CandyGraph,
-  xys: NumberArray | Dataset,
-  options?: Options
-) {
+export function createInterleavedCircles(cg: CandyGraph, xys: NumberArray | Dataset, options?: Options) {
   const positionBuffer = getPositionBuffer(cg)!;
   return new InterleavedCircles(cg.regl, positionBuffer, xys, options);
 }
@@ -57,12 +53,7 @@ export class InterleavedCircles extends Primitive {
   public readonly borderWidths: Dataset;
   public readonly borderColors: Dataset;
 
-  constructor(
-    private regl: Regl,
-    private positionBuffer: Buffer,
-    xys: NumberArray | Dataset,
-    options: Options = {}
-  ) {
+  constructor(private regl: Regl, private positionBuffer: Buffer, xys: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xys = createDataset(regl, xys);
@@ -168,15 +159,11 @@ export class InterleavedCircles extends Primitive {
         },
         borderWidth: {
           buffer: this.regl.prop<Props, "borderWidth">("borderWidth"),
-          divisor: this.regl.prop<Props, "borderWidthDivisor">(
-            "borderWidthDivisor"
-          ),
+          divisor: this.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
         },
         borderColor: {
           buffer: this.regl.prop<Props, "borderColor">("borderColor"),
-          divisor: this.regl.prop<Props, "borderColorDivisor">(
-            "borderColorDivisor"
-          ),
+          divisor: this.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
         },
       },
       count: 6,
@@ -202,10 +189,10 @@ export class InterleavedCircles extends Primitive {
   }
 
   public dispose(): void {
-    this.xys.disposeIfAuto();
-    this.radii.disposeIfAuto();
-    this.borderWidths.disposeIfAuto();
-    this.colors.disposeIfAuto();
-    this.borderColors.disposeIfAuto();
+    this.xys.dispose();
+    this.radii.dispose();
+    this.borderWidths.dispose();
+    this.colors.dispose();
+    this.borderColors.dispose();
   }
 }
