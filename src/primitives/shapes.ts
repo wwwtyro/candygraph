@@ -151,11 +151,11 @@ export class Shapes extends Primitive {
   }
 
   public dispose(): void {
-    this.xs.disposeIfAuto();
-    this.ys.disposeIfAuto();
-    this.shape.disposeIfAuto();
-    this.scales.disposeIfAuto();
-    this.rotations.disposeIfAuto();
-    this.colors.disposeIfAuto();
+    this.xs.dispose();
+    this.ys.dispose();
+    this.shape.dispose();
+    this.scales.dispose();
+    this.rotations.dispose();
+    this.colors.dispose();
   }
 }

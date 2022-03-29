@@ -6,7 +6,6 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createFont,
   createGrid,
   createLineStrip,
   createOrthoAxis,
@@ -38,10 +37,7 @@ export default async function RelativeTime(cg: CandyGraph) {
   // We'll make two coordinate systems; one for the x-axis, which is relative time,
   // and one for the traces, which are in real time. We'll share the y scale between
   // them.
-  const yScale = createLinearScale(
-    [0, 25],
-    [32 * dpr, viewport.height - 16 * dpr]
-  );
+  const yScale = createLinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
   const axisCoords = createCartesianCoordinateSystem(
     createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
@@ -62,8 +58,7 @@ export default async function RelativeTime(cg: CandyGraph) {
       tickWidth: 1 * dpr,
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
-    })
-    .retain(),
+    }),
     createOrthoAxis(cg, axisCoords, "y", font, {
       axisIntercept: 0,
       labelAnchor: [1, 1.25],
@@ -75,8 +70,7 @@ export default async function RelativeTime(cg: CandyGraph) {
       labelSize: 12 * dpr,
 
       labelFormatter: (n: number) => (n === 0 ? "" : n.toString()),
-    })
-    .retain(),
+    }),
   ];
 
   const grid = createGrid(
@@ -86,8 +80,7 @@ export default async function RelativeTime(cg: CandyGraph) {
     axisCoords.xscale.domain,
     axisCoords.yscale.domain,
     { width: 1 * dpr }
-  )
-  .retain();
+  );
 
   function primenoise(t: number) {
     const primes = [2, 3, 5, 7, 11, 13, 17, 19];
@@ -116,8 +109,7 @@ export default async function RelativeTime(cg: CandyGraph) {
       trace: createLineStrip(cg, xs, ys, {
         colors: [1, 0, 1, 1],
         widths: 3.0 * dpr,
-      })
-      .retain(),
+      }),
     };
   }
 

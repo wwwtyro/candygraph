@@ -39,7 +39,7 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
     colors: [0, 0.5, 1.0, 1.0],
     radii: 1 * dpr,
     borderWidths: 0 * dpr,
-  }).retain();
+  });
 
   // Create a viewport. Units are in pixels.
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };

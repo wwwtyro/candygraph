@@ -32,22 +32,17 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('circles')) {
+  if (!cg.hasPositionBuffer("circles")) {
     cg.setPositionBuffer(
-      'circles',
+      "circles",
       // prettier-ignore
       [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
     );
   }
-  return cg.getPositionBuffer('circles');
+  return cg.getPositionBuffer("circles");
 }
 
-export function createCircles(
-  cg: CandyGraph,
-  xs: NumberArray | Dataset,
-  ys: NumberArray | Dataset,
-  options?: Options
-) {
+export function createCircles(cg: CandyGraph, xs: NumberArray | Dataset, ys: NumberArray | Dataset, options?: Options) {
   const positionBuffer = getPositionBuffer(cg)!;
   return new Circles(cg.regl, positionBuffer, xs, ys, options);
 }
@@ -178,15 +173,11 @@ export class Circles extends Primitive {
         },
         borderWidth: {
           buffer: this.regl.prop<Props, "borderWidth">("borderWidth"),
-          divisor: this.regl.prop<Props, "borderWidthDivisor">(
-            "borderWidthDivisor"
-          ),
+          divisor: this.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
         },
         borderColor: {
           buffer: this.regl.prop<Props, "borderColor">("borderColor"),
-          divisor: this.regl.prop<Props, "borderColorDivisor">(
-            "borderColorDivisor"
-          ),
+          divisor: this.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
         },
       },
       count: 6,
@@ -213,11 +204,11 @@ export class Circles extends Primitive {
   }
 
   public dispose(): void {
-    this.xs.disposeIfAuto();
-    this.ys.disposeIfAuto();
-    this.radii.disposeIfAuto();
-    this.borderWidths.disposeIfAuto();
-    this.colors.disposeIfAuto();
-    this.borderColors.disposeIfAuto();
+    this.xs.dispose();
+    this.ys.dispose();
+    this.radii.dispose();
+    this.borderWidths.dispose();
+    this.colors.dispose();
+    this.borderColors.dispose();
   }
 }

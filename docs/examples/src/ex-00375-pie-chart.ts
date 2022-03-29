@@ -5,7 +5,6 @@
 import CandyGraph, {
   createDefaultFont,
   createWedges,
-  createFont,
   createText,
   createLinearScale,
   createCartesianCoordinateSystem,
@@ -38,20 +37,12 @@ export default async function PieChart(cg: CandyGraph) {
         cg,
         font,
         `${Math.round((100 * step) / (2 * Math.PI))}%`,
-        [
-          0.5 * Math.cos(theta + 0.5 * step),
-          0.5 * Math.sin(theta + 0.5 * step),
-        ],
+        [0.5 * Math.cos(theta + 0.5 * step), 0.5 * Math.sin(theta + 0.5 * step)],
         { size: 12 * dpr }
       )
     );
     theta += step;
-    colors.push(
-      Math.random() * 0.5 + 0.5,
-      Math.random() * 0.5 + 0.5,
-      Math.random() * 0.5 + 0.5,
-      1.0
-    );
+    colors.push(Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, 1.0);
   }
   angles.push(theta);
   const step = 2 * Math.PI - theta;
@@ -65,12 +56,7 @@ export default async function PieChart(cg: CandyGraph) {
       { size: 12 * dpr }
     )
   );
-  colors.push(
-    Math.random() * 0.5 + 0.5,
-    Math.random() * 0.5 + 0.5,
-    Math.random() * 0.5 + 0.5,
-    1.0
-  );
+  colors.push(Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, 1.0);
   // prettier-ignore
   const positions = [
     0, 0, 0, 0, 0, 0, 0, 0,

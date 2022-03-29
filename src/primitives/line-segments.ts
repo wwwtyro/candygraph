@@ -23,27 +23,20 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('lineSegments')) {
-    cg.setPositionBuffer(
-      'lineSegments',
-      [
-        [0, -0.5],
-        [1, -0.5],
-        [1, +0.5],
-        [0, -0.5],
-        [1, +0.5],
-        [0, +0.5],
-      ]
-    );
+  if (!cg.hasPositionBuffer("lineSegments")) {
+    cg.setPositionBuffer("lineSegments", [
+      [0, -0.5],
+      [1, -0.5],
+      [1, +0.5],
+      [0, -0.5],
+      [1, +0.5],
+      [0, +0.5],
+    ]);
   }
-  return cg.getPositionBuffer('lineSegments');
+  return cg.getPositionBuffer("lineSegments");
 }
 
-export function createLineSegments(
-  cg: CandyGraph,
-  points: NumberArray | Dataset,
-  options?: Options
-) {
+export function createLineSegments(cg: CandyGraph, points: NumberArray | Dataset, options?: Options) {
   const segmentGeometry = getPositionBuffer(cg)!;
   return new LineSegments(cg.regl, segmentGeometry, points, options);
 }
@@ -149,8 +142,8 @@ export class LineSegments extends Primitive {
   }
 
   public dispose(): void {
-    this.points.disposeIfAuto();
-    this.colors.disposeIfAuto();
-    this.widths.disposeIfAuto();
+    this.points.dispose();
+    this.colors.dispose();
+    this.widths.dispose();
   }
 }

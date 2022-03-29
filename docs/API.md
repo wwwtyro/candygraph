@@ -165,17 +165,16 @@ This method destroys the Regl instance and cached position buffers.
 
 ## Factory Functions
 
-#### `createDataset(cg: CandyGraph, data: NumberArray, autoDispose?: boolean): DataSet`
+#### `createDataset(cg: CandyGraph, data: NumberArray): DataSet`
 
 Returns a reusable DataSet. These can be used to make some operations more
 efficient, such as rendering the same points many times but in different
 positions.
 
-| Parameter   | Type        | Description                                                                                                 |
-| ----------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
-| cg          | CandyGraph  | Required. The CandyGraph instance for wich you want to create a DataSet.                                    |
-| data        | NumberArray | Required. The data to convert to a DataSet. The DataSet will be stored on the GPU for extremely fast reuse. |
-| autoDispose | boolean     | Optional. If `true` the DataSet instance will automatically be disposed.                                    |
+| Parameter | Type        | Description                                                                                                 |
+| --------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| cg        | CandyGraph  | Required. The CandyGraph instance for wich you want to create a DataSet.                                    |
+| data      | NumberArray | Required. The data to convert to a DataSet. The DataSet will be stored on the GPU for extremely fast reuse. |
 
 ##### Example
 

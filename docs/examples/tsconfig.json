@@ -2,6 +2,7 @@
   "compilerOptions": {
     "sourceMap": true,
     "strict": true,
+    "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "module": "es6",

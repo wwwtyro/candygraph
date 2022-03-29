@@ -25,14 +25,14 @@ type Props = {
 };
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('wedges')) {
+  if (!cg.hasPositionBuffer("wedges")) {
     cg.setPositionBuffer(
-      'wedges',
+      "wedges",
       // prettier-ignore
       [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
     );
   }
-  return cg.getPositionBuffer('wedges');
+  return cg.getPositionBuffer("wedges");
 }
 
 export function createWedges(
@@ -184,9 +184,9 @@ export class Wedges extends Primitive {
   }
 
   public dispose(): void {
-    this.xys.disposeIfAuto();
-    this.angles.disposeIfAuto();
-    this.radii.disposeIfAuto();
-    this.colors.disposeIfAuto();
+    this.xys.dispose();
+    this.angles.dispose();
+    this.radii.dispose();
+    this.colors.dispose();
   }
 }

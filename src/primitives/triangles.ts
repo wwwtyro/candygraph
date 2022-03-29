@@ -17,11 +17,7 @@ type Props = {
   count: number;
 };
 
-export function createTriangles(
-  cg: CandyGraph,
-  vertices: NumberArray | Dataset,
-  options?: Options
-) {
+export function createTriangles(cg: CandyGraph, vertices: NumberArray | Dataset, options?: Options) {
   return new Triangles(cg.regl, vertices, options);
 }
 
@@ -29,11 +25,7 @@ export class Triangles extends Primitive {
   private vertices: Dataset;
   public color: Vector4;
 
-  constructor(
-    private regl: Regl,
-    vertices: NumberArray | Dataset,
-    options: Options = {}
-  ) {
+  constructor(private regl: Regl, vertices: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.vertices = createDataset(regl, vertices);
@@ -81,6 +73,6 @@ export class Triangles extends Primitive {
   }
 
   public dispose(): void {
-    this.vertices.disposeIfAuto();
+    this.vertices.dispose();
   }
 }
