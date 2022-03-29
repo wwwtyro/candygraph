@@ -73,7 +73,7 @@ export class Text extends Primitive {
     let charCount = 0;
     for (let i = 0; i < text.length; i++) {
       const code = text.charCodeAt(i);
-      // We do not count whitespaces (code 32), line breaks (code 10), and unavailable glyphs
+      // We do not count whitespaces (code 32), line breaks (code 10), and unknown glyphs
       charCount += Number(Boolean(code !== 32 && code !== 10 && this.font.glyphs[code]));
     }
 
@@ -100,9 +100,9 @@ export class Text extends Primitive {
     // We'll store the width and char count of each line in this.
     const textMetrics = [];
 
-    // Counter for keeping track of unavailable glyphs to limit the number of
+    // Counter for keeping track of unknown glyphs to limit the number of
     // console-logged warnings
-    let numUnavailableGlyphs = 0;
+    let numUnknownGlyphs = 0;
 
     // Iterate over each line.
     for (const line of lines) {
@@ -124,12 +124,12 @@ export class Text extends Primitive {
         const glyph = this.font.glyphs[char.charCodeAt(0)];
 
         if (!glyph) {
-          ++numUnavailableGlyphs;
+          ++numUnknownGlyphs;
 
-          if (numUnavailableGlyphs < MAX_UNAVAILABLE_GLYPH_WARNINGS) {
+          if (numUnknownGlyphs < MAX_UNAVAILABLE_GLYPH_WARNINGS) {
             console.warn(`The provided font does not contain a glyph for "${char}" (code: ${char.charCodeAt(0)})`);
-          } else if (numUnavailableGlyphs === MAX_UNAVAILABLE_GLYPH_WARNINGS) {
-            console.warn("Too many warnings of unavailable glyphs in the provided font. We'll stop logging warnings.");
+          } else if (numUnknownGlyphs === MAX_UNAVAILABLE_GLYPH_WARNINGS) {
+            console.warn("Too many warnings of unknown glyphs in the provided font. We'll stop logging warnings.");
           }
 
           continue;
