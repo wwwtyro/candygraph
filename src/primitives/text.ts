@@ -3,6 +3,8 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, Vector2, Vector4 } from "../common";
 import { Font } from "./font";
 
+const MAX_UNAVAILABLE_GLYPH_WARNINGS = 10;
+
 export type Options = {
   align?: number;
   anchor?: Vector2;
@@ -34,22 +36,13 @@ let quadBuffer = new Float32Array(1);
 let uvBuffer = new Float32Array(1);
 
 function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer('text')) {
-    cg.setPositionBuffer(
-      'text',
-      [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
-    );
+  if (!cg.hasPositionBuffer("text")) {
+    cg.setPositionBuffer("text", [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
   }
-  return cg.getPositionBuffer('text');
+  return cg.getPositionBuffer("text");
 }
 
-export function createText(
-  cg: CandyGraph,
-  font: Font,
-  text: string,
-  position: Vector2,
-  options?: Options
-) {
+export function createText(cg: CandyGraph, font: Font, text: string, position: Vector2, options?: Options) {
   const quadGeometry = getPositionBuffer(cg)!;
   return new Text(cg.regl, quadGeometry, font, text, position, options);
 }
@@ -77,7 +70,12 @@ export class Text extends Primitive {
     const opts = { ...DEFAULTS, ...options };
 
     // Get a count of the actual number of characters we'll be creating quads for.
-    const charCount = text.replace(/ /g, "").replace(/\n/g, "").length;
+    let charCount = 0;
+    for (let i = 0; i < text.length; i++) {
+      const code = text.charCodeAt(i);
+      // We do not count whitespaces (code 32), line breaks (code 10), and unknown glyphs
+      charCount += Number(Boolean(code !== 32 && code !== 10 && this.font.glyphs[code]));
+    }
 
     // Keep track of the current character.
     let charIndex = 0;
@@ -102,6 +100,10 @@ export class Text extends Primitive {
     // We'll store the width and char count of each line in this.
     const textMetrics = [];
 
+    // Counter for keeping track of unknown glyphs to limit the number of
+    // console-logged warnings
+    let numUnknownGlyphs = 0;
+
     // Iterate over each line.
     for (const line of lines) {
       const lineMetrics = {
@@ -121,11 +123,22 @@ export class Text extends Primitive {
         // Find the glyph for that character.
         const glyph = this.font.glyphs[char.charCodeAt(0)];
 
+        if (!glyph) {
+          ++numUnknownGlyphs;
+
+          if (numUnknownGlyphs < MAX_UNAVAILABLE_GLYPH_WARNINGS) {
+            console.warn(`The provided font does not contain a glyph for "${char}" (code: ${char.charCodeAt(0)})`);
+          } else if (numUnknownGlyphs === MAX_UNAVAILABLE_GLYPH_WARNINGS) {
+            console.warn("Too many warnings of unknown glyphs in the provided font. We'll stop logging warnings.");
+          }
+
+          continue;
+        }
+
         // If this isn't a space character, go ahead and append layout data.
         if (char !== " ") {
           // Calculate the amount to kern. Default to zero.
-          const kernAmount =
-            prevGlyph === null ? 0 : this.font.kern(prevGlyph.id, glyph.id);
+          const kernAmount = prevGlyph === null ? 0 : this.font.kern(prevGlyph.id, glyph.id);
 
           // Calculate and append the offset of the character quad.
           const ox = cx + glyph.xoffset + kernAmount;
