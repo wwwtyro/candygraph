@@ -62,8 +62,8 @@ export default async function doc_00500(cg: CandyGraph) {
   const liny = createLinearScale([0, 10000], [24, viewport.height - 16]);
   const logy = createLogScale(10, [1, 10000], [24, viewport.height - 16]);
 
-  const linlin = createCartesianCoordinateSystem(linx, liny);
-  const linlog = createCartesianCoordinateSystem(linx, logy);
+  const linlin = createCartesianCoordinateSystem(cg, linx, liny);
+  const linlog = createCartesianCoordinateSystem(cg, linx, logy);
 
   // We'll also hold onto our higher-level constructs by assigning them to a
   // variable and keeping that reference to them, preventing garbage collection.

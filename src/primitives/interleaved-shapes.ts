@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -35,7 +35,7 @@ export function createInterleavedShapes(
   xys: NumberArray | Dataset,
   options?: Options
 ) {
-  return new InterleavedShapes(cg.regl, shape, xys, options);
+  return new InterleavedShapes(cg, shape, xys, options);
 }
 
 export class InterleavedShapes extends Primitive {
@@ -45,18 +45,18 @@ export class InterleavedShapes extends Primitive {
   public rotations: Dataset;
   public colors: Dataset;
 
-  constructor(private regl: Regl, shape: NumberArray | Dataset, xys: NumberArray | Dataset, options: Options = {}) {
+  constructor(private cg: CandyGraph, shape: NumberArray | Dataset, xys: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.shape = createDataset(regl, shape);
-    this.xys = createDataset(regl, xys);
-    this.scales = createDataset(regl, opts.scales);
-    this.rotations = createDataset(regl, opts.rotations);
-    this.colors = createDataset(regl, opts.colors);
+    this.shape = createDataset(cg.regl, shape);
+    this.xys = createDataset(cg.regl, xys);
+    this.scales = createDataset(cg.regl, opts.scales);
+    this.rotations = createDataset(cg.regl, opts.rotations);
+    this.colors = createDataset(cg.regl, opts.colors);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -92,28 +92,28 @@ export class InterleavedShapes extends Primitive {
 
       attributes: {
         position: {
-          buffer: this.regl.prop<Props, "position">("position"),
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         xy: {
-          buffer: this.regl.prop<Props, "xy">("xy"),
+          buffer: this.cg.regl.prop<Props, "xy">("xy"),
           divisor: 1,
         },
         scale: {
-          buffer: this.regl.prop<Props, "scale">("scale"),
-          divisor: this.regl.prop<Props, "scaleDivisor">("scaleDivisor"),
+          buffer: this.cg.regl.prop<Props, "scale">("scale"),
+          divisor: this.cg.regl.prop<Props, "scaleDivisor">("scaleDivisor"),
         },
         rotation: {
-          buffer: this.regl.prop<Props, "rotation">("rotation"),
-          divisor: this.regl.prop<Props, "rotationDivisor">("rotationDivisor"),
+          buffer: this.cg.regl.prop<Props, "rotation">("rotation"),
+          divisor: this.cg.regl.prop<Props, "rotationDivisor">("rotationDivisor"),
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
       },
-      count: this.regl.prop<Props, "count">("count"),
-      instances: this.regl.prop<Props, "instances">("instances"),
+      count: this.cg.regl.prop<Props, "count">("count"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -140,5 +140,6 @@ export class InterleavedShapes extends Primitive {
     this.scales.dispose();
     this.rotations.dispose();
     this.colors.dispose();
+    this.cg.clearCommandCache(this);
   }
 }

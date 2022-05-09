@@ -41,6 +41,7 @@ export default async function doc_00400(cg: CandyGraph) {
   // system with a bit of padding for our axes:
   const viewport = { x: 0, y: 0, width: 1024, height: 384 };
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-history, 0], [40, viewport.width - 16]),
     createLinearScale([-1, 1], [32, viewport.height - 16])
   );

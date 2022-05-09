@@ -22,11 +22,13 @@ export default async function MultiViewport(cg: CandyGraph) {
   canvas.height *= dpr;
 
   const coordstop = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
     createLinearScale([0, 10], [16 * dpr, 256 * dpr - 40 * dpr])
   );
 
   const coordsbottom = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
     createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr])
   );
@@ -128,6 +130,7 @@ export default async function MultiViewport(cg: CandyGraph) {
   ]);
 
   const coordsbig = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 10], [40 * dpr, 512 * dpr - 40 * dpr]),
     createLinearScale([0, 10], [32 * dpr, 512 * dpr - 32 * dpr])
   );

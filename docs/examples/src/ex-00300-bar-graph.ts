@@ -84,6 +84,7 @@ export default async function BarGraph(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: 512 * dpr, height: 1024 * dpr };
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
     createLinearScale([-0.75, keys.length - 1], [32 * dpr, viewport.height - 48 * dpr])
   );

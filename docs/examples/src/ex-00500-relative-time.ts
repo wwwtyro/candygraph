@@ -39,10 +39,12 @@ export default async function RelativeTime(cg: CandyGraph) {
   // them.
   const yScale = createLinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
   const axisCoords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
   const timeCoords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );

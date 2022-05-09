@@ -10,7 +10,6 @@ import CandyGraph, {
   createCartesianCoordinateSystem,
 } from "../../../src";
 
-
 export default async function SimplePlot(cg: CandyGraph) {
   // Generate some x & y data.
   const xs = [];
@@ -35,6 +34,7 @@ export default async function SimplePlot(cg: CandyGraph) {
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
     createLinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );

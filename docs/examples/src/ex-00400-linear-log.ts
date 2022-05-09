@@ -24,6 +24,7 @@ export default async function LinearLog(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [40 * dpr, viewport.width - 16 * dpr]),
     createLogScale(10, [1, 100000], [32 * dpr, viewport.height - 16 * dpr])
   );
