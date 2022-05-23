@@ -1,3 +1,4 @@
+import { CandyGraph } from "../candygraph";
 import { Regl, DrawCommand } from "regl";
 import { Vector2 } from "../common";
 import { CoordinateSystem, Kind } from "./coordinate-system";
@@ -12,10 +13,11 @@ type Props = {
 };
 
 export function createCartesianCoordinateSystem(
+  cg: CandyGraph,
   xscale: LinearScale | LogScale,
   yscale: LinearScale | LogScale
 ) {
-  return new CartesianCoordinateSystem(xscale, yscale);
+  return new CartesianCoordinateSystem(cg, xscale, yscale);
 }
 
 export class CartesianCoordinateSystem extends CoordinateSystem {
@@ -23,17 +25,14 @@ export class CartesianCoordinateSystem extends CoordinateSystem {
   public readonly kind = Kind.Cartesian;
 
   constructor(
+    private cg: CandyGraph,
     public readonly xscale: LinearScale | LogScale,
     public readonly yscale: LinearScale | LogScale
   ) {
     super();
 
-    const xglsl = xscale.glsl
-      .replace("toDomain", "toXDomain")
-      .replace("toRange", "toXRange");
-    const yglsl = yscale.glsl
-      .replace("toDomain", "toYDomain")
-      .replace("toRange", "toYRange");
+    const xglsl = xscale.glsl.replace("toDomain", "toXDomain").replace("toRange", "toXRange");
+    const yglsl = yscale.glsl.replace("toDomain", "toYDomain").replace("toRange", "toYRange");
     this.glsl = `
     uniform vec2 xdomain, ydomain;
     uniform vec2 xrange, yrange;
@@ -83,5 +82,9 @@ export class CartesianCoordinateSystem extends CoordinateSystem {
       xrange: this.xscale.range,
       yrange: this.yscale.range,
     };
+  }
+
+  public dispose() {
+    this.cg.clearCoordinateCache(this);
   }
 }

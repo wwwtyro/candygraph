@@ -33,7 +33,7 @@ export class CandyGraph {
   public readonly regl: Regl;
   public readonly canvas: HTMLCanvasElement;
 
-  private commandCache: { [glsl: string]: Map<Function, DrawCommand> } = {};
+  private commandCache = new Map<Function, { [glsl: string]: DrawCommand }>();
   private coordinateScopeCache = new Map<CoordinateSystem, DrawCommand>();
   private compositeScopeCache = new Map<Function, DrawCommand | null>();
   private scope: DrawCommand;
@@ -87,6 +87,24 @@ export class CandyGraph {
       buffer.destroy();
     });
     this.positionBufferCache.clear();
+  };
+
+  public clearCache = (): void => {
+    this.coordinateScopeCache.clear();
+    this.compositeScopeCache.clear();
+    this.commandCache.clear();
+  };
+
+  public clearCoordinateCache = (coords: CoordinateSystem): void => {
+    this.coordinateScopeCache.delete(coords);
+  };
+
+  public clearCompositeCache = (composite: Composite): void => {
+    this.compositeScopeCache.delete(composite.constructor);
+  };
+
+  public clearCommandCache = (primitive: Primitive): void => {
+    this.commandCache.delete(primitive.constructor);
   };
 
   public render = (coords: CoordinateSystem, viewport: Viewport, renderable: Renderable): void => {
@@ -166,16 +184,18 @@ export class CandyGraph {
   }
 
   private getCommand(coords: CoordinateSystem, primitive: Primitive) {
-    let m0 = this.commandCache[coords.glsl];
-    if (!m0) {
-      m0 = new Map<Function, DrawCommand>();
-      this.commandCache[coords.glsl] = m0;
+    let commands = this.commandCache.get(primitive.constructor);
+    if (!commands) {
+      commands = {};
+      this.commandCache.set(primitive.constructor, commands);
     }
-    let command = m0.get(primitive.constructor);
+
+    let command = commands[coords.glsl];
     if (!command) {
       command = primitive.command(coords.glsl + commonGLSL);
-      m0.set(primitive.constructor, command);
+      commands[coords.glsl] = command;
     }
+
     return command;
   }
 

@@ -65,6 +65,7 @@ export default async function PieChart(cg: CandyGraph) {
   ];
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-1, 1], [0, viewport.width]),
     createLinearScale([-1, 1], [0, viewport.height])
   );

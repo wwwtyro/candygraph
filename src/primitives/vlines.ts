@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -38,7 +38,7 @@ function getPositionBuffer(cg: CandyGraph) {
 
 export function createVLines(cg: CandyGraph, lines: NumberArray | Dataset, options?: Options) {
   const segmentGeometry = getPositionBuffer(cg)!;
-  return new VLines(cg.regl, segmentGeometry, lines, options);
+  return new VLines(cg, segmentGeometry, lines, options);
 }
 
 export class VLines extends Primitive {
@@ -47,20 +47,20 @@ export class VLines extends Primitive {
   public readonly colors: Dataset;
 
   constructor(
-    private regl: Regl,
+    private cg: CandyGraph,
     private segmentGeometry: Buffer,
     lines: NumberArray | Dataset,
     options: Options = {}
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.lines = createDataset(regl, lines);
-    this.widths = createDataset(regl, opts.widths);
-    this.colors = createDataset(regl, opts.colors);
+    this.lines = createDataset(cg.regl, lines);
+    this.widths = createDataset(cg.regl, opts.widths);
+    this.colors = createDataset(cg.regl, opts.colors);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -121,21 +121,21 @@ export class VLines extends Primitive {
           divisor: 0,
         },
         line: {
-          buffer: this.regl.prop<Props, "line">("line"),
+          buffer: this.cg.regl.prop<Props, "line">("line"),
           divisor: 1,
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
         width: {
-          buffer: this.regl.prop<Props, "width">("width"),
-          divisor: this.regl.prop<Props, "widthDivisor">("widthDivisor"),
+          buffer: this.cg.regl.prop<Props, "width">("width"),
+          divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
         },
       },
 
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -156,5 +156,6 @@ export class VLines extends Primitive {
     this.lines.dispose();
     this.colors.dispose();
     this.widths.dispose();
+    this.cg.clearCommandCache(this);
   }
 }

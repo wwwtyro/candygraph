@@ -63,7 +63,7 @@ to the full width and height of our viewport. Here they are:</p>
 <p>Now that we have our scales, we can create a coordinate system. Coordinate
 systems in CandyGraph wrap scales and add a little more GLSL glue code for
 use on the GPU. Here we’ll create a cartesian coordinate system:</p>
-<pre><code class="language-typescript">  const coords = createCartesianCoordinateSystem(xscale, yscale);
+<pre><code class="language-typescript">  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
 </code></pre>
 <p>Next we’re going to make some data for our plot. We’ll loop through 0 to 2π
 with a small increment for our x-values, and calculate the sine of each of
@@ -93,10 +93,7 @@ render a line strip. We’ll render it with width 2 pixels and in red
 been added to the DOM. Instead of doing that, we’ll use the <code>copyTo</code>
 utility function to copy it to the canvas we mentioned earlier, which has
 <code>id=&quot;doc_00100&quot;</code> defined:</p>
-<pre><code class="language-typescript">  cg.copyTo(
-    viewport,
-    document.getElementById(&quot;doc_00100&quot;) as HTMLCanvasElement
-  );
+<pre><code class="language-typescript">  cg.copyTo(viewport, document.getElementById(&quot;doc_00100&quot;) as HTMLCanvasElement);
 </code></pre>
 <div style="text-align: center">
 <canvas id="doc_00100" style="box-shadow: 0px 0px 8px #ccc;" width=512 height=384>
@@ -268,7 +265,7 @@ of 1 to 100000:</p>
 </code></pre>
 <p>Then we’ll create our coordinate system, grab the default font, clear the
 canvas, and render our data with axes:</p>
-<pre><code class="language-typescript">  const coords = createCartesianCoordinateSystem(xscale, yscale);
+<pre><code class="language-typescript">  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
   const font = await createDefaultFont(cg);
 
   cg.clear([1, 1, 1, 1]);
@@ -313,8 +310,7 @@ the x-axis:</p>
     createOrthoAxis(cg, coords, &quot;y&quot;, font, {
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) =&gt;
-        n &gt;= 1000 ? Math.round(n / 1000).toString() + &quot;K&quot; : n.toString(),
+      labelFormatter: (n) =&gt; (n &gt;= 1000 ? Math.round(n / 1000).toString() + &quot;K&quot; : n.toString()),
     }),
   ]);
 </code></pre>
@@ -342,8 +338,7 @@ adding some minor ticks:</p>
       minorTickOffset: 2,
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) =&gt;
-        n &gt;= 1000 ? Math.round(n / 1000).toString() + &quot;K&quot; : n.toString(),
+      labelFormatter: (n) =&gt; (n &gt;= 1000 ? Math.round(n / 1000).toString() + &quot;K&quot; : n.toString()),
     }),
   ]);
 </code></pre>
@@ -368,33 +363,23 @@ from the render function into a separate variable:</p>
       minorTickOffset: 2,
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) =&gt;
-        n &gt;= 1000 ? Math.round(n / 1000).toString() + &quot;K&quot; : n.toString(),
+      labelFormatter: (n) =&gt; (n &gt;= 1000 ? Math.round(n / 1000).toString() + &quot;K&quot; : n.toString()),
     }),
   ];
 </code></pre>
 <p>Then we’ll access the <code>info</code> objects on that variable to build grids with
 the <code>Grid</code> helper CandyGraph provides. First we’ll make a grid with our
 major ticks on both the x- and y-axes:</p>
-<pre><code class="language-typescript">  const majorGrid = createGrid(
-    cg,
-    axes[0].info.ticks,
-    axes[1].info.ticks,
-    coords.xscale.domain,
-    coords.yscale.domain,
-    { color: [0.25, 0.25, 0.25, 1], width: 1 }
-  );
+<pre><code class="language-typescript">  const majorGrid = createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    color: [0.25, 0.25, 0.25, 1],
+    width: 1,
+  });
 </code></pre>
 <p>Then we’ll create a grid for the minor ticks, which we only have on the
 y-axis, so we’ll pass an empty array for the x-axis ticks:</p>
-<pre><code class="language-typescript">  const minorGrid = createGrid(
-    cg,
-    [],
-    axes[1].info.minorTicks,
-    coords.xscale.domain,
-    coords.yscale.domain,
-    { color: [0.75, 0.75, 0.75, 1] }
-  );
+<pre><code class="language-typescript">  const minorGrid = createGrid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+    color: [0.75, 0.75, 0.75, 1],
+  });
 </code></pre>
 <p>And finally render our graph:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
@@ -439,6 +424,7 @@ of data:</p>
 system with a bit of padding for our axes:</p>
 <pre><code class="language-typescript">  const viewport = { x: 0, y: 0, width: 1024, height: 384 };
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-history, 0], [40, viewport.width - 16]),
     createLinearScale([-1, 1], [32, viewport.height - 16])
   );
@@ -585,8 +571,8 @@ y-axis:</p>
   const liny = createLinearScale([0, 10000], [24, viewport.height - 16]);
   const logy = createLogScale(10, [1, 10000], [24, viewport.height - 16]);
 
-  const linlin = createCartesianCoordinateSystem(linx, liny);
-  const linlog = createCartesianCoordinateSystem(linx, logy);
+  const linlin = createCartesianCoordinateSystem(cg, linx, liny);
+  const linlog = createCartesianCoordinateSystem(cg, linx, logy);
 </code></pre>
 <p>We’ll also hold onto our higher-level constructs by assigning them to a
 variable and keeping that reference to them, preventing garbage collection.</p>

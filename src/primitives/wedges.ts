@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -42,7 +42,7 @@ export function createWedges(
   options?: Options
 ) {
   const positionBuffer = getPositionBuffer(cg)!;
-  return new Wedges(cg.regl, positionBuffer, xys, angles, options);
+  return new Wedges(cg, positionBuffer, xys, angles, options);
 }
 
 export class Wedges extends Primitive {
@@ -52,7 +52,7 @@ export class Wedges extends Primitive {
   public readonly radii: Dataset;
 
   constructor(
-    private regl: Regl,
+    private cg: CandyGraph,
     private positionBuffer: Buffer,
     xys: NumberArray | Dataset,
     angles: NumberArray | Dataset,
@@ -60,86 +60,86 @@ export class Wedges extends Primitive {
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.xys = createDataset(regl, xys);
-    this.angles = createDataset(regl, angles);
-    this.colors = createDataset(regl, opts.colors);
-    this.radii = createDataset(regl, opts.radii);
+    this.xys = createDataset(cg.regl, xys);
+    this.angles = createDataset(cg.regl, angles);
+    this.colors = createDataset(cg.regl, opts.colors);
+    this.radii = createDataset(cg.regl, opts.radii);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
-          precision highp float;
-          attribute vec2 position;
-          attribute vec2 offset, angle;
-          attribute vec4 color;
-          attribute float radius;
+        precision highp float;
+        attribute vec2 position;
+        attribute vec2 offset, angle;
+        attribute vec4 color;
+        attribute float radius;
 
-          varying vec4 vColor;
-          varying vec2 vPosition, vAngle;
-          varying float vRadius;
+        varying vec4 vColor;
+        varying vec2 vPosition, vAngle;
+        varying float vRadius;
 
-          ${glsl}
+        ${glsl}
 
-          void main() {
-            vPosition = position * radius;
-            vec2 screenPosition = toRange(offset) + vPosition;
-            gl_Position = rangeToClip(screenPosition);
-            vColor = color;
-            vRadius = radius;
-            vAngle = angle;
-          }`,
+        void main() {
+          vPosition = position * radius;
+          vec2 screenPosition = toRange(offset) + vPosition;
+          gl_Position = rangeToClip(screenPosition);
+          vColor = color;
+          vRadius = radius;
+          vAngle = angle;
+        }`,
 
       frag: `
-          precision highp float;
+        precision highp float;
 
-          uniform vec2 resolution;
+        uniform vec2 resolution;
 
-          varying vec4 vColor;
-          varying vec2 vPosition, vAngle;
-          varying float vRadius;
+        varying vec4 vColor;
+        varying vec2 vPosition, vAngle;
+        varying float vRadius;
 
-          const float PI = 3.141592653589793;
+        const float PI = 3.141592653589793;
 
-          vec4 sample(vec2 p) {
-            float dist2 = dot(p, p);
-            if (dist2 > vRadius * vRadius) {
-              return vec4(vColor.rgb, 0.0);
-            }
-            float theta;
-            if (p.x == 0.0) {
-              if (p.y > 0.0) {
-                theta = 0.5 * PI;
-              } else {
-                theta = 1.5 * PI;
-              }
-            } else {
-              theta = atan(p.y, p.x);
-              if (theta < 0.0) {
-                theta += 2.0 * PI;
-              }
-            }
-            if (theta < vAngle.x || theta > vAngle.x + vAngle.y) {
-              return vec4(vColor.rgb, 0.0);
-            }
-            return vColor;
+        vec4 sample(vec2 p) {
+          float dist2 = dot(p, p);
+          if (dist2 > vRadius * vRadius) {
+            return vec4(vColor.rgb, 0.0);
           }
-
-          void main() {
-            vec2 p1 = vPosition + vec2(-0.25, +0.35);
-            vec2 p2 = vPosition + vec2(+0.35, +0.25);
-            vec2 p3 = vPosition + vec2(+0.25, -0.35);
-            vec2 p4 = vPosition + vec2(-0.35, -0.25);
-            vec4 pc = vec4(0.0);
-            pc += sample(p1);
-            pc += sample(p2);
-            pc += sample(p3);
-            pc += sample(p4);
-            if (pc.a == 0.0) {
-              discard;
+          float theta;
+          if (p.x == 0.0) {
+            if (p.y > 0.0) {
+              theta = 0.5 * PI;
+            } else {
+              theta = 1.5 * PI;
             }
-            gl_FragColor = 0.25 * pc;
-          }`,
+          } else {
+            theta = atan(p.y, p.x);
+            if (theta < 0.0) {
+              theta += 2.0 * PI;
+            }
+          }
+          if (theta < vAngle.x || theta > vAngle.x + vAngle.y) {
+            return vec4(vColor.rgb, 0.0);
+          }
+          return vColor;
+        }
+
+        void main() {
+          vec2 p1 = vPosition + vec2(-0.25, +0.35);
+          vec2 p2 = vPosition + vec2(+0.35, +0.25);
+          vec2 p3 = vPosition + vec2(+0.25, -0.35);
+          vec2 p4 = vPosition + vec2(-0.35, -0.25);
+          vec4 pc = vec4(0.0);
+          pc += sample(p1);
+          pc += sample(p2);
+          pc += sample(p3);
+          pc += sample(p4);
+          if (pc.a == 0.0) {
+            discard;
+          }
+          gl_FragColor = 0.25 * pc;
+        }`,
 
       attributes: {
         position: {
@@ -147,24 +147,24 @@ export class Wedges extends Primitive {
           divisor: 0,
         },
         offset: {
-          buffer: this.regl.prop<Props, "offset">("offset"),
+          buffer: this.cg.regl.prop<Props, "offset">("offset"),
           divisor: 1,
         },
         angle: {
-          buffer: this.regl.prop<Props, "angle">("angle"),
-          divisor: this.regl.prop<Props, "angleDivisor">("angleDivisor"),
+          buffer: this.cg.regl.prop<Props, "angle">("angle"),
+          divisor: this.cg.regl.prop<Props, "angleDivisor">("angleDivisor"),
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
         radius: {
-          buffer: this.regl.prop<Props, "radius">("radius"),
-          divisor: this.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
+          buffer: this.cg.regl.prop<Props, "radius">("radius"),
+          divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
         },
       },
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -188,5 +188,6 @@ export class Wedges extends Primitive {
     this.angles.dispose();
     this.radii.dispose();
     this.colors.dispose();
+    this.cg.clearCommandCache(this);
   }
 }

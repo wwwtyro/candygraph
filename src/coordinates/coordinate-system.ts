@@ -13,4 +13,5 @@ export abstract class CoordinateSystem {
   public abstract props(): Record<string, unknown>;
   public abstract toDomain(rangeVector: Vector2): Vector2;
   public abstract toRange(domainVector: Vector2): Vector2;
+  public abstract dispose(): void;
 }

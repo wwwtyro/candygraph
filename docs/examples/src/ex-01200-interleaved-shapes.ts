@@ -21,6 +21,7 @@ export default function InterleavedShapes(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [0, viewport.width]),
     createLinearScale([0, 1], [0, viewport.height])
   );

@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -71,7 +71,7 @@ export function createLineStrip(
   options?: Options
 ) {
   const geometry = getPositionBuffer(cg)!;
-  return new LineStrip(cg.regl, geometry, geometryCount, xs, ys, options);
+  return new LineStrip(cg, geometry, geometryCount, xs, ys, options);
 }
 
 export class LineStrip extends Primitive {
@@ -81,7 +81,7 @@ export class LineStrip extends Primitive {
   public readonly colors: Dataset;
 
   constructor(
-    private regl: Regl,
+    private cg: CandyGraph,
     private roundCapJoin: Buffer,
     private geometryCount: number,
     xs: NumberArray | Dataset,
@@ -90,14 +90,14 @@ export class LineStrip extends Primitive {
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.xs = createDataset(regl, xs);
-    this.ys = createDataset(regl, ys);
-    this.widths = createDataset(regl, opts.widths);
-    this.colors = createDataset(regl, opts.colors);
+    this.xs = createDataset(cg.regl, xs);
+    this.ys = createDataset(cg.regl, ys);
+    this.widths = createDataset(cg.regl, opts.widths);
+    this.colors = createDataset(cg.regl, opts.colors);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
       precision highp float;
       attribute vec3 position;
@@ -136,37 +136,37 @@ export class LineStrip extends Primitive {
           divisor: 0,
         },
         ax: {
-          buffer: this.regl.prop<Props, "xs">("xs"),
+          buffer: this.cg.regl.prop<Props, "xs">("xs"),
           divisor: 1,
           offset: Float32Array.BYTES_PER_ELEMENT * 0,
         },
         ay: {
-          buffer: this.regl.prop<Props, "ys">("ys"),
+          buffer: this.cg.regl.prop<Props, "ys">("ys"),
           divisor: 1,
           offset: Float32Array.BYTES_PER_ELEMENT * 0,
         },
         bx: {
-          buffer: this.regl.prop<Props, "xs">("xs"),
+          buffer: this.cg.regl.prop<Props, "xs">("xs"),
           divisor: 1,
           offset: Float32Array.BYTES_PER_ELEMENT * 1,
         },
         by: {
-          buffer: this.regl.prop<Props, "ys">("ys"),
+          buffer: this.cg.regl.prop<Props, "ys">("ys"),
           divisor: 1,
           offset: Float32Array.BYTES_PER_ELEMENT * 1,
         },
         width: {
-          buffer: this.regl.prop<Props, "width">("width"),
-          divisor: this.regl.prop<Props, "widthDivisor">("widthDivisor"),
+          buffer: this.cg.regl.prop<Props, "width">("width"),
+          divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
       },
 
       count: this.geometryCount,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -189,5 +189,6 @@ export class LineStrip extends Primitive {
     this.ys.dispose();
     this.widths.dispose();
     this.colors.dispose();
+    this.cg.clearCommandCache(this);
   }
 }

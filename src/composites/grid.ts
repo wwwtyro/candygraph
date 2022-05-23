@@ -1,11 +1,5 @@
 import { CandyGraph } from "../candygraph";
-import {
-  Composite,
-  Renderable,
-  Vector4,
-  Vector2,
-  NumberArray,
-} from "../common";
+import { Composite, Renderable, Vector4, Vector2, NumberArray } from "../common";
 import { createVLines } from "../primitives/vlines";
 import { createHLines } from "../primitives/hlines";
 
@@ -27,21 +21,14 @@ export function createGrid(
   yExtents: Vector2,
   options?: Options
 ): Grid {
-  return new Grid(
-    cg,
-    xPositions,
-    yPositions,
-    xExtents,
-    yExtents,
-    options
-  );
+  return new Grid(cg, xPositions, yPositions, xExtents, yExtents, options);
 }
 
 export class Grid extends Composite {
   private grid: Renderable = [];
 
   constructor(
-    cg: CandyGraph,
+    private cg: CandyGraph,
     xPositions: NumberArray,
     yPositions: NumberArray,
     xExtents: Vector2,
@@ -71,5 +58,9 @@ export class Grid extends Composite {
 
   public children(): Renderable {
     return this.grid;
+  }
+
+  public dispose() {
+    this.cg.clearCompositeCache(this);
   }
 }
