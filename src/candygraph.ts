@@ -190,10 +190,10 @@ export class CandyGraph {
       this.commandCache.set(primitive.constructor, commands);
     }
 
-    let command = commands[coords.kind];
+    let command = commands[coords.glsl];
     if (!command) {
       command = primitive.command(coords.glsl + commonGLSL);
-      commands[coords.kind] = command;
+      commands[coords.glsl] = command;
     }
 
     return command;
