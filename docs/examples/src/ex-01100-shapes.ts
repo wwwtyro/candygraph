@@ -22,6 +22,7 @@ export default function Shapes(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 2 * Math.PI], [0, viewport.width]),
     createLinearScale([-1, 1], [0, viewport.height])
   );
@@ -45,12 +46,7 @@ export default function Shapes(cg: CandyGraph) {
     xs.push(x);
     ys0.push(Math.sin(x));
     ys1.push(Math.cos(x));
-    colors.push(
-      Math.random() * 0.75 + 0.25,
-      Math.random() * 0.75 + 0.25,
-      Math.random() * 0.75 + 0.25,
-      1
-    );
+    colors.push(Math.random() * 0.75 + 0.25, Math.random() * 0.75 + 0.25, Math.random() * 0.75 + 0.25, 1);
     const scale = (1 + Math.random() * 2) * dpr;
     scales.push(scale, scale);
     rotations.push(Math.random() * 2 * Math.PI);

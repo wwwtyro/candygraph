@@ -1,9 +1,5 @@
 // skip-doc-start
-import CandyGraph, {
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
-} from "../../../src";
+import CandyGraph, { createLinearScale, createCartesianCoordinateSystem, createLineStrip } from "../../../src";
 // skip-doc-stop
 
 // ## Viewport, Scale, and Coordinates
@@ -34,7 +30,7 @@ export default function doc_00100(cg: CandyGraph): void {
   // Now that we have our scales, we can create a coordinate system. Coordinate
   // systems in CandyGraph wrap scales and add a little more GLSL glue code for
   // use on the GPU. Here we'll create a cartesian coordinate system:
-  const coords = createCartesianCoordinateSystem(xscale, yscale);
+  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
 
   // Next we're going to make some data for our plot. We'll loop through 0 to 2π
   // with a small increment for our x-values, and calculate the sine of each of
@@ -64,10 +60,7 @@ export default function doc_00100(cg: CandyGraph): void {
   // been added to the DOM. Instead of doing that, we'll use the `copyTo`
   // utility function to copy it to the canvas we mentioned earlier, which has
   // `id="doc_00100"` defined:
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00100") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00100") as HTMLCanvasElement);
 } // skip-doc
 
 // <div style="text-align: center">

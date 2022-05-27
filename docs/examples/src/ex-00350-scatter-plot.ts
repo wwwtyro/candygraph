@@ -17,8 +17,7 @@ export default async function ScatterPlot(cg: CandyGraph) {
   for (let i = 0; i < 10000; i++) {
     const x = Math.random();
     const y = x;
-    const d =
-      0.8 * (Math.random() - 0.5) * Math.pow(Math.sin(x * Math.PI), 2.0);
+    const d = 0.8 * (Math.random() - 0.5) * Math.pow(Math.sin(x * Math.PI), 2.0);
     xs.push(x - d);
     ys.push(y + d);
   }
@@ -38,6 +37,7 @@ export default async function ScatterPlot(cg: CandyGraph) {
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
     createLinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );

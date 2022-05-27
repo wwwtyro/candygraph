@@ -41,7 +41,7 @@ export default async function doc_00300(cg: CandyGraph) {
 
   // Then we'll create our coordinate system, grab the default font, clear the
   // canvas, and render our data with axes:
-  const coords = createCartesianCoordinateSystem(xscale, yscale);
+  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
   const font = await createDefaultFont(cg);
 
   cg.clear([1, 1, 1, 1]);
@@ -69,10 +69,7 @@ export default async function doc_00300(cg: CandyGraph) {
   //
 
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00300-000") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00300-000") as HTMLCanvasElement);
   // skip-doc-stop
 
   // Note that the `OrthoAxis` detected that we're using a logarithmic scale on
@@ -98,8 +95,7 @@ export default async function doc_00300(cg: CandyGraph) {
     createOrthoAxis(cg, coords, "y", font, {
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) =>
-        n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString(),
+      labelFormatter: (n) => (n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString()),
     }),
   ]);
 
@@ -110,10 +106,7 @@ export default async function doc_00300(cg: CandyGraph) {
   //
 
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00300-001") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00300-001") as HTMLCanvasElement);
   // skip-doc-stop
 
   // We can make the logarithmic nature of the y-axis a little more obvious by
@@ -139,8 +132,7 @@ export default async function doc_00300(cg: CandyGraph) {
       minorTickOffset: 2,
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) =>
-        n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString(),
+      labelFormatter: (n) => (n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString()),
     }),
   ]);
 
@@ -151,10 +143,7 @@ export default async function doc_00300(cg: CandyGraph) {
   //
 
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00300-002") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00300-002") as HTMLCanvasElement);
   // skip-doc-stop
 
   // Sometimes it's helpful to display a grid on your plot to make it easier to
@@ -175,33 +164,23 @@ export default async function doc_00300(cg: CandyGraph) {
       minorTickOffset: 2,
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) =>
-        n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString(),
+      labelFormatter: (n) => (n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString()),
     }),
   ];
 
   // Then we'll access the `info` objects on that variable to build grids with
   // the `Grid` helper CandyGraph provides. First we'll make a grid with our
   // major ticks on both the x- and y-axes:
-  const majorGrid = createGrid(
-    cg,
-    axes[0].info.ticks,
-    axes[1].info.ticks,
-    coords.xscale.domain,
-    coords.yscale.domain,
-    { color: [0.25, 0.25, 0.25, 1], width: 1 }
-  );
+  const majorGrid = createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    color: [0.25, 0.25, 0.25, 1],
+    width: 1,
+  });
 
   // Then we'll create a grid for the minor ticks, which we only have on the
   // y-axis, so we'll pass an empty array for the x-axis ticks:
-  const minorGrid = createGrid(
-    cg,
-    [],
-    axes[1].info.minorTicks,
-    coords.xscale.domain,
-    coords.yscale.domain,
-    { color: [0.75, 0.75, 0.75, 1] }
-  );
+  const minorGrid = createGrid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+    color: [0.75, 0.75, 0.75, 1],
+  });
 
   cg.clear([1, 1, 1, 1]); // skip-doc
 
@@ -223,9 +202,6 @@ export default async function doc_00300(cg: CandyGraph) {
   //
 
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00300-003") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00300-003") as HTMLCanvasElement);
   // skip-doc-stop
 } // skip-doc

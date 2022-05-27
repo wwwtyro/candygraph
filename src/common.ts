@@ -26,10 +26,7 @@ export abstract class Primitive {
 export abstract class Composite {
   public readonly kind = RenderableType.Composite;
   public abstract children(): Renderable;
-
-  public scope(): DrawCommand | null {
-    return null;
-  }
+  public readonly scope: DrawCommand | null = null;
 
   public props(coords: CoordinateSystem) {
     return {};

@@ -38,6 +38,7 @@ export default async function PrecisionPlot(cg: CandyGraph) {
 
   // Create a coordinate system from two linear scales.
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [56 * dpr, viewport.width - 16 * dpr]),
     createLinearScale([0, 1], [108 * dpr, viewport.height - 24 * dpr])
   );
