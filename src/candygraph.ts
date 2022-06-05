@@ -128,15 +128,15 @@ export class CandyGraph {
   }
 
   private getCommand(coords: CoordinateSystem, primitive: Primitive) {
-    let m0 = this.commandCache.get(coords.glsl);
-    if (!m0) {
-      m0 = new Map<Function, DrawCommand>();
-      this.commandCache.set(coords.glsl, m0);
+    let commands = this.commandCache.get(coords.glsl);
+    if (!commands) {
+      commands = new Map<Function, DrawCommand>();
+      this.commandCache.set(coords.glsl, commands);
     }
-    let command = m0.get(primitive.constructor);
+    let command = commands.get(primitive.constructor);
     if (!command) {
       command = primitive.command(coords.glsl + commonGLSL);
-      m0.set(primitive.constructor, command);
+      commands.set(primitive.constructor, command);
     }
     return command;
   }
