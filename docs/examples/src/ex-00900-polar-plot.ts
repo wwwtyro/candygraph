@@ -35,6 +35,7 @@ export default async function PolarPlot(cg: CandyGraph) {
   // polar distance and angle (in radians), the next two map the resulting
   // cartesian coordinates to pixels.
   const coords = createPolarCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [0, 1]), // radial scale
     createLinearScale([0, 1], [0, 1]), // angular scale
     createLinearScale([-1.1, 1.1], [16 * dpr, viewport.width - 16 * dpr]), // x scale

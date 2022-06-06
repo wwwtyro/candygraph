@@ -20,7 +20,7 @@ export default async function doc_00200(cg: CandyGraph) {
   const xscale = createLinearScale([0, 2 * Math.PI], [0, viewport.width]);
   const yscale = createLinearScale([-1, 1], [0, viewport.height]);
 
-  const coords = createCartesianCoordinateSystem(xscale, yscale);
+  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
 
   const xs = [];
   const ys = [];
@@ -62,10 +62,7 @@ export default async function doc_00200(cg: CandyGraph) {
   //
 
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-000") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-000") as HTMLCanvasElement);
   // skip-doc-stop
 
   // Wait, don't run away! It looks ugly, but there's a method to this madness.
@@ -92,10 +89,7 @@ export default async function doc_00200(cg: CandyGraph) {
     createOrthoAxis(cg, coords, "x", font),
     createOrthoAxis(cg, coords, "y", font),
   ]);
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-001") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-001") as HTMLCanvasElement);
   // skip-doc-stop
 
   // Okay, we can at least see our axes now. There's still issues, though. The
@@ -113,10 +107,7 @@ export default async function doc_00200(cg: CandyGraph) {
     createOrthoAxis(cg, coords, "y", font),
   ]);
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-002") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-002") as HTMLCanvasElement);
   // skip-doc-stop
 
   // <div style="text-align: center">
@@ -141,10 +132,7 @@ export default async function doc_00200(cg: CandyGraph) {
     createOrthoAxis(cg, coords, "y", font, { tickStep: 0.25 }),
   ]);
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-003") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-003") as HTMLCanvasElement);
   // skip-doc-stop
 
   // <div style="text-align: center">
@@ -169,10 +157,7 @@ export default async function doc_00200(cg: CandyGraph) {
     }),
   ]);
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-004") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-004") as HTMLCanvasElement);
   // skip-doc-stop
 
   // <div style="text-align: center">
@@ -201,10 +186,7 @@ export default async function doc_00200(cg: CandyGraph) {
     }),
   ]);
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-005") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-005") as HTMLCanvasElement);
   // skip-doc-stop
 
   // <div style="text-align: center">
@@ -236,10 +218,7 @@ export default async function doc_00200(cg: CandyGraph) {
     }),
   ]);
   // skip-doc-start
-  cg.copyTo(
-    viewport,
-    document.getElementById("doc_00200-006") as HTMLCanvasElement
-  );
+  cg.copyTo(viewport, document.getElementById("doc_00200-006") as HTMLCanvasElement);
   // skip-doc-stop
 
   // <div style="text-align: center">

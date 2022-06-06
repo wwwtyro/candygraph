@@ -1,7 +1,7 @@
+import { DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Composite, Renderable } from "../common";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
-import { Regl } from "regl";
 
 type Props = {
   box: { x: number; y: number; width: number; height: number };
@@ -16,14 +16,15 @@ export function createScissor(
   screenSpace: boolean,
   children: Renderable
 ): Scissor {
-  return new Scissor(cg.regl, x, y, width, height, screenSpace, children);
+  return new Scissor(cg, x, y, width, height, screenSpace, children);
 }
 
 export class Scissor extends Composite {
   private _children: Renderable;
+  public readonly scope: DrawCommand;
 
   constructor(
-    private regl: Regl,
+    cg: CandyGraph,
     public x: number,
     public y: number,
     public width: number,
@@ -33,16 +34,14 @@ export class Scissor extends Composite {
   ) {
     super();
 
-    this._children = children;
-  }
-
-  public scope() {
-    return this.regl({
+    this.scope = cg.regl({
       scissor: {
         enable: true,
-        box: this.regl.prop<Props, "box">("box"),
+        box: cg.regl.prop<Props, "box">("box"),
       },
     });
+
+    this._children = children;
   }
 
   public props(coords: CoordinateSystem) {

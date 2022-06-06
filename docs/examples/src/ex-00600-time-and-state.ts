@@ -33,10 +33,12 @@ export default async function TimeAndState(cg: CandyGraph) {
   // them.
   const yScale = createLinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
   const axisCoords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
     yScale
   );
   const timeCoords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
     yScale
   );

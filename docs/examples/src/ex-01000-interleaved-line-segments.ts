@@ -2,11 +2,7 @@
 // <canvas id="ex-10000" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import CandyGraph, {
-  createLinearScale,
-  createLineSegments,
-  createCartesianCoordinateSystem,
-} from "../../../src";
+import CandyGraph, { createLinearScale, createLineSegments, createCartesianCoordinateSystem } from "../../../src";
 
 export default function InterleavedLineSegments(cg: CandyGraph) {
   // Scale the canvas by the device pixel ratio.
@@ -20,6 +16,7 @@ export default function InterleavedLineSegments(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, 1], [0, viewport.width]),
     createLinearScale([0, 1], [0, viewport.height])
   );

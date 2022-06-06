@@ -568,25 +568,27 @@ Returns a `LogScale` object.
 | domain    | Vector2 | The domain of this scale.   |
 | range     | Vector2 | The range of this scale.    |
 
-#### `createCartesianCoordinateSystem(xscale: Scale, yscale: Scale): CartesianCoordinateSystem`
+#### `createCartesianCoordinateSystem(cg: CandyGraph, xscale: Scale, yscale: Scale): CartesianCoordinateSystem`
 
 Returns a `CartesianCoordinateSystem`.
 
-| Parameter | Type  | Description               |
-| --------- | ----- | ------------------------- |
-| xscale    | Scale | The scale for the x-axis. |
-| yscale    | Scale | The scale for the y-axis. |
+| Parameter | Type       | Description                                        |
+| --------- | ---------- | -------------------------------------------------- |
+| cg        | CandyGraph | Required. The `CandyGraph` instance for rendering. |
+| xscale    | Scale      | The scale for the x-axis.                          |
+| yscale    | Scale      | The scale for the y-axis.                          |
 
-#### `createPolarCoordinateSystem(xscale: Scale, yscale: Scale): PolarCoordinateSystem`
+#### `createPolarCoordinateSystem(cg: CandyGraph, xscale: Scale, yscale: Scale): PolarCoordinateSystem`
 
 Returns a `PolarCoordinateSystem`.
 
-| Parameter    | Type  | Description                                           |
-| ------------ | ----- | ----------------------------------------------------- |
-| radialScale  | Scale | The scale for the radial axis (distance from origin). |
-| angularScale | Scale | The scale for the angular axis.                       |
-| xScale       | Scale | The scale for the x-axis.                             |
-| yScale       | Scale | The scale for the y-axis.                             |
+| Parameter    | Type       | Description                                           |
+| ------------ | ---------- | ----------------------------------------------------- |
+| cg           | CandyGraph | Required. The `CandyGraph` instance for rendering.    |
+| radialScale  | Scale      | The scale for the radial axis (distance from origin). |
+| angularScale | Scale      | The scale for the angular axis.                       |
+| xScale       | Scale      | The scale for the x-axis.                             |
+| yScale       | Scale      | The scale for the y-axis.                             |
 
 ### Properties
 

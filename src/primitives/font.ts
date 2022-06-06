@@ -12,11 +12,7 @@ type Glyph = {
   uv: Vector2;
 };
 
-export function createFont(
-  cg: CandyGraph,
-  image: HTMLImageElement,
-  json: any
-) {
+export function createFont(cg: CandyGraph, image: HTMLImageElement, json: any) {
   return new Font(cg.regl, image, json);
 }
 
@@ -65,12 +61,15 @@ export class Font {
     this.maxid = this.glyphs.length;
     this.kernTable = new Int8Array(this.maxid * this.maxid);
     for (const kern of json.kernings) {
-      this.kernTable[kern.first * this.maxid + kern.second] =
-        scale * kern.amount;
+      this.kernTable[kern.first * this.maxid + kern.second] = scale * kern.amount;
     }
   }
 
   public kern(first: number, second: number) {
     return this.kernTable[first * this.maxid + second];
+  }
+
+  public dispose() {
+    this.texture.destroy();
   }
 }

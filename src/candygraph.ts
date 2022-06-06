@@ -1,6 +1,6 @@
 import REGL, { DrawCommand, Regl, Buffer, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
-import { Viewport, Renderable, RenderableType, Primitive, Composite } from "./common";
+import { Viewport, Renderable, RenderableType, Primitive } from "./common";
 
 type Props = {
   resolution: [number, number];
@@ -33,9 +33,7 @@ export class CandyGraph {
   public readonly regl: Regl;
   public readonly canvas: HTMLCanvasElement;
 
-  private commandCache: { [glsl: string]: Map<Function, DrawCommand> } = {};
-  private coordinateScopeCache = new Map<CoordinateSystem, DrawCommand>();
-  private compositeScopeCache = new Map<Function, DrawCommand | null>();
+  private commandCache = new Map<string, Map<Function, DrawCommand>>();
   private scope: DrawCommand;
   private positionBufferCache = new Map<string, Buffer>();
 
@@ -70,6 +68,41 @@ export class CandyGraph {
     this.regl.clear({ color: color as Vec4 });
   };
 
+  public render = (coords: CoordinateSystem, viewport: Viewport, renderable: Renderable): void => {
+    coords.scope(coords.props(), () => {
+      this.scope(
+        {
+          resolution: [viewport.width, viewport.height],
+          viewport,
+        },
+        () => {
+          this.recursiveRender(coords, renderable);
+        }
+      );
+    });
+  };
+
+  private recursiveRender(coords: CoordinateSystem, renderable: Renderable) {
+    if (Array.isArray(renderable)) {
+      for (const element of renderable) {
+        this.recursiveRender(coords, element);
+      }
+    } else {
+      if (renderable.kind === RenderableType.Primitive) {
+        const command = this.getCommand(coords, renderable);
+        renderable.render(command);
+      } else if (renderable.kind === RenderableType.Composite) {
+        if (renderable.scope) {
+          renderable.scope(renderable.props(coords), () => {
+            this.recursiveRender(coords, renderable.children());
+          });
+        } else {
+          this.recursiveRender(coords, renderable.children());
+        }
+      }
+    }
+  }
+
   public hasPositionBuffer = (name: string): boolean => {
     return this.positionBufferCache.has(name);
   };
@@ -89,19 +122,24 @@ export class CandyGraph {
     this.positionBufferCache.clear();
   };
 
-  public render = (coords: CoordinateSystem, viewport: Viewport, renderable: Renderable): void => {
-    this.getCoordinateScope(coords)({ ...coords.props() }, () => {
-      this.scope(
-        {
-          resolution: [viewport.width, viewport.height],
-          viewport,
-        },
-        () => {
-          this.recursiveRender(coords, renderable);
-        }
-      );
-    });
-  };
+  public destroy() {
+    this.clearPositionBuffers();
+    this.regl.destroy();
+  }
+
+  private getCommand(coords: CoordinateSystem, primitive: Primitive) {
+    let commands = this.commandCache.get(coords.glsl);
+    if (!commands) {
+      commands = new Map<Function, DrawCommand>();
+      this.commandCache.set(coords.glsl, commands);
+    }
+    let command = commands.get(primitive.constructor);
+    if (!command) {
+      command = primitive.command(coords.glsl + commonGLSL);
+      commands.set(primitive.constructor, command);
+    }
+    return command;
+  }
 
   public copyTo(sourceViewport: Viewport, destinationCanvas?: HTMLCanvasElement, destinationViewport?: Viewport) {
     // If we're not provided a canvas, make one.
@@ -136,64 +174,5 @@ export class CandyGraph {
     );
 
     return dest;
-  }
-
-  public destroy() {
-    this.clearPositionBuffers();
-    this.regl.destroy();
-  }
-
-  private recursiveRender(coords: CoordinateSystem, renderable: Renderable) {
-    if (Array.isArray(renderable)) {
-      for (const element of renderable) {
-        this.recursiveRender(coords, element);
-      }
-    } else {
-      if (renderable.kind === RenderableType.Primitive) {
-        const command = this.getCommand(coords, renderable);
-        renderable.render(command);
-      } else if (renderable.kind === RenderableType.Composite) {
-        const scope = this.getCompositeScope(renderable);
-        if (scope) {
-          scope(renderable.props(coords), () => {
-            this.recursiveRender(coords, renderable.children());
-          });
-        } else {
-          this.recursiveRender(coords, renderable.children());
-        }
-      }
-    }
-  }
-
-  private getCommand(coords: CoordinateSystem, primitive: Primitive) {
-    let m0 = this.commandCache[coords.glsl];
-    if (!m0) {
-      m0 = new Map<Function, DrawCommand>();
-      this.commandCache[coords.glsl] = m0;
-    }
-    let command = m0.get(primitive.constructor);
-    if (!command) {
-      command = primitive.command(coords.glsl + commonGLSL);
-      m0.set(primitive.constructor, command);
-    }
-    return command;
-  }
-
-  private getCoordinateScope(coords: CoordinateSystem) {
-    let scope = this.coordinateScopeCache.get(coords);
-    if (!scope) {
-      scope = coords.scope(this.regl);
-      this.coordinateScopeCache.set(coords, scope);
-    }
-    return scope;
-  }
-
-  private getCompositeScope(composite: Composite) {
-    let scope = this.compositeScopeCache.get(composite.constructor);
-    if (!scope) {
-      scope = composite.scope();
-      this.compositeScopeCache.set(composite.constructor, scope);
-    }
-    return scope;
   }
 }

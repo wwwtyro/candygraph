@@ -29,11 +29,13 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
 
   const coords = createCartesianCoordinateSystem(
+    cg,
     createLogScale(10, [100, 100000], [64 * dpr, viewport.width - 20 * dpr]),
     createLinearScale([10, 90], [48 * dpr, viewport.height - 60 * dpr])
   );
 
   const screenCoords = createCartesianCoordinateSystem(
+    cg,
     createLinearScale([0, canvas.width], [0, canvas.width]),
     createLinearScale([0, canvas.height], [0, canvas.height])
   );

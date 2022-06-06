@@ -1,9 +1,10 @@
-import { Regl, DrawCommand } from "regl";
+import { DrawCommand } from "regl";
 import { vec2 } from "gl-matrix";
 import { Vector2 } from "../common";
 import { CoordinateSystem, Kind } from "./coordinate-system";
 import { LinearScale } from "../scales/linear";
 import { LogScale } from "../scales/log";
+import { CandyGraph } from "../candygraph";
 
 type Props = {
   radialDomain: Vector2;
@@ -17,19 +18,22 @@ type Props = {
 };
 
 export function createPolarCoordinateSystem(
+  cg: CandyGraph,
   radialScale: LinearScale | LogScale,
   angularScale: LinearScale | LogScale,
   xScale: LinearScale | LogScale,
   yScale: LinearScale | LogScale
 ) {
-  return new PolarCoordinateSystem(radialScale, angularScale, xScale, yScale);
+  return new PolarCoordinateSystem(cg, radialScale, angularScale, xScale, yScale);
 }
 
 export class PolarCoordinateSystem extends CoordinateSystem {
   public readonly glsl: string;
   public readonly kind = Kind.Polar;
+  public readonly scope: DrawCommand;
 
   constructor(
+    cg: CandyGraph,
     public readonly radialScale: LinearScale | LogScale,
     public readonly angularScale: LinearScale | LogScale,
     public readonly xScale: LinearScale | LogScale,
@@ -37,18 +41,23 @@ export class PolarCoordinateSystem extends CoordinateSystem {
   ) {
     super();
 
-    const radialGLSL = radialScale.glsl
-      .replace("toDomain", "toRadialDomain")
-      .replace("toRange", "toRadialRange");
-    const angularGLSL = angularScale.glsl
-      .replace("toDomain", "toAngularDomain")
-      .replace("toRange", "toAngularRange");
-    const xGLSL = xScale.glsl
-      .replace("toDomain", "toXDomain")
-      .replace("toRange", "toXRange");
-    const yGLSL = yScale.glsl
-      .replace("toDomain", "toYDomain")
-      .replace("toRange", "toYRange");
+    this.scope = cg.regl({
+      uniforms: {
+        xDomain: cg.regl.prop<Props, "xDomain">("xDomain"),
+        xRange: cg.regl.prop<Props, "xRange">("xRange"),
+        yDomain: cg.regl.prop<Props, "yDomain">("yDomain"),
+        yRange: cg.regl.prop<Props, "yRange">("yRange"),
+        radialDomain: cg.regl.prop<Props, "radialDomain">("radialDomain"),
+        radialRange: cg.regl.prop<Props, "radialRange">("radialRange"),
+        angularDomain: cg.regl.prop<Props, "angularDomain">("angularDomain"),
+        angularRange: cg.regl.prop<Props, "angularRange">("angularRange"),
+      },
+    });
+
+    const radialGLSL = radialScale.glsl.replace("toDomain", "toRadialDomain").replace("toRange", "toRadialRange");
+    const angularGLSL = angularScale.glsl.replace("toDomain", "toAngularDomain").replace("toRange", "toAngularRange");
+    const xGLSL = xScale.glsl.replace("toDomain", "toXDomain").replace("toRange", "toXRange");
+    const yGLSL = yScale.glsl.replace("toDomain", "toYDomain").replace("toRange", "toYRange");
     this.glsl = `
       uniform vec2 radialDomain, radialRange;
       uniform vec2 angularDomain, angularRange;
@@ -93,45 +102,15 @@ export class PolarCoordinateSystem extends CoordinateSystem {
   }
 
   public toRange(v: Vector2): Vector2 {
-    const polar = [
-      this.radialScale.toRange(v[0]),
-      this.angularScale.toRange(v[1]),
-    ];
-    const cartesian = [
-      polar[0] * Math.cos(polar[1]),
-      polar[0] * Math.sin(polar[1]),
-    ];
-    return [
-      this.xScale.toRange(cartesian[0]),
-      this.yScale.toRange(cartesian[1]),
-    ];
+    const polar = [this.radialScale.toRange(v[0]), this.angularScale.toRange(v[1])];
+    const cartesian = [polar[0] * Math.cos(polar[1]), polar[0] * Math.sin(polar[1])];
+    return [this.xScale.toRange(cartesian[0]), this.yScale.toRange(cartesian[1])];
   }
 
   public toDomain(v: Vector2): Vector2 {
     const cartesian = [this.xScale.toDomain(v[0]), this.yScale.toDomain(v[1])];
-    const polar = [
-      vec2.length(cartesian as vec2),
-      Math.atan2(cartesian[1], cartesian[0]),
-    ];
-    return [
-      this.radialScale.toDomain(polar[0]),
-      this.angularScale.toDomain(polar[1]),
-    ];
-  }
-
-  public scope(regl: Regl): DrawCommand {
-    return regl({
-      uniforms: {
-        xDomain: regl.prop<Props, "xDomain">("xDomain"),
-        xRange: regl.prop<Props, "xRange">("xRange"),
-        yDomain: regl.prop<Props, "yDomain">("yDomain"),
-        yRange: regl.prop<Props, "yRange">("yRange"),
-        radialDomain: regl.prop<Props, "radialDomain">("radialDomain"),
-        radialRange: regl.prop<Props, "radialRange">("radialRange"),
-        angularDomain: regl.prop<Props, "angularDomain">("angularDomain"),
-        angularRange: regl.prop<Props, "angularRange">("angularRange"),
-      },
-    });
+    const polar = [vec2.length(cartesian as vec2), Math.atan2(cartesian[1], cartesian[0])];
+    return [this.radialScale.toDomain(polar[0]), this.angularScale.toDomain(polar[1])];
   }
 
   public props(): Props {
