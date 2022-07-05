@@ -81,7 +81,8 @@ export default async function doc_00400(cg: CandyGraph) {
 
     // Now we'll clear our canvas and render:
     cg.clear([1, 1, 1, 1]);
-    cg.render(coords, viewport, [
+
+    const renderables = [
       // First we'll render our plot data. We have two traces to render, `ys0`
       // and `ys1`. We'll get a little fancy and render a black border around
       // each trace by first rendering a thick black line, then a thinner line
@@ -122,11 +123,18 @@ export default async function doc_00400(cg: CandyGraph) {
         tickOffset: 2,
         labelFormatter: (n) => n.toFixed(1),
       }),
-    ]);
+    ];
+
+    cg.render(coords, viewport, renderables);
 
     // Finally, we'll copy our rendered plot to a canvas that's already been
     // added to this document:
     cg.copyTo(viewport, document.getElementById("doc_00400") as HTMLCanvasElement);
+
+    // At the end, we'll dispose of GPU resources, preventing memory leaks:
+    renderables.forEach((renderable) => {
+      renderable.dispose();
+    });
   }
 
   // Here's some interaction and animation loop odds and ends to tie everything up:
