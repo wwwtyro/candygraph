@@ -464,7 +464,8 @@ keep the last <code>history</code> seconds in view:</p>
 </code></pre>
 <p>Now we’ll clear our canvas and render:</p>
 <pre><code class="language-typescript">    cg.clear([1, 1, 1, 1]);
-    cg.render(coords, viewport, [
+
+    const renderables = [
 </code></pre>
 <p>First we’ll render our plot data. We have two traces to render, <code>ys0</code>
 and <code>ys1</code>. We’ll get a little fancy and render a black border around
@@ -508,11 +509,18 @@ confine the lines to the plot region. First the <code>ys0</code> trace in ~orang
         tickOffset: 2,
         labelFormatter: (n) =&gt; n.toFixed(1),
       }),
-    ]);
+    ];
+
+    cg.render(coords, viewport, renderables);
 </code></pre>
 <p>Finally, we’ll copy our rendered plot to a canvas that’s already been
 added to this document:</p>
 <pre><code class="language-typescript">    cg.copyTo(viewport, document.getElementById(&quot;doc_00400&quot;) as HTMLCanvasElement);
+</code></pre>
+<p>At the end, we’ll dispose of GPU resources, preventing memory leaks:</p>
+<pre><code class="language-typescript">    renderables.forEach((renderable) =&gt; {
+      renderable.dispose();
+    });
   }
 </code></pre>
 <p>Here’s some interaction and animation loop odds and ends to tie everything up:</p>
