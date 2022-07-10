@@ -46,7 +46,7 @@ export class CandyGraph {
       attributes: {
         depth: false,
         alpha: opts.alpha,
-        premultipliedAlpha: false,
+        premultipliedAlpha: true,
       },
     });
     this.scope = this.regl({
@@ -56,7 +56,7 @@ export class CandyGraph {
       viewport: this.regl.prop<Props, "viewport">("viewport"),
       blend: {
         enable: true,
-        func: { src: "src alpha", dst: "one minus src alpha" },
+        func: { srcRGB: "src alpha", dstRGB: "one minus src alpha", srcAlpha: "one", dstAlpha: "one minus src alpha" },
       },
       depth: {
         enable: false,
