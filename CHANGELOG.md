@@ -1,3 +1,10 @@
+## 0.7.0
+
+- Fixed the blending so that compositing with the webpage looks correct. While
+  technically a bugfix, we can't be sure people haven't come to rely on the
+  previous blending, so this is a zero-based major version bump.
+  ([#41](https://github.com/wwwtyro/candygraph/pull/41))
+
 ## 0.6.0
 
 - Cartesian and polar coordinate systems now allow their scopes to be garbage
