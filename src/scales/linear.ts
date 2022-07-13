@@ -1,10 +1,6 @@
 import { Scale, Kind } from "./scale";
 import { Vector2 } from "../common";
 
-export function createLinearScale(domain: Vector2, range: Vector2): LinearScale {
-  return new LinearScale(domain, range);
-}
-
 export class LinearScale extends Scale {
   public readonly kind = Kind.Linear;
   public readonly glsl = `
@@ -56,8 +52,7 @@ export class LinearScale extends Scale {
   }
 
   private updateQ(): void {
-    this.qDomain =
-      (this._domain[1] - this._domain[0]) / (this._range[1] - this._range[0]);
+    this.qDomain = (this._domain[1] - this._domain[0]) / (this._range[1] - this._range[0]);
     this.qRange = 1 / this.qDomain;
   }
 }

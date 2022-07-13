@@ -1,11 +1,11 @@
 // skip-doc-start
 import CandyGraph, {
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
   createDefaultFont,
-  createOrthoAxis,
-  createScissor,
+  LinearScale,
+  CartesianCoordinateSystem,
+  LineStrip,
+  OrthoAxis,
+  Scissor,
 } from "../../../src";
 // skip-doc-stop
 
@@ -40,10 +40,10 @@ export default async function doc_00400(cg: CandyGraph) {
   // We'll define a wide viewport and a linear/linear cartesian coordinate
   // system with a bit of padding for our axes:
   const viewport = { x: 0, y: 0, width: 1024, height: 384 };
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([-history, 0], [40, viewport.width - 16]),
-    createLinearScale([-1, 1], [32, viewport.height - 16])
+    new LinearScale([-history, 0], [40, viewport.width - 16]),
+    new LinearScale([-1, 1], [32, viewport.height - 16])
   );
 
   // Next we'll create some arrays to store our plot data:
@@ -88,35 +88,35 @@ export default async function doc_00400(cg: CandyGraph) {
       // each trace by first rendering a thick black line, then a thinner line
       // in our desired color. We'll also apply a scissor in screen space to
       // confine the lines to the plot region. First the `ys0` trace in ~orange:
-      createScissor(cg, 40, 32, viewport.width - 56, viewport.height - 48, true, [
-        createLineStrip(cg, xs, ys0, {
+      new Scissor(cg, 40, 32, viewport.width - 56, viewport.height - 48, true, [
+        new LineStrip(cg, xs, ys0, {
           colors: [0, 0, 0, 1],
           widths: 17,
         }),
-        createLineStrip(cg, xs, ys0, {
+        new LineStrip(cg, xs, ys0, {
           colors: [1, 0.5, 0, 1],
           widths: 9,
         }),
         // Then our `ys1` trace in ~blue:
-        createLineStrip(cg, xs, ys1, {
+        new LineStrip(cg, xs, ys1, {
           colors: [0, 0, 0, 1],
           widths: 17,
         }),
-        createLineStrip(cg, xs, ys1, {
+        new LineStrip(cg, xs, ys1, {
           colors: [0, 0.5, 1, 1],
           widths: 9,
         }),
       ]),
       // Then we'll render our axes. Note that for the y-axis we're shifting the
       // `axisIntercept` to keep up with the current time:
-      createOrthoAxis(cg, coords, "x", font, {
+      new OrthoAxis(cg, coords, "x", font, {
         labelSide: 1,
         tickLength: 5,
         tickOffset: -2,
         tickStep: 1,
         labelFormatter: (n) => n.toFixed(0),
       }),
-      createOrthoAxis(cg, coords, "y", font, {
+      new OrthoAxis(cg, coords, "y", font, {
         axisIntercept: time - history,
         tickStep: 0.5,
         tickLength: 5,

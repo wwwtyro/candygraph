@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -14,6 +14,7 @@ const DEFAULT_OPTIONS = {
 };
 
 type Props = {
+  position: Buffer;
   points: Buffer;
   instances: number;
   width: Buffer;
@@ -22,9 +23,19 @@ type Props = {
   colorDivisor: number;
 };
 
-function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer("lineSegments")) {
-    cg.setPositionBuffer("lineSegments", [
+export class LineSegments extends Primitive {
+  public readonly points: Dataset;
+  public readonly widths: Dataset;
+  public readonly colors: Dataset;
+  private segmentGeometry: Buffer;
+
+  constructor(private cg: CandyGraph, points: NumberArray | Dataset, options: Options = {}) {
+    super();
+    const opts = { ...DEFAULT_OPTIONS, ...options };
+    this.points = createDataset(cg, points);
+    this.widths = createDataset(cg, opts.widths);
+    this.colors = createDataset(cg, opts.colors);
+    this.segmentGeometry = cg.regl.buffer([
       [0, -0.5],
       [1, -0.5],
       [1, +0.5],
@@ -33,34 +44,9 @@ function getPositionBuffer(cg: CandyGraph) {
       [0, +0.5],
     ]);
   }
-  return cg.getPositionBuffer("lineSegments");
-}
-
-export function createLineSegments(cg: CandyGraph, points: NumberArray | Dataset, options?: Options) {
-  const segmentGeometry = getPositionBuffer(cg)!;
-  return new LineSegments(cg.regl, segmentGeometry, points, options);
-}
-
-export class LineSegments extends Primitive {
-  public readonly points: Dataset;
-  public readonly widths: Dataset;
-  public readonly colors: Dataset;
-
-  constructor(
-    private regl: Regl,
-    private segmentGeometry: Buffer,
-    points: NumberArray | Dataset,
-    options: Options = {}
-  ) {
-    super();
-    const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.points = createDataset(regl, points);
-    this.widths = createDataset(regl, opts.widths);
-    this.colors = createDataset(regl, opts.colors);
-  }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position, pointA, pointB;
@@ -98,33 +84,33 @@ export class LineSegments extends Primitive {
 
       attributes: {
         position: {
-          buffer: this.segmentGeometry,
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         pointA: {
-          buffer: this.regl.prop<Props, "points">("points"),
+          buffer: this.cg.regl.prop<Props, "points">("points"),
           divisor: 1,
           offset: Float32Array.BYTES_PER_ELEMENT * 0,
           stride: Float32Array.BYTES_PER_ELEMENT * 4,
         },
         pointB: {
-          buffer: this.regl.prop<Props, "points">("points"),
+          buffer: this.cg.regl.prop<Props, "points">("points"),
           divisor: 1,
           offset: Float32Array.BYTES_PER_ELEMENT * 2,
           stride: Float32Array.BYTES_PER_ELEMENT * 4,
         },
         width: {
-          buffer: this.regl.prop<Props, "width">("width"),
-          divisor: this.regl.prop<Props, "widthDivisor">("widthDivisor"),
+          buffer: this.cg.regl.prop<Props, "width">("width"),
+          divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
       },
 
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -133,6 +119,7 @@ export class LineSegments extends Primitive {
     const instances = points.count(2) / 2;
     command({
       instances,
+      position: this.segmentGeometry,
       points: points.buffer,
       color: colors.buffer,
       width: widths.buffer,
@@ -145,5 +132,6 @@ export class LineSegments extends Primitive {
     this.points.dispose();
     this.colors.dispose();
     this.widths.dispose();
+    this.segmentGeometry.destroy();
   }
 }

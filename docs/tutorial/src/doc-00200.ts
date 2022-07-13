@@ -1,10 +1,10 @@
 // skip-doc-start
 import CandyGraph, {
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
   createDefaultFont,
-  createOrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
+  LineStrip,
+  OrthoAxis,
 } from "../../../src";
 // skip-doc-stop
 
@@ -17,10 +17,10 @@ import CandyGraph, {
 export default async function doc_00200(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: 512, height: 384 };
 
-  const xscale = createLinearScale([0, 2 * Math.PI], [0, viewport.width]);
-  const yscale = createLinearScale([-1, 1], [0, viewport.height]);
+  const xscale = new LinearScale([0, 2 * Math.PI], [0, viewport.width]);
+  const yscale = new LinearScale([-1, 1], [0, viewport.height]);
 
-  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
+  const coords = new CartesianCoordinateSystem(cg, xscale, yscale);
 
   const xs = [];
   const ys = [];
@@ -47,12 +47,12 @@ export default async function doc_00200(cg: CandyGraph) {
   cg.clear([1, 1, 1, 1]); // skip-doc
 
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font),
-    createOrthoAxis(cg, coords, "y", font),
+    new OrthoAxis(cg, coords, "x", font),
+    new OrthoAxis(cg, coords, "y", font),
   ]);
 
   // <div style="text-align: center">
@@ -82,12 +82,12 @@ export default async function doc_00200(cg: CandyGraph) {
   // skip-doc-start
   cg.clear([1, 1, 1, 1]);
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font),
-    createOrthoAxis(cg, coords, "y", font),
+    new OrthoAxis(cg, coords, "x", font),
+    new OrthoAxis(cg, coords, "y", font),
   ]);
   cg.copyTo(viewport, document.getElementById("doc_00200-001") as HTMLCanvasElement);
   // skip-doc-stop
@@ -99,12 +99,12 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
-    createOrthoAxis(cg, coords, "y", font),
+    new OrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
+    new OrthoAxis(cg, coords, "y", font),
   ]);
   // skip-doc-start
   cg.copyTo(viewport, document.getElementById("doc_00200-002") as HTMLCanvasElement);
@@ -124,12 +124,12 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
-    createOrthoAxis(cg, coords, "y", font, { tickStep: 0.25 }),
+    new OrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
+    new OrthoAxis(cg, coords, "y", font, { tickStep: 0.25 }),
   ]);
   // skip-doc-start
   cg.copyTo(viewport, document.getElementById("doc_00200-003") as HTMLCanvasElement);
@@ -146,12 +146,12 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
+    new OrthoAxis(cg, coords, "y", font, {
       tickStep: 0.25,
       labelFormatter: (n: number) => n.toFixed(2),
     }),
@@ -171,16 +171,16 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickStep: 0.25 * Math.PI,
       labelFormatter: (n: number) => n.toFixed(2),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickStep: 0.25,
       labelFormatter: (n: number) => n.toFixed(2),
     }),
@@ -199,18 +199,18 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickStep: 0.25 * Math.PI,
       tickLength: 5,
       tickOffset: -2,
       labelFormatter: (n: number) => n.toFixed(2),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickStep: 0.25,
       tickLength: 5,
       tickOffset: 2,

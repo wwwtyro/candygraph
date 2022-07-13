@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -30,16 +30,6 @@ type Props = {
   instances: number;
 };
 
-export function createShapes(
-  cg: CandyGraph,
-  shape: NumberArray | Dataset,
-  xs: NumberArray | Dataset,
-  ys: NumberArray | Dataset,
-  options?: Options
-) {
-  return new Shapes(cg.regl, shape, xs, ys, options);
-}
-
 export class Shapes extends Primitive {
   public shape: Dataset;
   public xs: Dataset;
@@ -49,7 +39,7 @@ export class Shapes extends Primitive {
   public colors: Dataset;
 
   constructor(
-    private regl: Regl,
+    private cg: CandyGraph,
     shape: NumberArray | Dataset,
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
@@ -57,16 +47,16 @@ export class Shapes extends Primitive {
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.shape = createDataset(regl, shape);
-    this.xs = createDataset(regl, xs);
-    this.ys = createDataset(regl, ys);
-    this.scales = createDataset(regl, opts.scales);
-    this.rotations = createDataset(regl, opts.rotations);
-    this.colors = createDataset(regl, opts.colors);
+    this.shape = createDataset(cg, shape);
+    this.xs = createDataset(cg, xs);
+    this.ys = createDataset(cg, ys);
+    this.scales = createDataset(cg, opts.scales);
+    this.rotations = createDataset(cg, opts.rotations);
+    this.colors = createDataset(cg, opts.colors);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -103,32 +93,32 @@ export class Shapes extends Primitive {
 
       attributes: {
         position: {
-          buffer: this.regl.prop<Props, "position">("position"),
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         xs: {
-          buffer: this.regl.prop<Props, "xs">("xs"),
+          buffer: this.cg.regl.prop<Props, "xs">("xs"),
           divisor: 1,
         },
         ys: {
-          buffer: this.regl.prop<Props, "ys">("ys"),
+          buffer: this.cg.regl.prop<Props, "ys">("ys"),
           divisor: 1,
         },
         scale: {
-          buffer: this.regl.prop<Props, "scale">("scale"),
-          divisor: this.regl.prop<Props, "scaleDivisor">("scaleDivisor"),
+          buffer: this.cg.regl.prop<Props, "scale">("scale"),
+          divisor: this.cg.regl.prop<Props, "scaleDivisor">("scaleDivisor"),
         },
         rotation: {
-          buffer: this.regl.prop<Props, "rotation">("rotation"),
-          divisor: this.regl.prop<Props, "rotationDivisor">("rotationDivisor"),
+          buffer: this.cg.regl.prop<Props, "rotation">("rotation"),
+          divisor: this.cg.regl.prop<Props, "rotationDivisor">("rotationDivisor"),
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
       },
-      count: this.regl.prop<Props, "count">("count"),
-      instances: this.regl.prop<Props, "instances">("instances"),
+      count: this.cg.regl.prop<Props, "count">("count"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, Vector4, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -17,23 +17,19 @@ type Props = {
   count: number;
 };
 
-export function createTriangles(cg: CandyGraph, vertices: NumberArray | Dataset, options?: Options) {
-  return new Triangles(cg.regl, vertices, options);
-}
-
 export class Triangles extends Primitive {
   private vertices: Dataset;
   public color: Vector4;
 
-  constructor(private regl: Regl, vertices: NumberArray | Dataset, options: Options = {}) {
+  constructor(private cg: CandyGraph, vertices: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.vertices = createDataset(regl, vertices);
+    this.vertices = createDataset(cg, vertices);
     this.color = opts.color.slice();
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -52,14 +48,14 @@ export class Triangles extends Primitive {
           }`,
 
       attributes: {
-        position: this.regl.prop<Props, "position">("position"),
+        position: this.cg.regl.prop<Props, "position">("position"),
       },
 
       uniforms: {
-        color: this.regl.prop<Props, "color">("color"),
+        color: this.cg.regl.prop<Props, "color">("color"),
       },
 
-      count: this.regl.prop<Props, "count">("count"),
+      count: this.cg.regl.prop<Props, "count">("count"),
     });
   }
 

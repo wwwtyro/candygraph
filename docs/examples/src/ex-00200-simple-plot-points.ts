@@ -4,12 +4,12 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createCircles,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createScissor,
+  Circles,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
+  Scissor,
 } from "../../../src";
 
 export default async function SimplePlotPoints(cg: CandyGraph) {
@@ -37,10 +37,10 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
-    createLinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
+    new LinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
+    new LinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );
 
   // Clear the viewport.
@@ -48,23 +48,23 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    createScissor(cg, 0, 0, 1, 1, false, [
-      createLineStrip(cg, xs, ys, {
+    new Scissor(cg, 0, 0, 1, 1, false, [
+      new LineStrip(cg, xs, ys, {
         colors: [1, 0.5, 0, 1],
         widths: 3 * dpr,
       }),
-      createCircles(cg, xs, ys, {
+      new Circles(cg, xs, ys, {
         colors: [1, 0.5, 0, 1],
         radii: 6.0 * dpr,
         borderWidths: 0 * dpr,
       }),
-      createCircles(cg, xs, ys, {
+      new Circles(cg, xs, ys, {
         colors: [0, 0, 0.25, 1],
         radii: 3.0 * dpr,
         borderWidths: 0 * dpr,
       }),
     ]),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       axisColor: [1, 1, 1, 1],
       labelSide: 1,
       labelColor: [1, 1, 1, 1],
@@ -77,7 +77,7 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       axisColor: [1, 1, 1, 1],
       tickOffset: 2.5 * dpr,
       tickLength: 6 * dpr,

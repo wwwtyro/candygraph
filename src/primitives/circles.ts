@@ -1,7 +1,7 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { createDataset, Dataset } from "./dataset";
 
 type Options = {
   colors?: NumberArray | Dataset;
@@ -18,6 +18,7 @@ const DEFAULT_OPTIONS = {
 };
 
 type Props = {
+  position: Buffer;
   offsetX: Buffer;
   offsetY: Buffer;
   color: Buffer;
@@ -31,22 +32,6 @@ type Props = {
   instances: number;
 };
 
-function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer("circles")) {
-    cg.setPositionBuffer(
-      "circles",
-      // prettier-ignore
-      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
-    );
-  }
-  return cg.getPositionBuffer("circles");
-}
-
-export function createCircles(cg: CandyGraph, xs: NumberArray | Dataset, ys: NumberArray | Dataset, options?: Options) {
-  const positionBuffer = getPositionBuffer(cg)!;
-  return new Circles(cg.regl, positionBuffer, xs, ys, options);
-}
-
 export class Circles extends Primitive {
   public readonly xs: Dataset;
   public readonly ys: Dataset;
@@ -54,26 +39,22 @@ export class Circles extends Primitive {
   public readonly radii: Dataset;
   public readonly borderWidths: Dataset;
   public readonly borderColors: Dataset;
+  private positionBuffer: Buffer;
 
-  constructor(
-    private regl: Regl,
-    private positionBuffer: Buffer,
-    xs: NumberArray | Dataset,
-    ys: NumberArray | Dataset,
-    options: Options = {}
-  ) {
+  constructor(private cg: CandyGraph, xs: NumberArray | Dataset, ys: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.xs = createDataset(regl, xs);
-    this.ys = createDataset(regl, ys);
-    this.colors = createDataset(regl, opts.colors);
-    this.radii = createDataset(regl, opts.radii);
-    this.borderWidths = createDataset(regl, opts.borderWidths);
-    this.borderColors = createDataset(regl, opts.borderColors);
+    this.xs = createDataset(cg, xs);
+    this.ys = createDataset(cg, ys);
+    this.colors = createDataset(cg, opts.colors);
+    this.radii = createDataset(cg, opts.radii);
+    this.borderWidths = createDataset(cg, opts.borderWidths);
+    this.borderColors = createDataset(cg, opts.borderColors);
+    this.positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -152,36 +133,36 @@ export class Circles extends Primitive {
 
       attributes: {
         position: {
-          buffer: this.positionBuffer,
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         offsetX: {
-          buffer: this.regl.prop<Props, "offsetX">("offsetX"),
+          buffer: this.cg.regl.prop<Props, "offsetX">("offsetX"),
           divisor: 1,
         },
         offsetY: {
-          buffer: this.regl.prop<Props, "offsetY">("offsetY"),
+          buffer: this.cg.regl.prop<Props, "offsetY">("offsetY"),
           divisor: 1,
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
         radius: {
-          buffer: this.regl.prop<Props, "radius">("radius"),
-          divisor: this.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
+          buffer: this.cg.regl.prop<Props, "radius">("radius"),
+          divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
         },
         borderWidth: {
-          buffer: this.regl.prop<Props, "borderWidth">("borderWidth"),
-          divisor: this.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
+          buffer: this.cg.regl.prop<Props, "borderWidth">("borderWidth"),
+          divisor: this.cg.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
         },
         borderColor: {
-          buffer: this.regl.prop<Props, "borderColor">("borderColor"),
-          divisor: this.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
+          buffer: this.cg.regl.prop<Props, "borderColor">("borderColor"),
+          divisor: this.cg.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
         },
       },
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -190,6 +171,7 @@ export class Circles extends Primitive {
     const instances = xs.count(1);
     command({
       instances,
+      position: this.positionBuffer,
       offsetX: xs.buffer,
       offsetY: ys.buffer,
       color: colors.buffer,
@@ -210,5 +192,6 @@ export class Circles extends Primitive {
     this.borderWidths.dispose();
     this.colors.dispose();
     this.borderColors.dispose();
+    this.positionBuffer.destroy();
   }
 }

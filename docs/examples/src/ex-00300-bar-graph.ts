@@ -2,13 +2,7 @@
 // <canvas id="ex-00300" style="box-shadow: 0px 0px 8px #888;" width=512 height=1024></canvas>
 
 // skip-doc-start
-import CandyGraph, {
-  createDefaultFont,
-  createRects,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
-} from "../../../src";
+import CandyGraph, { createDefaultFont, Rects, OrthoAxis, LinearScale, CartesianCoordinateSystem } from "../../../src";
 
 export default async function BarGraph(cg: CandyGraph) {
   // Population data.
@@ -83,10 +77,10 @@ export default async function BarGraph(cg: CandyGraph) {
 
   const viewport = { x: 0, y: 0, width: 512 * dpr, height: 1024 * dpr };
 
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
-    createLinearScale([-0.75, keys.length - 1], [32 * dpr, viewport.height - 48 * dpr])
+    new LinearScale([0, 40000000], [160 * dpr, viewport.width - 24 * dpr]),
+    new LinearScale([-0.75, keys.length - 1], [32 * dpr, viewport.height - 48 * dpr])
   );
 
   const font = await createDefaultFont(cg);
@@ -94,7 +88,7 @@ export default async function BarGraph(cg: CandyGraph) {
   cg.clear([0, 0, 0.25, 1]);
 
   cg.render(coords, viewport, [
-    createRects(
+    new Rects(
       cg,
       keys.flatMap((key, index): number[] => {
         return [0, index - 0.25, pops[key], 0.5];
@@ -103,7 +97,7 @@ export default async function BarGraph(cg: CandyGraph) {
         colors: keys.flatMap((_, i) => (i % 2 === 0 ? [1, 0.5, 0, 1] : [0, 0.5, 1, 1])),
       }
     ),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],
       labelSide: 1,
@@ -117,7 +111,7 @@ export default async function BarGraph(cg: CandyGraph) {
 
       labelFormatter: (n) => (n > 0 ? `${n / 1000000}M` : "0"),
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       axisIntercept: keys.length - 0.25,
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],
@@ -131,7 +125,7 @@ export default async function BarGraph(cg: CandyGraph) {
 
       labelFormatter: (n) => (n > 0 ? `${n / 1000000}M` : "0"),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       axisHigh: keys.length - 0.25,
       axisColor: [1, 1, 1, 1],
       labelColor: [1, 1, 1, 1],

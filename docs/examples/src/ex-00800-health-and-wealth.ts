@@ -4,13 +4,13 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createText,
-  createGrid,
-  createInterleavedCircles,
-  createOrthoAxis,
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
+  Text,
+  Grid,
+  InterleavedCircles,
+  OrthoAxis,
+  LinearScale,
+  LogScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
@@ -28,22 +28,22 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
 
   const viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height };
 
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLogScale(10, [100, 100000], [64 * dpr, viewport.width - 20 * dpr]),
-    createLinearScale([10, 90], [48 * dpr, viewport.height - 60 * dpr])
+    new LogScale(10, [100, 100000], [64 * dpr, viewport.width - 20 * dpr]),
+    new LinearScale([10, 90], [48 * dpr, viewport.height - 60 * dpr])
   );
 
-  const screenCoords = createCartesianCoordinateSystem(
+  const screenCoords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, canvas.width], [0, canvas.width]),
-    createLinearScale([0, canvas.height], [0, canvas.height])
+    new LinearScale([0, canvas.width], [0, canvas.width]),
+    new LinearScale([0, canvas.height], [0, canvas.height])
   );
 
   const font = await createDefaultFont(cg);
 
   const axes = [
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       labelFormatter: (n) => (n < 1000 ? n.toString() : Math.round(n / 1000).toString() + "K"),
       tickLength: 6 * dpr,
@@ -57,7 +57,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
       minorTickOffset: -2 * dpr,
       minorTickWidth: 1 * dpr,
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickStep: 10,
       tickLength: 6 * dpr,
       tickOffset: 3 * dpr,
@@ -68,26 +68,26 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   ];
 
   const Labels = [
-    createText(cg, font, "Income", [canvas.width / 2, 8 * dpr], {
+    new Text(cg, font, "Income", [canvas.width / 2, 8 * dpr], {
       anchor: [0, -1],
       size: 16 * dpr,
     }),
-    createText(cg, font, "Life Expectancy", [8 * dpr, canvas.height / 2], {
+    new Text(cg, font, "Life Expectancy", [8 * dpr, canvas.height / 2], {
       anchor: [0, 1],
       angle: Math.PI / 2,
       size: 16 * dpr,
     }),
-    createText(cg, font, "The Health & Wealth of Nations", [8 * dpr, canvas.height - 8 * dpr], {
+    new Text(cg, font, "The Health & Wealth of Nations", [8 * dpr, canvas.height - 8 * dpr], {
       anchor: [-1, 1],
       size: 32 * dpr,
     }),
   ];
 
   const grid = [
-    createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
       width: 1 * dpr,
     }),
-    createGrid(cg, axes[0].info.minorTicks, [], coords.xscale.domain, coords.yscale.domain, { width: 1 * dpr }),
+    new Grid(cg, axes[0].info.minorTicks, [], coords.xscale.domain, coords.yscale.domain, { width: 1 * dpr }),
   ];
 
   const colors = [];
@@ -95,7 +95,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     colors.push(Math.random(), Math.random(), Math.random(), 0.5);
   }
 
-  const circles = createInterleavedCircles(cg, [0, 0], { colors, borderWidths: 0 });
+  const circles = new InterleavedCircles(cg, [0, 0], { colors, borderWidths: 0 });
 
   function render(year: number) {
     year = Math.max(nations.bounds.date.min, year);
@@ -114,7 +114,7 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
     cg.render(coords, viewport, [grid, circles, axes]);
 
     cg.render(screenCoords, viewport, [
-      createText(
+      new Text(
         cg,
         font,
         year.toString(),

@@ -6,11 +6,11 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createCircles,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
-  createScissor,
+  Circles,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
+  Scissor,
 } from "../../../src";
 
 export default async function ScatterPlotZoomPan(cg: CandyGraph) {
@@ -35,7 +35,7 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
   }
 
   // Store this for performance.
-  const circles = createCircles(cg, xs, ys, {
+  const circles = new Circles(cg, xs, ys, {
     colors: [0, 0.5, 1.0, 1.0],
     radii: 1 * dpr,
     borderWidths: 0 * dpr,
@@ -47,10 +47,10 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
-    createLinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
+    new LinearScale([0, 1], [32 * dpr, viewport.width - 16 * dpr]),
+    new LinearScale([0, 1], [32 * dpr, viewport.height - 16 * dpr])
   );
 
   const camera = {
@@ -127,8 +127,8 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
 
     // Render the data as circles and the axes.
     cg.render(coords, viewport, [
-      createScissor(cg, 32 * dpr, 32 * dpr, viewport.width - 48 * dpr, viewport.width - 48 * dpr, true, circles),
-      createOrthoAxis(cg, coords, "x", font, {
+      new Scissor(cg, 32 * dpr, 32 * dpr, viewport.width - 48 * dpr, viewport.width - 48 * dpr, true, circles),
+      new OrthoAxis(cg, coords, "x", font, {
         labelSide: 1,
         tickOffset: -2.5 * dpr,
         tickLength: 6 * dpr,
@@ -141,7 +141,7 @@ export default async function ScatterPlotZoomPan(cg: CandyGraph) {
         labelSize: 12 * dpr,
         labelFormatter: (n) => n.toFixed(1),
       }),
-      createOrthoAxis(cg, coords, "y", font, {
+      new OrthoAxis(cg, coords, "y", font, {
         tickOffset: 2.5 * dpr,
         tickLength: 6 * dpr,
         tickStep: 0.2,

@@ -17,16 +17,6 @@ type Props = {
   yRange: Vector2;
 };
 
-export function createPolarCoordinateSystem(
-  cg: CandyGraph,
-  radialScale: LinearScale | LogScale,
-  angularScale: LinearScale | LogScale,
-  xScale: LinearScale | LogScale,
-  yScale: LinearScale | LogScale
-) {
-  return new PolarCoordinateSystem(cg, radialScale, angularScale, xScale, yScale);
-}
-
 export class PolarCoordinateSystem extends CoordinateSystem {
   public readonly glsl: string;
   public readonly kind = Kind.Polar;

@@ -2,30 +2,30 @@ import { CandyGraph } from "./candygraph";
 export { CandyGraph };
 export default CandyGraph;
 
-export { LinearScale, createLinearScale } from "./scales/linear";
-export { LogScale, createLogScale } from "./scales/log";
+export { LinearScale } from "./scales/linear";
+export { LogScale } from "./scales/log";
 
-export { CartesianCoordinateSystem, createCartesianCoordinateSystem } from "./coordinates/cartesian";
-export { PolarCoordinateSystem, createPolarCoordinateSystem } from "./coordinates/polar";
+export { CartesianCoordinateSystem } from "./coordinates/cartesian";
+export { PolarCoordinateSystem } from "./coordinates/polar";
 
-export { Circles, createCircles } from "./primitives/circles";
-export { Dataset, createDatasetPublic as createDataset } from "./primitives/dataset";
-export { Font, createFont } from "./primitives/font";
-export { HLines, createHLines } from "./primitives/hlines";
-export { InterleavedCircles, createInterleavedCircles } from "./primitives/interleaved-circles";
-export { InterleavedShapes, createInterleavedShapes } from "./primitives/interleaved-shapes";
-export { LineSegments, createLineSegments } from "./primitives/line-segments";
-export { LineStrip, createLineStrip } from "./primitives/line-strip";
-export { Rects, createRects } from "./primitives/rects";
-export { Shapes, createShapes } from "./primitives/shapes";
-export { Text, createText } from "./primitives/text";
-export { Triangles, createTriangles } from "./primitives/triangles";
-export { VLines, createVLines } from "./primitives/vlines";
-export { Wedges, createWedges } from "./primitives/wedges";
+export { Circles } from "./primitives/circles";
+export { Dataset } from "./primitives/dataset";
+export { Font } from "./primitives/font";
+export { HLines } from "./primitives/hlines";
+export { InterleavedCircles } from "./primitives/interleaved-circles";
+export { InterleavedShapes } from "./primitives/interleaved-shapes";
+export { LineSegments } from "./primitives/line-segments";
+export { LineStrip } from "./primitives/line-strip";
+export { Rects } from "./primitives/rects";
+export { Shapes } from "./primitives/shapes";
+export { Text } from "./primitives/text";
+export { Triangles } from "./primitives/triangles";
+export { VLines } from "./primitives/vlines";
+export { Wedges } from "./primitives/wedges";
 
-export { Axis, createAxis } from "./composites/axis";
-export { Grid, createGrid } from "./composites/grid";
-export { OrthoAxis, createOrthoAxis } from "./composites/ortho-axis";
-export { Scissor, createScissor } from "./composites/scissor";
+export { Axis } from "./composites/axis";
+export { Grid } from "./composites/grid";
+export { OrthoAxis } from "./composites/ortho-axis";
+export { Scissor } from "./composites/scissor";
 
 export { createDefaultFont } from "./assets/default-font";

@@ -1,4 +1,4 @@
-import { Regl, Texture } from "regl";
+import { Texture } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Vector2 } from "../common";
 
@@ -12,10 +12,6 @@ type Glyph = {
   uv: Vector2;
 };
 
-export function createFont(cg: CandyGraph, image: HTMLImageElement, json: any) {
-  return new Font(cg.regl, image, json);
-}
-
 export class Font {
   public readonly texture: Texture;
   public readonly lineHeight: number;
@@ -23,8 +19,8 @@ export class Font {
   private readonly kernTable: Int8Array;
   private readonly maxid: number;
 
-  constructor(regl: Regl, image: HTMLImageElement, json: any) {
-    this.texture = regl.texture({
+  constructor(cg: CandyGraph, image: HTMLImageElement, json: any) {
+    this.texture = cg.regl.texture({
       data: image,
       mag: "linear",
       min: "linear",

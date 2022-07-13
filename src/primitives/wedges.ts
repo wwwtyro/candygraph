@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -14,6 +14,7 @@ const DEFAULT_OPTIONS = {
 };
 
 type Props = {
+  position: Buffer;
   offset: Buffer;
   angle: Buffer;
   radius: Buffer;
@@ -24,50 +25,30 @@ type Props = {
   instances: number;
 };
 
-function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer("wedges")) {
-    cg.setPositionBuffer(
-      "wedges",
-      // prettier-ignore
-      [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]
-    );
-  }
-  return cg.getPositionBuffer("wedges");
-}
-
-export function createWedges(
-  cg: CandyGraph,
-  xys: NumberArray | Dataset,
-  angles: NumberArray | Dataset,
-  options?: Options
-) {
-  const positionBuffer = getPositionBuffer(cg)!;
-  return new Wedges(cg.regl, positionBuffer, xys, angles, options);
-}
-
 export class Wedges extends Primitive {
   public readonly xys: Dataset;
   public readonly angles: Dataset;
   public readonly colors: Dataset;
   public readonly radii: Dataset;
+  private positionBuffer: Buffer;
 
   constructor(
-    private regl: Regl,
-    private positionBuffer: Buffer,
+    private cg: CandyGraph,
     xys: NumberArray | Dataset,
     angles: NumberArray | Dataset,
     options: Options = {}
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.xys = createDataset(regl, xys);
-    this.angles = createDataset(regl, angles);
-    this.colors = createDataset(regl, opts.colors);
-    this.radii = createDataset(regl, opts.radii);
+    this.xys = createDataset(cg, xys);
+    this.angles = createDataset(cg, angles);
+    this.colors = createDataset(cg, opts.colors);
+    this.radii = createDataset(cg, opts.radii);
+    this.positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -143,28 +124,28 @@ export class Wedges extends Primitive {
 
       attributes: {
         position: {
-          buffer: this.positionBuffer,
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         offset: {
-          buffer: this.regl.prop<Props, "offset">("offset"),
+          buffer: this.cg.regl.prop<Props, "offset">("offset"),
           divisor: 1,
         },
         angle: {
-          buffer: this.regl.prop<Props, "angle">("angle"),
-          divisor: this.regl.prop<Props, "angleDivisor">("angleDivisor"),
+          buffer: this.cg.regl.prop<Props, "angle">("angle"),
+          divisor: this.cg.regl.prop<Props, "angleDivisor">("angleDivisor"),
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
         radius: {
-          buffer: this.regl.prop<Props, "radius">("radius"),
-          divisor: this.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
+          buffer: this.cg.regl.prop<Props, "radius">("radius"),
+          divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
         },
       },
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -173,6 +154,7 @@ export class Wedges extends Primitive {
     const instances = xys.count(2);
     command({
       instances,
+      position: this.positionBuffer,
       offset: xys.buffer,
       angle: angles.buffer,
       color: colors.buffer,
@@ -188,5 +170,6 @@ export class Wedges extends Primitive {
     this.angles.dispose();
     this.radii.dispose();
     this.colors.dispose();
+    this.positionBuffer.destroy();
   }
 }

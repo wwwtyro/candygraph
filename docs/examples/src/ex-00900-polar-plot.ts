@@ -4,11 +4,11 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createText,
-  createLineStrip,
-  createLineSegments,
-  createLinearScale,
-  createPolarCoordinateSystem,
+  Text,
+  LineStrip,
+  LineSegments,
+  LinearScale,
+  PolarCoordinateSystem,
 } from "../../../src";
 
 export default async function PolarPlot(cg: CandyGraph) {
@@ -34,12 +34,12 @@ export default async function PolarPlot(cg: CandyGraph) {
   // Create a polar coordinate system. The first two scales map input data to
   // polar distance and angle (in radians), the next two map the resulting
   // cartesian coordinates to pixels.
-  const coords = createPolarCoordinateSystem(
+  const coords = new PolarCoordinateSystem(
     cg,
-    createLinearScale([0, 1], [0, 1]), // radial scale
-    createLinearScale([0, 1], [0, 1]), // angular scale
-    createLinearScale([-1.1, 1.1], [16 * dpr, viewport.width - 16 * dpr]), // x scale
-    createLinearScale([-1.1, 1.1], [16 * dpr, viewport.height - 16 * dpr]) // y scale
+    new LinearScale([0, 1], [0, 1]), // radial scale
+    new LinearScale([0, 1], [0, 1]), // angular scale
+    new LinearScale([-1.1, 1.1], [16 * dpr, viewport.width - 16 * dpr]), // x scale
+    new LinearScale([-1.1, 1.1], [16 * dpr, viewport.height - 16 * dpr]) // y scale
   );
 
   const font = await createDefaultFont(cg);
@@ -67,7 +67,7 @@ export default async function PolarPlot(cg: CandyGraph) {
       axisLineColors.push(0, 0, 0, 1.0);
     }
     axisLabels.push(
-      createText(cg, font, Math.round(turn * 360).toString(), [1.05, theta], {
+      new Text(cg, font, Math.round(turn * 360).toString(), [1.05, theta], {
         anchor: turn < 0.25 || turn > 0.75 ? [-1, 0] : [1, 0],
         angle: turn < 0.25 || turn > 0.75 ? theta : theta + Math.PI,
         size: 12 * dpr,
@@ -95,12 +95,12 @@ export default async function PolarPlot(cg: CandyGraph) {
 
   // Render the a line strip representing the polar data.
   cg.render(coords, viewport, [
-    createLineSegments(cg, axisLinePositions, {
+    new LineSegments(cg, axisLinePositions, {
       widths: axisLineWidths,
       colors: axisLineColors,
     }),
     ...axisLabels,
-    createLineStrip(cg, rhos, thetas, {
+    new LineStrip(cg, rhos, thetas, {
       colors: [1, 0.5, 0, 1],
       widths: 2.5 * dpr,
     }),

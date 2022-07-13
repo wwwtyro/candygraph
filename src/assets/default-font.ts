@@ -1,5 +1,5 @@
 import { CandyGraph } from "../candygraph";
-import { Font, createFont } from "../primitives/font";
+import { Font } from "../primitives/font";
 
 function loadImage(url: string) {
   return new Promise<HTMLImageElement>((accept) => {
@@ -12,7 +12,7 @@ function loadImage(url: string) {
 export function createDefaultFont(cg: CandyGraph) {
   return new Promise<Font>(async (accept) => {
     const image = await loadImage(latoImage);
-    const font = createFont(cg, image, latoJSON);
+    const font = new Font(cg, image, latoJSON);
     accept(font);
   });
 }
