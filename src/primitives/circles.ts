@@ -3,12 +3,19 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { createDataset, Dataset } from "./dataset";
 
-type Options = {
+export interface CirclesOptions {
+  /** The interior color of the circles. If this value is a single Vector4, it will apply to all the circles. Default [0, 0, 0, 0.5]. */
   colors?: NumberArray | Dataset;
-  borderColors?: NumberArray | Dataset;
+
+  /** The radius of the circles (including border) in pixels. If this value is a single number, it will apply to all the circles. Default 10. */
   radii?: number | NumberArray | Dataset;
+
+  /** The color of the borders. If this value is a single Vector4, it will apply to all the circles. Default [0, 0, 0, 1]. */
+  borderColors?: NumberArray | Dataset;
+
+  /** The width of the borders in pixels. If this value is a single number, it will apply to all the borders. Default 3. */
   borderWidths?: number | NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 0.5],
@@ -41,7 +48,19 @@ export class Circles extends Primitive {
   public readonly borderColors: Dataset;
   private positionBuffer: Buffer;
 
-  constructor(private cg: CandyGraph, xs: NumberArray | Dataset, ys: NumberArray | Dataset, options: Options = {}) {
+  /**
+   *
+   * @param cg
+   * @param xs The x coordinates of the circle centers in the form `[x0, x1, ...]`.
+   * @param ys The y coordinates of the circle centers in the form `[y0, y1, ...]`.
+   * @param options
+   */
+  constructor(
+    private cg: CandyGraph,
+    xs: NumberArray | Dataset,
+    ys: NumberArray | Dataset,
+    options: CirclesOptions = {}
+  ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xs = createDataset(cg, xs);
@@ -53,6 +72,7 @@ export class Circles extends Primitive {
     this.positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -166,6 +186,7 @@ export class Circles extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { xs, ys, colors, radii, borderWidths, borderColors } = this;
     const instances = xs.count(1);
@@ -185,6 +206,7 @@ export class Circles extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.xs.dispose();
     this.ys.dispose();

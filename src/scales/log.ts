@@ -2,8 +2,12 @@ import { Scale, Kind } from "./scale";
 import { Vector2 } from "../common";
 
 export class LogScale extends Scale {
+  /** @internal */
   public readonly kind = Kind.Log;
+
+  /** @internal */
   public readonly glsl: string;
+
   private _domain: Vector2 = [];
   private _range: Vector2 = [];
   private conversion: number;

@@ -3,10 +3,15 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface LineSegmentsOptions {
+  /** The width of the line segments in pixels. If this parameter is a single
+   * number, it will apply to all line segments. Default 1. */
   widths?: number | NumberArray | Dataset;
+
+  /** The color of the line segments. If this parameter is a single Vector4, it
+   * will apply to all line segments. Default [0, 0, 0, 1]. */
   colors?: NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   widths: 1,
@@ -29,7 +34,11 @@ export class LineSegments extends Primitive {
   public readonly colors: Dataset;
   private segmentGeometry: Buffer;
 
-  constructor(private cg: CandyGraph, points: NumberArray | Dataset, options: Options = {}) {
+  /**
+   * @param points An array of points in the format `[x0, y0, x1, y1, ...]` that
+   * represent the endpoints of the line segments to be rendered.
+   */
+  constructor(private cg: CandyGraph, points: NumberArray | Dataset, options: LineSegmentsOptions = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.points = createDataset(cg, points);
@@ -45,6 +54,7 @@ export class LineSegments extends Primitive {
     ]);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -114,6 +124,7 @@ export class LineSegments extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { points, colors, widths } = this;
     const instances = points.count(2) / 2;
@@ -128,6 +139,7 @@ export class LineSegments extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.points.dispose();
     this.colors.dispose();

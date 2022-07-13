@@ -3,11 +3,17 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface ShapesOptions {
+  /** The color of the shapes. If this value is a single Vector4, it will apply
+   * to all the shapes. Default [0, 0, 0, 0.5]. */
   colors?: NumberArray | Dataset;
+  /** The scale of the shapes. If this value is a single Vector2, it will apply
+   * to all the shapes. Default [1, 1]. */
   scales?: NumberArray | Dataset;
+  /** The rotation of the shapes in radians. If this value is a single float, it
+   * will apply to all the shapes. Default 0. */
   rotations?: number | NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 0.5],
@@ -30,6 +36,7 @@ type Props = {
   instances: number;
 };
 
+/** Renders colored shapes. Useful for custom trace points. */
 export class Shapes extends Primitive {
   public shape: Dataset;
   public xs: Dataset;
@@ -38,12 +45,20 @@ export class Shapes extends Primitive {
   public rotations: Dataset;
   public colors: Dataset;
 
+  /**
+   * @param shape Set of 2D points in the form `[x0, y0, x1, y1, ...]` that
+   * describe the (unindexed) set of triangles representing the shape to render.
+   * @param xs The x coordinates of the shape positions in the form `[x0, x1,
+   * ...]`.
+   * @param ys The y coordinates of the shape positions in the form `[y0, y1,
+   * ...]`.
+   */
   constructor(
     private cg: CandyGraph,
     shape: NumberArray | Dataset,
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
-    options: Options = {}
+    options: ShapesOptions = {}
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
@@ -55,6 +70,7 @@ export class Shapes extends Primitive {
     this.colors = createDataset(cg, opts.colors);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -122,6 +138,7 @@ export class Shapes extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { shape, xs, ys, scales, rotations, colors } = this;
     const instances = xs.count(1);
@@ -140,6 +157,7 @@ export class Shapes extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.xs.dispose();
     this.ys.dispose();

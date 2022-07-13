@@ -19,10 +19,13 @@ const commonGLSL = `
   }
 `;
 
-type CandyGraphOptions = {
+export interface CandyGraphOptions {
+  /** The canvas element the webgl context will be created from. One will be created if not provided. */
   canvas?: HTMLCanvasElement;
+
+  /** Indicates if the canvas contains an alpha buffer. Enable this if you would like to composite your graph with DOM elements. */
   alpha?: boolean;
-};
+}
 
 const DEFAULT_OPTIONS = {
   canvas: null,
@@ -30,7 +33,9 @@ const DEFAULT_OPTIONS = {
 };
 
 export class CandyGraph {
+  /** @internal */
   public readonly regl: Regl;
+
   public readonly canvas: HTMLCanvasElement;
 
   private commandCache = new Map<string, Map<Function, DrawCommand>>();
@@ -63,10 +68,45 @@ export class CandyGraph {
     });
   }
 
+  /** Clears the entire CandyGraph canvas.
+   * @examples
+   * Clear the canvas to solid white.
+   * ```ts
+   * cg.clear([1, 1, 1, 1]);
+   * ```
+   * Clear the canvas to blue.
+   * ```ts
+   * cg.clear([0, 0, 1, 1]);
+   * ```
+   * Clear the canvas to zero alpha for compositing with the page.
+   * ```ts
+   * const cg = new CandyGraph({ alpha: true });
+   * cg.clear([0, 0, 0, 0]);
+   * ```
+   */
   public clear = (color: [number, number, number, number]): void => {
     this.regl.clear({ color: color as Vec4 });
   };
 
+  /** Renders the given Renderable(s) to the given Viewport with the provided CoordinateSystem.
+   * @example
+   * ```ts
+   * // Create a viewport.
+   * const viewport = { x: 0, y: 0, width: 384, height: 384 };
+   *
+   * // Create a coordinate system.
+   * const coords = new CartesianCoordinateSystem(
+   *   new LinearScale([0, 1], [32, viewport.width - 16]),
+   *   new LinearScale([0, 1], [32, viewport.height - 16])
+   * );
+   *
+   * // Render a line segment to the viewport.
+   * cg.render(coords, viewport, new LineSegments(cg, [0, 0, 1, 1]));
+   *
+   * // Render a couple more line segments to the viewport.
+   * cg.render(coords, viewport, [new LineSegments(cg, [0.5, 0, 0.5, 1]), new LineSegments(cg, [0, 1, 1, 0])]);
+   * ```
+   */
   public render = (coords: CoordinateSystem, viewport: Viewport, renderable: Renderable): void => {
     coords.scope(coords.props(), () => {
       this.scope(
@@ -81,45 +121,16 @@ export class CandyGraph {
     });
   };
 
-  private recursiveRender(coords: CoordinateSystem, renderable: Renderable) {
-    if (Array.isArray(renderable)) {
-      for (const element of renderable) {
-        this.recursiveRender(coords, element);
-      }
-    } else {
-      if (renderable.kind === RenderableType.Primitive) {
-        const command = this.getCommand(coords, renderable);
-        renderable.render(command);
-      } else if (renderable.kind === RenderableType.Composite) {
-        if (renderable.scope) {
-          renderable.scope(renderable.props(coords), () => {
-            this.recursiveRender(coords, renderable.children());
-          });
-        } else {
-          this.recursiveRender(coords, renderable.children());
-        }
-      }
-    }
-  }
-
+  /** Destroys the underlying `regl` instance and renders this `CandyGraph` instance unusable. */
   public destroy() {
     this.regl.destroy();
   }
 
-  private getCommand(coords: CoordinateSystem, primitive: Primitive) {
-    let commands = this.commandCache.get(coords.glsl);
-    if (!commands) {
-      commands = new Map<Function, DrawCommand>();
-      this.commandCache.set(coords.glsl, commands);
-    }
-    let command = commands.get(primitive.constructor);
-    if (!command) {
-      command = primitive.command(coords.glsl + commonGLSL);
-      commands.set(primitive.constructor, command);
-    }
-    return command;
-  }
-
+  /** Copies the contents of the CandyGraph canvas to another canvas. Returns the HTMLCanvasElement that was copied to.
+   * @param sourceViewport The `Viewport` of the `CandyGraph` canvas that will be copied from.
+   * @param destinationCanvas The canvas that will be copied to. If not provided, one will be created with the dimensions of `destinationViewport`.
+   * @param destinationViewport If not provided, one will be created that is positioned at [0, 0] and with the width and height of `sourceViewport`.
+   */
   public copyTo(sourceViewport: Viewport, destinationCanvas?: HTMLCanvasElement, destinationViewport?: Viewport) {
     // If we're not provided a canvas, make one.
     const dest = destinationCanvas ?? document.createElement("canvas");
@@ -153,5 +164,40 @@ export class CandyGraph {
     );
 
     return dest;
+  }
+
+  private getCommand(coords: CoordinateSystem, primitive: Primitive) {
+    let commands = this.commandCache.get(coords.glsl);
+    if (!commands) {
+      commands = new Map<Function, DrawCommand>();
+      this.commandCache.set(coords.glsl, commands);
+    }
+    let command = commands.get(primitive.constructor);
+    if (!command) {
+      command = primitive.command(coords.glsl + commonGLSL);
+      commands.set(primitive.constructor, command);
+    }
+    return command;
+  }
+
+  private recursiveRender(coords: CoordinateSystem, renderable: Renderable) {
+    if (Array.isArray(renderable)) {
+      for (const element of renderable) {
+        this.recursiveRender(coords, element);
+      }
+    } else {
+      if (renderable.kind === RenderableType.Primitive) {
+        const command = this.getCommand(coords, renderable);
+        renderable.render(command);
+      } else if (renderable.kind === RenderableType.Composite) {
+        if (renderable.scope) {
+          renderable.scope(renderable.props(coords), () => {
+            this.recursiveRender(coords, renderable.children());
+          });
+        } else {
+          this.recursiveRender(coords, renderable.children());
+        }
+      }
+    }
   }
 }

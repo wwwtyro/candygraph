@@ -5,13 +5,21 @@ import { Font } from "./font";
 
 const MAX_UNAVAILABLE_GLYPH_WARNINGS = 10;
 
-export type Options = {
+export interface TextOptions {
+  /** A value between -1 and 1 that represents the alignment of multiple lines
+   * of text. -1 is aligned fully to the left, 1 is aligned fully to the right,
+   * and 0 is centered. Default 0. */
   align?: number;
+  /** The x/y position of the anchor relative to the text quad, on the range
+   * [-1, -1] (bottom left) to [1, 1] (top right). Default [0, 0]. */
   anchor?: Vector2;
+  /** The angle at which the text will be rotated around the anchor. Default 0. */
   angle?: number;
+  /** The color of the text. Default [0, 0, 0, 1]. */
   color?: Vector4;
+  /** The size of the text. Default 12. */
   size?: number;
-};
+}
 
 const DEFAULTS = {
   align: 0,
@@ -48,7 +56,7 @@ export class Text extends Primitive {
   private instances: number;
   private quadGeometry: Buffer;
 
-  constructor(private cg: CandyGraph, private font: Font, text: string, position: Vector2, options: Options = {}) {
+  constructor(private cg: CandyGraph, private font: Font, text: string, position: Vector2, options: TextOptions = {}) {
     super();
     this.quadGeometry = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
 
@@ -189,6 +197,7 @@ export class Text extends Primitive {
     this.color = opts.color.slice();
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -271,6 +280,7 @@ export class Text extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { color, position, angle, size, quad, uv, instances } = this;
     command({
@@ -285,6 +295,7 @@ export class Text extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.quad.destroy();
     this.uv.destroy();

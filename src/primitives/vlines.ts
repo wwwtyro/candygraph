@@ -3,10 +3,12 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface VLinesOptions {
+  /** The width of the lines in pixels. If this value is a single number, it will apply to all the lines. Default 1. */
   widths?: number | NumberArray | Dataset;
+  /** The color of the lines. If this value is a single Vector4, it will apply to all the lines. Default [0, 0, 0, 1] */
   colors?: NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   widths: 1.0,
@@ -23,13 +25,24 @@ type Props = {
   instances: number;
 };
 
+/**
+ * Renders clean vertical lines. Line widths are rounded to the nearest pixel
+ * (with a minimum of 1) so that the lines never appear blurry. This is useful
+ * when rendering items like orthographic axes; without this approach, axis
+ * lines or tick marks can consume different numbers of pixels and result in an
+ * inconsistent appearance.
+ */
 export class VLines extends Primitive {
   public readonly lines: Dataset;
   public readonly widths: Dataset;
   public readonly colors: Dataset;
   private segmentGeometry: Buffer;
 
-  constructor(private cg: CandyGraph, lines: NumberArray | Dataset, options: Options = {}) {
+  /**
+   * @param lines The line positions in the form `[x0, y0_0, y0_1, x1, y1_0,
+   * y1_1, ...]` where each line is defined by three numbers.
+   */
+  constructor(private cg: CandyGraph, lines: NumberArray | Dataset, options: VLinesOptions = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.lines = createDataset(cg, lines);
@@ -45,6 +58,7 @@ export class VLines extends Primitive {
     ]);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -125,6 +139,7 @@ export class VLines extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { lines, colors, widths } = this;
     const instances = lines.count(3);
@@ -139,6 +154,7 @@ export class VLines extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.lines.dispose();
     this.colors.dispose();

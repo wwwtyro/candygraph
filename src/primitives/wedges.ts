@@ -3,10 +3,12 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface WedgesOptions {
+  /** The interior color of the wedges. If this value is a single Vector4, it will apply to all the wedges. Default [0, 0, 0, 0.5]. */
   colors?: NumberArray | Dataset;
+  /** The radius of the wedges in pixels. If this value is a single number, it will apply to all the wedges. Default 10. */
   radii?: number | NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 0.5],
@@ -25,6 +27,9 @@ type Props = {
   instances: number;
 };
 
+/**
+ * Useful for pie charts.
+ */
 export class Wedges extends Primitive {
   public readonly xys: Dataset;
   public readonly angles: Dataset;
@@ -32,11 +37,15 @@ export class Wedges extends Primitive {
   public readonly radii: Dataset;
   private positionBuffer: Buffer;
 
+  /**
+   * @param xys The x, y coordinates of the wedge point in the form `[x0, y0, x1, y1, ...]`.
+   * @param angles The angle and arclength of each wedge in the form `[angle0, arclength0, angle1, arclength1, ...]`.
+   */
   constructor(
     private cg: CandyGraph,
     xys: NumberArray | Dataset,
     angles: NumberArray | Dataset,
-    options: Options = {}
+    options: WedgesOptions = {}
   ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
@@ -47,6 +56,7 @@ export class Wedges extends Primitive {
     this.positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -149,6 +159,7 @@ export class Wedges extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { xys, angles, colors, radii } = this;
     const instances = xys.count(2);
@@ -165,6 +176,7 @@ export class Wedges extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.xys.dispose();
     this.angles.dispose();

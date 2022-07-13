@@ -13,8 +13,13 @@ type Props = {
 };
 
 export class CartesianCoordinateSystem extends CoordinateSystem {
+  /** @internal */
   public readonly glsl: string;
+
+  /** @internal */
   public readonly kind = Kind.Cartesian;
+
+  /** @internal */
   public readonly scope: DrawCommand;
 
   constructor(
@@ -65,6 +70,7 @@ export class CartesianCoordinateSystem extends CoordinateSystem {
     return [this.xscale.toDomain(v[0]), this.yscale.toDomain(v[1])];
   }
 
+  /** @internal */
   public props(): Props {
     return {
       xdomain: this.xscale.domain,

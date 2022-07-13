@@ -3,12 +3,16 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface InterleavedCirclesOptions {
+  /** The interior color of the circles. If this value is a single Vector4, it will apply to all the circles. Default [0, 0, 0, 0.5]. */
   colors?: NumberArray | Dataset;
+  /** The color of the borders. If this value is a single Vector4, it will apply to all the circles. Default [0, 0, 0, 1]. */
   borderColors?: NumberArray | Dataset;
+  /** The radius of the circles (including border) in pixels. If this value is a single number, it will apply to all the circles. Default 10. */
   radii?: number | NumberArray | Dataset;
+  /** The width of the borders in pixels. If this value is a single number, it will apply to all the borders. Default 3. */
   borderWidths?: number | NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 0.5],
@@ -31,6 +35,7 @@ type Props = {
   instances: number;
 };
 
+/** Colored circles with optional borders. */
 export class InterleavedCircles extends Primitive {
   public readonly xys: Dataset;
   public readonly colors: Dataset;
@@ -39,7 +44,10 @@ export class InterleavedCircles extends Primitive {
   public readonly borderColors: Dataset;
   private positionBuffer: Buffer;
 
-  constructor(private cg: CandyGraph, xys: NumberArray | Dataset, options: Options = {}) {
+  /**
+   * @param xys The x and y coordinates of the circle centers in the form `[x0, y0, x1, y1, ...]`.
+   */
+  constructor(private cg: CandyGraph, xys: NumberArray | Dataset, options: InterleavedCirclesOptions = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xys = createDataset(cg, xys);
@@ -50,6 +58,7 @@ export class InterleavedCircles extends Primitive {
     this.positionBuffer = cg.regl.buffer([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -158,6 +167,7 @@ export class InterleavedCircles extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { xys, colors, radii, borderWidths, borderColors } = this;
     const instances = xys.count(2);
@@ -176,6 +186,7 @@ export class InterleavedCircles extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.xys.dispose();
     this.radii.dispose();

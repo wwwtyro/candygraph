@@ -3,9 +3,10 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface RectsOptions {
+  /** The color of the rectangles. If this value is a single Vector4, it will apply to all the rectangles. Default [0, 0, 0, 0.5]. */
   colors?: NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 0.5],
@@ -24,7 +25,11 @@ export class Rects extends Primitive {
   public readonly colors: Dataset;
   private positionBuffer: Buffer;
 
-  constructor(private cg: CandyGraph, rects: NumberArray | Dataset, options: Options = {}) {
+  /**
+   * @param rects The x, y position of the lower-left corner of the rectangle
+   * and its width and height in the form `[x0, y0, w0, h0, x1, y1, w1, h1, ...]`.
+   */
+  constructor(private cg: CandyGraph, rects: NumberArray | Dataset, options: RectsOptions = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.rects = createDataset(cg, rects);
@@ -32,6 +37,7 @@ export class Rects extends Primitive {
     this.positionBuffer = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -77,6 +83,7 @@ export class Rects extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { rects, colors } = this;
     const instances = rects.count(4);
@@ -89,6 +96,7 @@ export class Rects extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.rects.dispose();
     this.colors.dispose();
