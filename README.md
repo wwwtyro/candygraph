@@ -28,7 +28,13 @@
 </p>
 
 ```typescript
-import CandyGraph, { DefaultFont, LinearScale, LineStrip, OrthoAxis, CartesianCoordinateSystem } from "candygraph";
+import CandyGraph, {
+  createDefaultFont,
+  LinearScale,
+  LineStrip,
+  OrthoAxis,
+  CartesianCoordinateSystem,
+} from "candygraph";
 
 async function main() {
   const cg = new CandyGraph();
