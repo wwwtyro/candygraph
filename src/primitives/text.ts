@@ -1,4 +1,4 @@
-import { Regl, DrawCommand, Buffer } from "regl";
+import { DrawCommand, Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, Vector2, Vector4 } from "../common";
 import { Font } from "./font";
@@ -22,6 +22,7 @@ const DEFAULTS = {
 };
 
 type Props = {
+  position: Buffer;
   quad: Float32Array;
   uv: Float32Array;
   color: Vector4;
@@ -35,18 +36,6 @@ type Props = {
 let quadBuffer = new Float32Array(1);
 let uvBuffer = new Float32Array(1);
 
-function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer("text")) {
-    cg.setPositionBuffer("text", [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
-  }
-  return cg.getPositionBuffer("text");
-}
-
-export function createText(cg: CandyGraph, font: Font, text: string, position: Vector2, options?: Options) {
-  const quadGeometry = getPositionBuffer(cg)!;
-  return new Text(cg.regl, quadGeometry, font, text, position, options);
-}
-
 export class Text extends Primitive {
   public position: Vector2;
   public size: number;
@@ -57,16 +46,12 @@ export class Text extends Primitive {
   private quad: Buffer;
   private uv: Buffer;
   private instances: number;
+  private quadGeometry: Buffer;
 
-  constructor(
-    private regl: Regl,
-    private quadGeometry: Buffer,
-    private font: Font,
-    text: string,
-    position: Vector2,
-    options: Options = {}
-  ) {
+  constructor(private cg: CandyGraph, private font: Font, text: string, position: Vector2, options: Options = {}) {
     super();
+    this.quadGeometry = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
+
     const opts = { ...DEFAULTS, ...options };
 
     // Get a count of the actual number of characters we'll be creating quads for.
@@ -193,8 +178,8 @@ export class Text extends Primitive {
       }
     }
 
-    this.quad = regl.buffer(quad);
-    this.uv = regl.buffer(uv);
+    this.quad = cg.regl.buffer(quad);
+    this.uv = cg.regl.buffer(uv);
     this.instances = charCount;
     this.width = totalWidth;
     this.height = totalHeight;
@@ -205,7 +190,7 @@ export class Text extends Primitive {
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
         precision highp float;
         attribute vec2 position;
@@ -262,27 +247,27 @@ export class Text extends Primitive {
       `,
       attributes: {
         position: {
-          buffer: this.quadGeometry,
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         quad: {
-          buffer: this.regl.prop<Props, "quad">("quad"),
+          buffer: this.cg.regl.prop<Props, "quad">("quad"),
           divisor: 1,
         },
         uv: {
-          buffer: this.regl.prop<Props, "uv">("uv"),
+          buffer: this.cg.regl.prop<Props, "uv">("uv"),
           divisor: 1,
         },
       },
       uniforms: {
         tSDF: this.font.texture,
-        offset: this.regl.prop<Props, "offset">("offset"),
-        size: this.regl.prop<Props, "size">("size"),
-        angle: this.regl.prop<Props, "angle">("angle"),
-        color: this.regl.prop<Props, "color">("color"),
+        offset: this.cg.regl.prop<Props, "offset">("offset"),
+        size: this.cg.regl.prop<Props, "size">("size"),
+        angle: this.cg.regl.prop<Props, "angle">("angle"),
+        color: this.cg.regl.prop<Props, "color">("color"),
       },
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -290,6 +275,7 @@ export class Text extends Primitive {
     const { color, position, angle, size, quad, uv, instances } = this;
     command({
       color,
+      position: this.quadGeometry,
       offset: position,
       angle,
       size,
@@ -302,5 +288,6 @@ export class Text extends Primitive {
   public dispose(): void {
     this.quad.destroy();
     this.uv.destroy();
+    this.quadGeometry.destroy();
   }
 }

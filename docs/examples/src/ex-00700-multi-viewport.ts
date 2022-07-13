@@ -3,12 +3,12 @@
 
 // skip-doc-start
 import CandyGraph, {
-  createDataset,
+  Dataset,
   createDefaultFont,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function MultiViewport(cg: CandyGraph) {
@@ -21,22 +21,22 @@ export default async function MultiViewport(cg: CandyGraph) {
   canvas.width *= dpr;
   canvas.height *= dpr;
 
-  const coordstop = createCartesianCoordinateSystem(
+  const coordstop = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
-    createLinearScale([0, 10], [16 * dpr, 256 * dpr - 40 * dpr])
+    new LinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
+    new LinearScale([0, 10], [16 * dpr, 256 * dpr - 40 * dpr])
   );
 
-  const coordsbottom = createCartesianCoordinateSystem(
+  const coordsbottom = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
-    createLinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr])
+    new LinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr]),
+    new LinearScale([0, 10], [40 * dpr, 256 * dpr - 16 * dpr])
   );
 
   const font = await createDefaultFont(cg);
 
   const miniaxestop = [
-    createOrthoAxis(cg, coordstop, "x", font, {
+    new OrthoAxis(cg, coordstop, "x", font, {
       axisIntercept: 10.5,
       tickStep: 2,
       tickLength: 5 * dpr,
@@ -45,7 +45,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coordstop, "y", font, {
+    new OrthoAxis(cg, coordstop, "y", font, {
       axisIntercept: -0.5,
       tickStep: 2,
       tickLength: 5 * dpr,
@@ -57,7 +57,7 @@ export default async function MultiViewport(cg: CandyGraph) {
   ];
 
   const miniaxesbottom = [
-    createOrthoAxis(cg, coordsbottom, "x", font, {
+    new OrthoAxis(cg, coordsbottom, "x", font, {
       axisIntercept: -0.5,
       tickStep: 2,
       tickLength: 5 * dpr,
@@ -67,7 +67,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coordsbottom, "y", font, {
+    new OrthoAxis(cg, coordsbottom, "y", font, {
       axisIntercept: -0.5,
       tickStep: 2,
       tickLength: 5 * dpr,
@@ -91,7 +91,7 @@ export default async function MultiViewport(cg: CandyGraph) {
   for (let x = 0; x < 10; x += 0.01) {
     xData.push(x);
   }
-  const xs = createDataset(cg, xData);
+  const xs = new Dataset(cg, xData);
 
   function randomTraces() {
     const ys = [];
@@ -101,7 +101,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       const y = 5 + 5 * primenoise(x * rate + offset);
       ys.push(y);
     }
-    return createLineStrip(cg, xs, ys, {
+    return new LineStrip(cg, xs, ys, {
       colors: [Math.random(), Math.random(), Math.random(), 1],
       widths: dpr * (Math.random() * 2 + 1),
     });
@@ -129,14 +129,14 @@ export default async function MultiViewport(cg: CandyGraph) {
     miniaxestop,
   ]);
 
-  const coordsbig = createCartesianCoordinateSystem(
+  const coordsbig = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 10], [40 * dpr, 512 * dpr - 40 * dpr]),
-    createLinearScale([0, 10], [32 * dpr, 512 * dpr - 32 * dpr])
+    new LinearScale([0, 10], [40 * dpr, 512 * dpr - 40 * dpr]),
+    new LinearScale([0, 10], [32 * dpr, 512 * dpr - 32 * dpr])
   );
 
   cg.render(coordsbig, { x: 512 * dpr, y: 0, width: 512 * dpr, height: 512 * dpr }, [
-    createOrthoAxis(cg, coordsbig, "x", font, {
+    new OrthoAxis(cg, coordsbig, "x", font, {
       axisIntercept: 0,
       tickStep: 2,
       tickLength: 5 * dpr,
@@ -150,7 +150,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coordsbig, "y", font, {
+    new OrthoAxis(cg, coordsbig, "y", font, {
       axisIntercept: 0,
       tickStep: 0.5,
       tickLength: 5 * dpr,
@@ -161,7 +161,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coordsbig, "x", font, {
+    new OrthoAxis(cg, coordsbig, "x", font, {
       axisIntercept: 10,
       tickStep: 1,
       tickLength: 5 * dpr,
@@ -171,7 +171,7 @@ export default async function MultiViewport(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coordsbig, "y", font, {
+    new OrthoAxis(cg, coordsbig, "y", font, {
       axisIntercept: 10,
       tickStep: 0.5,
       tickLength: 5 * dpr,

@@ -1,23 +1,15 @@
-import { Regl, Buffer } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-
-type Data = number | number[] | number[][] | Float32Array | Dataset;
-
-export function createDataset(regl: Regl, data: Data) {
-  if (isDataset(data)) {
-    return data;
-  }
-  return new Dataset(regl, data);
-}
-
-// Added to keep the public API the same. I.e., like createRects this function
-// expects CandyGraph as the first argument.
-export function createDatasetPublic(cg: CandyGraph, data: Data) {
-  return createDataset(cg.regl, data);
-}
 
 function isDataset(obj: any): obj is Dataset {
   return obj.constructor === Dataset;
+}
+
+export function createDataset(cg: CandyGraph, data: number | number[] | number[][] | Float32Array | Dataset) {
+  if (isDataset(data)) {
+    return data;
+  }
+  return new Dataset(cg, data);
 }
 
 export class Dataset {
@@ -25,8 +17,8 @@ export class Dataset {
   private length = 0;
   private disposed = false;
 
-  constructor(regl: Regl, data: number | number[] | number[][] | Float32Array) {
-    this.buffer = regl.buffer(1);
+  constructor(cg: CandyGraph, data: number | number[] | number[][] | Float32Array) {
+    this.buffer = cg.regl.buffer(1);
     this.update(data);
   }
 

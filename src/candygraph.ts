@@ -1,4 +1,4 @@
-import REGL, { DrawCommand, Regl, Buffer, Vec4 } from "regl";
+import REGL, { DrawCommand, Regl, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
 import { Viewport, Renderable, RenderableType, Primitive } from "./common";
 
@@ -35,7 +35,6 @@ export class CandyGraph {
 
   private commandCache = new Map<string, Map<Function, DrawCommand>>();
   private scope: DrawCommand;
-  private positionBufferCache = new Map<string, Buffer>();
 
   constructor(options: CandyGraphOptions = {}) {
     const opts = { ...DEFAULT_OPTIONS, ...options };
@@ -103,27 +102,7 @@ export class CandyGraph {
     }
   }
 
-  public hasPositionBuffer = (name: string): boolean => {
-    return this.positionBufferCache.has(name);
-  };
-
-  public getPositionBuffer = (name: string): Buffer | undefined => {
-    return this.positionBufferCache.get(name);
-  };
-
-  public setPositionBuffer = (name: string, data: number[] | number[][]): void => {
-    this.positionBufferCache.set(name, this.regl.buffer(data));
-  };
-
-  public clearPositionBuffers = (): void => {
-    this.positionBufferCache.forEach((buffer: Buffer) => {
-      buffer.destroy();
-    });
-    this.positionBufferCache.clear();
-  };
-
   public destroy() {
-    this.clearPositionBuffers();
     this.regl.destroy();
   }
 

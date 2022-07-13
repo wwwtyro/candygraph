@@ -1,5 +1,5 @@
 // skip-doc-start
-import CandyGraph, { createLinearScale, createCartesianCoordinateSystem, createLineStrip } from "../../../src";
+import CandyGraph, { LinearScale, CartesianCoordinateSystem, LineStrip } from "../../../src";
 // skip-doc-stop
 
 // ## Viewport, Scale, and Coordinates
@@ -24,13 +24,13 @@ export default function doc_00100(cg: CandyGraph): void {
   // We're going to render a simple sine wave, so the domain for our x-scale
   // will be from 0 to 2π, and for our y-scale from -1 to 1. At first we'll map these
   // to the full width and height of our viewport. Here they are:
-  const xscale = createLinearScale([0, 2 * Math.PI], [0, viewport.width]);
-  const yscale = createLinearScale([-1, 1], [0, viewport.height]);
+  const xscale = new LinearScale([0, 2 * Math.PI], [0, viewport.width]);
+  const yscale = new LinearScale([-1, 1], [0, viewport.height]);
 
   // Now that we have our scales, we can create a coordinate system. Coordinate
   // systems in CandyGraph wrap scales and add a little more GLSL glue code for
   // use on the GPU. Here we'll create a cartesian coordinate system:
-  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
+  const coords = new CartesianCoordinateSystem(cg, xscale, yscale);
 
   // Next we're going to make some data for our plot. We'll loop through 0 to 2π
   // with a small increment for our x-values, and calculate the sine of each of
@@ -50,7 +50,7 @@ export default function doc_00100(cg: CandyGraph): void {
   // render a line strip. We'll render it with width 2 pixels and in red
   // (`colors` format is [red, green, blue, alpha]).
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),

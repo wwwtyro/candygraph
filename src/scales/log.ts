@@ -1,14 +1,6 @@
 import { Scale, Kind } from "./scale";
 import { Vector2 } from "../common";
 
-export function createLogScale(
-  base: number,
-  domain: Vector2,
-  range: Vector2
-): LogScale {
-  return new LogScale(base, domain, range);
-}
-
 export class LogScale extends Scale {
   public readonly kind = Kind.Log;
   public readonly glsl: string;
@@ -59,22 +51,14 @@ export class LogScale extends Scale {
 
   public toRange(value: number): number {
     const logValue = Math.log(value) * this.conversion;
-    const logDomain = [
-      Math.log(this._domain[0]) * this.conversion,
-      Math.log(this._domain[1]) * this.conversion,
-    ];
-    const qRange =
-      (this._range[1] - this._range[0]) / (logDomain[1] - logDomain[0]);
+    const logDomain = [Math.log(this._domain[0]) * this.conversion, Math.log(this._domain[1]) * this.conversion];
+    const qRange = (this._range[1] - this._range[0]) / (logDomain[1] - logDomain[0]);
     return this._range[0] + qRange * (logValue - logDomain[0]);
   }
 
   public toDomain(value: number): number {
-    const logDomain = [
-      Math.log(this._domain[0]) * this.conversion,
-      Math.log(this._domain[1]) * this.conversion,
-    ];
-    const qDomain =
-      (logDomain[1] - logDomain[0]) / (this._range[1] - this._range[0]);
+    const logDomain = [Math.log(this._domain[0]) * this.conversion, Math.log(this._domain[1]) * this.conversion];
+    const qDomain = (logDomain[1] - logDomain[0]) / (this._range[1] - this._range[0]);
     const logValue = logDomain[0] + qDomain * (value - this._range[0]);
     return Math.pow(this.base, logValue);
   }

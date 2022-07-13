@@ -4,12 +4,12 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createGrid,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
+  Grid,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  LogScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function LinearLog(cg: CandyGraph) {
@@ -23,10 +23,10 @@ export default async function LinearLog(cg: CandyGraph) {
 
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 1], [40 * dpr, viewport.width - 16 * dpr]),
-    createLogScale(10, [1, 100000], [32 * dpr, viewport.height - 16 * dpr])
+    new LinearScale([0, 1], [40 * dpr, viewport.width - 16 * dpr]),
+    new LogScale(10, [1, 100000], [32 * dpr, viewport.height - 16 * dpr])
   );
 
   const xs = [];
@@ -42,7 +42,7 @@ export default async function LinearLog(cg: CandyGraph) {
   cg.clear([1, 1, 1, 1]);
 
   const axes = [
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickOffset: -3 * dpr,
       tickLength: 6 * dpr,
@@ -53,7 +53,7 @@ export default async function LinearLog(cg: CandyGraph) {
 
       labelFormatter: (n) => n.toFixed(1),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickLength: 6 * dpr,
       tickOffset: 3 * dpr,
       labelAngle: Math.PI * 0.25,
@@ -70,11 +70,11 @@ export default async function LinearLog(cg: CandyGraph) {
   ];
 
   const grid = [
-    createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
       color: [0.25, 0.25, 0.25, 1],
       width: 1 * dpr,
     }),
-    createGrid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
       color: [0.75, 0.75, 0.75, 1],
       width: 1 * dpr,
     }),
@@ -84,7 +84,7 @@ export default async function LinearLog(cg: CandyGraph) {
 
   cg.render(coords, viewport, [
     grid,
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0.5, 0.0, 1.0],
       widths: 3,
     }),

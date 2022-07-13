@@ -6,11 +6,11 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createGrid,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
+  Grid,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function RelativeTime(cg: CandyGraph) {
@@ -37,15 +37,15 @@ export default async function RelativeTime(cg: CandyGraph) {
   // We'll make two coordinate systems; one for the x-axis, which is relative time,
   // and one for the traces, which are in real time. We'll share the y scale between
   // them.
-  const yScale = createLinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
-  const axisCoords = createCartesianCoordinateSystem(
+  const yScale = new LinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
+  const axisCoords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
+    new LinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
-  const timeCoords = createCartesianCoordinateSystem(
+  const timeCoords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
+    new LinearScale([-1, 5], [16 * dpr, viewport.width - 16 * dpr]),
     yScale
   );
 
@@ -53,7 +53,7 @@ export default async function RelativeTime(cg: CandyGraph) {
 
   // Make our two axes.
   const axes = [
-    createOrthoAxis(cg, axisCoords, "x", font, {
+    new OrthoAxis(cg, axisCoords, "x", font, {
       labelSide: 1,
       tickOffset: -3 * dpr,
       tickLength: 6 * dpr,
@@ -61,7 +61,7 @@ export default async function RelativeTime(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, axisCoords, "y", font, {
+    new OrthoAxis(cg, axisCoords, "y", font, {
       axisIntercept: 0,
       labelAnchor: [1, 1.25],
       tickOrigin: 0,
@@ -75,7 +75,7 @@ export default async function RelativeTime(cg: CandyGraph) {
     }),
   ];
 
-  const grid = createGrid(
+  const grid = new Grid(
     cg,
     axes[0].info.ticks,
     axes[1].info.ticks,
@@ -108,7 +108,7 @@ export default async function RelativeTime(cg: CandyGraph) {
     }
     return {
       timestamp: time,
-      trace: createLineStrip(cg, xs, ys, {
+      trace: new LineStrip(cg, xs, ys, {
         colors: [1, 0, 1, 1],
         widths: 3.0 * dpr,
       }),

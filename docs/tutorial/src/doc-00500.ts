@@ -1,13 +1,13 @@
 // skip-doc-start
 import CandyGraph, {
-  createCircles,
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
   createDefaultFont,
-  createOrthoAxis,
-  createDataset,
+  Circles,
+  LinearScale,
+  LogScale,
+  CartesianCoordinateSystem,
+  LineStrip,
+  OrthoAxis,
+  Dataset,
 } from "../../../src";
 // skip-doc-stop
 
@@ -45,57 +45,56 @@ export default async function doc_00500(cg: CandyGraph) {
     ysRaw.push(i + pn);
   }
 
-  // Previously we'd have fed `xsRaw` and `ysRaw` directly into functions like
-  // `createLineStrip`. This time, however, we'll upload them to the GPU and keep a
-  // handle to them using the `createDataset` function. Once we've done so, we
-  // can continue to use them until we invoke their `dispose()` functions. The
-  // `createDataset` function returns a `Dataset` object:
-  const xs = createDataset(cg, xsRaw);
-  const ys = createDataset(cg, ysRaw);
+  // Previously we'd have fed `xsRaw` and `ysRaw` directly into primitives like
+  // `LineStrip`. This time, however, we'll upload them to the GPU and keep a
+  // handle to them using the `Dataset` class. Once we've done so, we
+  // can continue to use them until we invoke their `dispose()` functions.
+  const xs = new Dataset(cg, xsRaw);
+  const ys = new Dataset(cg, ysRaw);
 
   const viewport = { x: 0, y: 0, width: 384, height: 384 }; // skip-doc
 
   // Next we'll create some scales and coordinate systems. In this example,
   // we're going to allow the user to switch between a linear and logarithmic
   // y-axis:
-  const linx = createLinearScale([0, 10000], [32, viewport.width - 16]);
-  const liny = createLinearScale([0, 10000], [24, viewport.height - 16]);
-  const logy = createLogScale(10, [1, 10000], [24, viewport.height - 16]);
+  const linx = new LinearScale([0, 10000], [32, viewport.width - 16]);
+  const liny = new LinearScale([0, 10000], [24, viewport.height - 16]);
+  const logy = new LogScale(10, [1, 10000], [24, viewport.height - 16]);
 
-  const linlin = createCartesianCoordinateSystem(cg, linx, liny);
-  const linlog = createCartesianCoordinateSystem(cg, linx, logy);
+  const linlin = new CartesianCoordinateSystem(cg, linx, liny);
+  const linlog = new CartesianCoordinateSystem(cg, linx, logy);
 
   // We'll also hold onto our higher-level constructs by assigning them to a
   // variable and keeping that reference to them, preventing garbage collection.
   const linlinAxis = [
-    createOrthoAxis(cg, linlin, "x", font, {
+    new OrthoAxis(cg, linlin, "x", font, {
       labelSide: 1,
       tickStep: 1000,
       tickLength: 5,
       tickOffset: -2,
-      labelFormatter: (n) => `${n / 1000}K`,
+      labelFormatter: (n: number) => `${n / 1000}K`,
     }),
-    createOrthoAxis(cg, linlin, "y", font, {
+    new OrthoAxis(cg, linlin, "y", font, {
       tickStep: 1000,
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) => `${n / 1000}K`,
+      labelFormatter: (n: number) => `${n / 1000}K`,
     }),
   ];
 
   const linlogAxis = [
-    createOrthoAxis(cg, linlog, "x", font, {
+    new OrthoAxis(cg, linlog, "x", font, {
       labelSide: 1,
       tickStep: 1000,
       tickLength: 5,
       tickOffset: -2,
-      labelFormatter: (n) => `${n / 1000}K`,
+      labelFormatter: (n: number) => `${n / 1000}K`,
     }),
-    createOrthoAxis(cg, linlog, "y", font, {
+    new OrthoAxis(cg, linlog, "y", font, {
       tickStep: 1,
       tickLength: 5,
       tickOffset: 2,
-      labelFormatter: (n) => (n >= 1000 ? `${n / 1000}K` : n.toString()),
+      labelFormatter: (n: number) => (n >= 1000 ? `${n / 1000}K` : n.toString()),
     }),
   ];
 
@@ -120,12 +119,12 @@ export default async function doc_00500(cg: CandyGraph) {
     // Next we'll use (and reuse!) our `xs` and `ys` `Dataset` objects in a
     // `Circles` or `LineStrip` renderable according to the value of `scatter`:
     const data = scatter
-      ? createCircles(cg, xs, ys, {
+      ? new Circles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
           radii: 3,
           borderWidths: 0,
         })
-      : createLineStrip(cg, xs, ys, {
+      : new LineStrip(cg, xs, ys, {
           colors: [1, 0, 0, 1],
           widths: 0.25,
         });

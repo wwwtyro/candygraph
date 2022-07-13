@@ -7,18 +7,6 @@ type Props = {
   box: { x: number; y: number; width: number; height: number };
 };
 
-export function createScissor(
-  cg: CandyGraph,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  screenSpace: boolean,
-  children: Renderable
-): Scissor {
-  return new Scissor(cg, x, y, width, height, screenSpace, children);
-}
-
 export class Scissor extends Composite {
   private _children: Renderable;
   public readonly scope: DrawCommand;

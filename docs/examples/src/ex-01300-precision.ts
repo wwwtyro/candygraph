@@ -4,10 +4,10 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function PrecisionPlot(cg: CandyGraph) {
@@ -37,10 +37,10 @@ export default async function PrecisionPlot(cg: CandyGraph) {
   const viewport = { x: 0, y: 0, width: canvas.width * dpr, height: canvas.height * dpr };
 
   // Create a coordinate system from two linear scales.
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 1], [56 * dpr, viewport.width - 16 * dpr]),
-    createLinearScale([0, 1], [108 * dpr, viewport.height - 24 * dpr])
+    new LinearScale([0, 1], [56 * dpr, viewport.width - 16 * dpr]),
+    new LinearScale([0, 1], [108 * dpr, viewport.height - 24 * dpr])
   );
 
   const font = await createDefaultFont(cg);
@@ -50,11 +50,11 @@ export default async function PrecisionPlot(cg: CandyGraph) {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0.5, 0.0, 1.0],
       widths: 3 * dpr,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickOffset: -2.5 * dpr,
       tickLength: 6 * dpr,
@@ -67,7 +67,7 @@ export default async function PrecisionPlot(cg: CandyGraph) {
       // Correct the labels appropriate for our -t0 offset:
       labelFormatter: (n) => (n + t0).toFixed(1),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickOffset: 2.5 * dpr,
       tickLength: 6 * dpr,
       tickStep: 0.2,

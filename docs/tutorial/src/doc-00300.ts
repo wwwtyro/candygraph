@@ -1,12 +1,12 @@
 // skip-doc-start
 import CandyGraph, {
-  createLinearScale,
-  createLogScale,
-  createCartesianCoordinateSystem,
-  createLineStrip,
   createDefaultFont,
-  createOrthoAxis,
-  createGrid,
+  LinearScale,
+  LogScale,
+  CartesianCoordinateSystem,
+  LineStrip,
+  OrthoAxis,
+  Grid,
 } from "../../../src";
 // skip-doc-stop
 
@@ -33,30 +33,30 @@ export default async function doc_00300(cg: CandyGraph) {
 
   // Then we'll set up our scales. The x-scale should be linear and have a
   // domain of 0 to 1:
-  const xscale = createLinearScale([0, 1], [40, viewport.width - 16]);
+  const xscale = new LinearScale([0, 1], [40, viewport.width - 16]);
 
   // The y-scale should be logarighmic. Here we'll use a base of 10 and a domain
   // of 1 to 100000:
-  const yscale = createLogScale(10, [1, 100000], [24, viewport.height - 16]);
+  const yscale = new LogScale(10, [1, 100000], [24, viewport.height - 16]);
 
   // Then we'll create our coordinate system, grab the default font, clear the
   // canvas, and render our data with axes:
-  const coords = createCartesianCoordinateSystem(cg, xscale, yscale);
+  const coords = new CartesianCoordinateSystem(cg, xscale, yscale);
   const font = await createDefaultFont(cg);
 
   cg.clear([1, 1, 1, 1]);
 
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickLength: 5,
       tickOffset: 2,
     }),
@@ -81,18 +81,18 @@ export default async function doc_00300(cg: CandyGraph) {
   cg.clear([1, 1, 1, 1]); // skip-doc
 
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
       tickStep: 0.2,
       labelFormatter: (n) => n.toFixed(1),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickLength: 5,
       tickOffset: 2,
       labelFormatter: (n) => (n >= 1000 ? Math.round(n / 1000).toString() + "K" : n.toString()),
@@ -115,18 +115,18 @@ export default async function doc_00300(cg: CandyGraph) {
   cg.clear([1, 1, 1, 1]); // skip-doc
 
   cg.render(coords, viewport, [
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
       tickStep: 0.2,
       labelFormatter: (n) => n.toFixed(1),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       minorTickCount: 5,
       minorTickLength: 3,
       minorTickOffset: 2,
@@ -151,14 +151,14 @@ export default async function doc_00300(cg: CandyGraph) {
   // from the render function into a separate variable:
 
   const axes = [
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickLength: 5,
       tickOffset: -2,
       tickStep: 0.2,
       labelFormatter: (n) => n.toFixed(1),
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       minorTickCount: 5,
       minorTickLength: 3,
       minorTickOffset: 2,
@@ -171,14 +171,14 @@ export default async function doc_00300(cg: CandyGraph) {
   // Then we'll access the `info` objects on that variable to build grids with
   // the `Grid` helper CandyGraph provides. First we'll make a grid with our
   // major ticks on both the x- and y-axes:
-  const majorGrid = createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+  const majorGrid = new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
     color: [0.25, 0.25, 0.25, 1],
     width: 1,
   });
 
   // Then we'll create a grid for the minor ticks, which we only have on the
   // y-axis, so we'll pass an empty array for the x-axis ticks:
-  const minorGrid = createGrid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+  const minorGrid = new Grid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
     color: [0.75, 0.75, 0.75, 1],
   });
 
@@ -188,7 +188,7 @@ export default async function doc_00300(cg: CandyGraph) {
   cg.render(coords, viewport, [
     minorGrid,
     majorGrid,
-    createLineStrip(cg, xs, ys, {
+    new LineStrip(cg, xs, ys, {
       colors: [1, 0, 0, 1],
       widths: 2,
     }),

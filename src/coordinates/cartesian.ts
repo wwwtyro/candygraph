@@ -12,14 +12,6 @@ type Props = {
   yrange: Vector2;
 };
 
-export function createCartesianCoordinateSystem(
-  cg: CandyGraph,
-  xscale: LinearScale | LogScale,
-  yscale: LinearScale | LogScale
-) {
-  return new CartesianCoordinateSystem(cg, xscale, yscale);
-}
-
 export class CartesianCoordinateSystem extends CoordinateSystem {
   public readonly glsl: string;
   public readonly kind = Kind.Cartesian;

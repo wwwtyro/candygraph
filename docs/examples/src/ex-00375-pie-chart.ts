@@ -2,13 +2,7 @@
 // <canvas id="ex-00375" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import CandyGraph, {
-  createDefaultFont,
-  createWedges,
-  createText,
-  createLinearScale,
-  createCartesianCoordinateSystem,
-} from "../../../src";
+import CandyGraph, { createDefaultFont, Wedges, Text, LinearScale, CartesianCoordinateSystem } from "../../../src";
 
 export default async function PieChart(cg: CandyGraph) {
   const font = await createDefaultFont(cg);
@@ -33,7 +27,7 @@ export default async function PieChart(cg: CandyGraph) {
     angles.push(theta);
     angles.push(step);
     text.push(
-      createText(
+      new Text(
         cg,
         font,
         `${Math.round((100 * step) / (2 * Math.PI))}%`,
@@ -48,7 +42,7 @@ export default async function PieChart(cg: CandyGraph) {
   const step = 2 * Math.PI - theta;
   angles.push(step);
   text.push(
-    createText(
+    new Text(
       cg,
       font,
       `${Math.round((100 * step) / (2 * Math.PI))}%`,
@@ -64,17 +58,17 @@ export default async function PieChart(cg: CandyGraph) {
     0.1 * Math.sin(theta + 0.5 * step),
   ];
 
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([-1, 1], [0, viewport.width]),
-    createLinearScale([-1, 1], [0, viewport.height])
+    new LinearScale([-1, 1], [0, viewport.width]),
+    new LinearScale([-1, 1], [0, viewport.height])
   );
 
   // Clear the viewport.
   cg.clear([1, 1, 1, 1]);
 
   cg.render(coords, viewport, [
-    createWedges(cg, positions, angles, {
+    new Wedges(cg, positions, angles, {
       colors,
       radii: 128 * dpr,
     }),

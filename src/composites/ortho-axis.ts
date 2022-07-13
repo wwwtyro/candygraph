@@ -2,7 +2,7 @@ import { CandyGraph } from "../candygraph";
 import { Composite, Renderable, NumberArray } from "../common";
 import { CartesianCoordinateSystem } from "../coordinates/cartesian";
 import { Kind as ScaleKind } from "../scales/scale";
-import { createAxis, Options as AxisOptions } from "./axis";
+import { Axis, Options as AxisOptions } from "./axis";
 import { Font } from "../primitives/font";
 
 type Options = {
@@ -26,38 +26,14 @@ type Info = {
   minorTicks: NumberArray;
 };
 
-export function createOrthoAxis(
-  cg: CandyGraph,
-  coords: CartesianCoordinateSystem,
-  axis: "x" | "y",
-  font: Font,
-  options?: Options
-): OrthoAxis {
-  return new OrthoAxis(cg, coords, axis, font, options);
-}
-
 export class OrthoAxis extends Composite {
   public readonly info: Info;
   private axis: Renderable = [];
 
-  constructor(
-    cg: CandyGraph,
-    coords: CartesianCoordinateSystem,
-    axis: "x" | "y",
-    font: Font,
-    options: Options = {}
-  ) {
+  constructor(cg: CandyGraph, coords: CartesianCoordinateSystem, axis: "x" | "y", font: Font, options: Options = {}) {
     super();
     const opts = { ...DEFAULTS, ...options };
-    const {
-      axisIntercept,
-      axisLow,
-      axisHigh,
-      minorTickCount,
-      tickOrigin,
-      tickStep,
-      labelFormatter,
-    } = opts;
+    const { axisIntercept, axisLow, axisHigh, minorTickCount, tickOrigin, tickStep, labelFormatter } = opts;
 
     if (tickStep === 0) {
       throw new Error("tickStep must be non-zero.");
@@ -80,8 +56,7 @@ export class OrthoAxis extends Composite {
     if (scale.kind === ScaleKind.Linear) {
       let tickLocation =
         tickOrigin +
-        resolvedTickStep *
-          Math.floor((resolvedAxisLow - tickOrigin) / resolvedTickStep) -
+        resolvedTickStep * Math.floor((resolvedAxisLow - tickOrigin) / resolvedTickStep) -
         resolvedTickStep * 2;
 
       while (tickLocation <= resolvedAxisHigh + resolvedTickStep) {
@@ -94,10 +69,7 @@ export class OrthoAxis extends Composite {
       const tickPowerHigh = Math.log(resolvedAxisHigh) / Math.log(scale.base);
 
       let tickPower =
-        tickOrigin +
-        resolvedTickStep *
-          Math.floor((tickPowerLow - tickOrigin) / resolvedTickStep) -
-        resolvedTickStep;
+        tickOrigin + resolvedTickStep * Math.floor((tickPowerLow - tickOrigin) / resolvedTickStep) - resolvedTickStep;
 
       while (tickPower <= tickPowerHigh + resolvedTickStep) {
         const tickLocation = Math.pow(scale.base, tickPower);
@@ -119,26 +91,16 @@ export class OrthoAxis extends Composite {
       }
     }
 
-    const boundedTicks = ticks.filter(
-      (tick) => tick >= 0 && tick <= resolvedAxisHigh - resolvedAxisLow
-    );
-    const boundedMinorTicks = minorTicks.filter(
-      (tick) => tick >= 0 && tick <= resolvedAxisHigh - resolvedAxisLow
-    );
+    const boundedTicks = ticks.filter((tick) => tick >= 0 && tick <= resolvedAxisHigh - resolvedAxisLow);
+    const boundedMinorTicks = minorTicks.filter((tick) => tick >= 0 && tick <= resolvedAxisHigh - resolvedAxisLow);
 
-    const labels = boundedTicks.map((tick) =>
-      labelFormatter(tick + resolvedAxisLow)
-    );
+    const labels = boundedTicks.map((tick) => labelFormatter(tick + resolvedAxisLow));
 
-    this.axis = createAxis(
+    this.axis = new Axis(
       cg,
       coords,
-      isx
-        ? [resolvedAxisLow, resolvedAxisIntercept]
-        : [resolvedAxisIntercept, resolvedAxisLow],
-      isx
-        ? [resolvedAxisHigh, resolvedAxisIntercept]
-        : [resolvedAxisIntercept, resolvedAxisHigh],
+      isx ? [resolvedAxisLow, resolvedAxisIntercept] : [resolvedAxisIntercept, resolvedAxisLow],
+      isx ? [resolvedAxisHigh, resolvedAxisIntercept] : [resolvedAxisIntercept, resolvedAxisHigh],
       boundedTicks,
       labels,
       font,

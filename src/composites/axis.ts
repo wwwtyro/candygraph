@@ -1,17 +1,11 @@
-import { CandyGraph } from "../candygraph";
 import { vec2 } from "gl-matrix";
+import { CandyGraph } from "../candygraph";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
-import {
-  Composite,
-  Renderable,
-  Vector4,
-  Vector2,
-  NumberArray,
-} from "../common";
-import { createText } from "../primitives/text";
-import { createVLines } from "../primitives/vlines";
-import { createHLines } from "../primitives/hlines";
-import { createLineSegments } from "../primitives/line-segments";
+import { Composite, Renderable, Vector4, Vector2, NumberArray } from "../common";
+import { Text } from "../primitives/text";
+import { VLines } from "../primitives/vlines";
+import { HLines } from "../primitives/hlines";
+import { LineSegments } from "../primitives/line-segments";
 import { Font } from "../primitives/font";
 
 export type Options = {
@@ -52,28 +46,6 @@ const DEFAULTS = {
   minorTickWidth: 1,
   minorTicks: [],
 };
-
-export function createAxis(
-  cg: CandyGraph,
-  coords: CoordinateSystem,
-  start: Vector2,
-  end: Vector2,
-  ticks: NumberArray,
-  labels: string[],
-  font: Font,
-  options?: Options
-): Axis {
-  return new Axis(
-    cg,
-    coords,
-    start,
-    end,
-    ticks,
-    labels,
-    font,
-    options
-  );
-}
 
 export class Axis extends Composite {
   private axis: Renderable = [];
@@ -120,10 +92,7 @@ export class Axis extends Composite {
     const startScreen = coords.toRange(start) as vec2;
     const endScreen = coords.toRange(end) as vec2;
     const p0p1Screen = vec2.sub(vec2.create(), endScreen, startScreen);
-    const orthoScreen = vec2.normalize(
-      vec2.create(),
-      vec2.fromValues(-p0p1Screen[1], p0p1Screen[0])
-    );
+    const orthoScreen = vec2.normalize(vec2.create(), vec2.fromValues(-p0p1Screen[1], p0p1Screen[0]));
 
     let anchor = labelAnchor as vec2;
     if (!anchor) {
@@ -146,19 +115,11 @@ export class Axis extends Composite {
 
       // tickCenter = p0 + dt * direction
       const tickCenterScreen = coords.toRange(
-        vec2.add(
-          vec2.create(),
-          start as vec2,
-          vec2.scale(vec2.create(), dirWorld, tick)
-        )
+        vec2.add(vec2.create(), start as vec2, vec2.scale(vec2.create(), dirWorld, tick))
       ) as vec2;
 
       // tickCenterScreen = tickCenterScreen + tickOffset * orthoScreen
-      vec2.add(
-        tickCenterScreen,
-        tickCenterScreen,
-        vec2.scale(vec2.create(), orthoScreen, tickOffset)
-      );
+      vec2.add(tickCenterScreen, tickCenterScreen, vec2.scale(vec2.create(), orthoScreen, tickOffset));
 
       // halfTick = 0.5 * tickLength * orthoScreen
       const halfTick = vec2.scale(vec2.create(), orthoScreen, 0.5 * tickLength);
@@ -179,18 +140,10 @@ export class Axis extends Composite {
       const labelPosition = vec2.add(
         vec2.create(),
         tickCenterScreen,
-        vec2.scale(
-          vec2.create(),
-          orthoScreen,
-          -labelSide * (0.5 * tickLength + labelPad)
-        )
+        vec2.scale(vec2.create(), orthoScreen, -labelSide * (0.5 * tickLength + labelPad))
       );
 
-      this.texts.push(
-        createText(
-          cg, font, label, coords.toDomain(labelPosition as Vector2), labelOpts
-        )
-      );
+      this.texts.push(new Text(cg, font, label, coords.toDomain(labelPosition as Vector2), labelOpts));
     }
 
     // Minor ticks.
@@ -200,26 +153,14 @@ export class Axis extends Composite {
 
       // tickCenter = p0 + dt * direction
       const tickCenterScreen = coords.toRange(
-        vec2.add(
-          vec2.create(),
-          start as vec2,
-          vec2.scale(vec2.create(), dirWorld, tick)
-        )
+        vec2.add(vec2.create(), start as vec2, vec2.scale(vec2.create(), dirWorld, tick))
       ) as vec2;
 
       // tickCenterScreen = tickCenterScreen + tickOffset * orthoScreen
-      vec2.add(
-        tickCenterScreen,
-        tickCenterScreen,
-        vec2.scale(vec2.create(), orthoScreen, minorTickOffset)
-      );
+      vec2.add(tickCenterScreen, tickCenterScreen, vec2.scale(vec2.create(), orthoScreen, minorTickOffset));
 
       // halfTick = 0.5 * tickLength * orthoScreen
-      const halfTick = vec2.scale(
-        vec2.create(),
-        orthoScreen,
-        0.5 * minorTickLength
-      );
+      const halfTick = vec2.scale(vec2.create(), orthoScreen, 0.5 * minorTickLength);
 
       // hi = tickCenterScreen + halfTick
       const hi = vec2.add(vec2.create(), tickCenterScreen, halfTick);
@@ -239,17 +180,17 @@ export class Axis extends Composite {
 
     if (axisPoints.length > 0) {
       if (verticalAxis) {
-        this.axis = createVLines(cg, segmentsToVlines(axisPoints), {
+        this.axis = new VLines(cg, segmentsToVlines(axisPoints), {
           widths: axisWidth,
           colors: axisColor,
         });
       } else if (horizontalAxis) {
-        this.axis = createHLines(cg, segmentsToHlines(axisPoints), {
+        this.axis = new HLines(cg, segmentsToHlines(axisPoints), {
           widths: axisWidth,
           colors: axisColor,
         });
       } else {
-        this.axis = createLineSegments(cg, axisPoints, {
+        this.axis = new LineSegments(cg, axisPoints, {
           widths: axisWidth,
           colors: axisColor,
         });
@@ -258,17 +199,17 @@ export class Axis extends Composite {
 
     if (tickPoints.length > 0) {
       if (verticalAxis) {
-        this.ticks = createHLines(cg, segmentsToHlines(tickPoints), {
+        this.ticks = new HLines(cg, segmentsToHlines(tickPoints), {
           widths: tickWidth,
           colors: tickColor,
         });
       } else if (horizontalAxis) {
-        this.ticks = createVLines(cg, segmentsToVlines(tickPoints), {
+        this.ticks = new VLines(cg, segmentsToVlines(tickPoints), {
           widths: tickWidth,
           colors: tickColor,
         });
       } else {
-        this.ticks = createLineSegments(cg, tickPoints, {
+        this.ticks = new LineSegments(cg, tickPoints, {
           widths: tickWidth,
           colors: tickColor,
         });
@@ -277,17 +218,17 @@ export class Axis extends Composite {
 
     if (minorTickPoints.length > 0) {
       if (verticalAxis) {
-        this.minorTicks = createHLines(cg, segmentsToHlines(minorTickPoints), {
+        this.minorTicks = new HLines(cg, segmentsToHlines(minorTickPoints), {
           widths: minorTickWidth,
           colors: minorTickColor,
         });
       } else if (horizontalAxis) {
-        this.minorTicks = createVLines(cg, segmentsToVlines(minorTickPoints), {
+        this.minorTicks = new VLines(cg, segmentsToVlines(minorTickPoints), {
           widths: minorTickWidth,
           colors: minorTickColor,
         });
       } else {
-        this.minorTicks = createLineSegments(cg, minorTickPoints, {
+        this.minorTicks = new LineSegments(cg, minorTickPoints, {
           widths: tickWidth,
           colors: tickColor,
         });

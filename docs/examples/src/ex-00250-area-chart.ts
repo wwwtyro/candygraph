@@ -4,11 +4,11 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createTriangles,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
+  Triangles,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function Area(cg: CandyGraph) {
@@ -44,10 +44,10 @@ export default async function Area(cg: CandyGraph) {
   // Create a coordinate system from two linear scales. Note
   // that we add 32 pixels of padding to the left and bottom
   // of the viewport, and 16 pixels to the top and right.
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 100], [32 * dpr, viewport.width - 16 * dpr]),
-    createLinearScale([0, 100], [32 * dpr, viewport.height - 16 * dpr])
+    new LinearScale([0, 100], [32 * dpr, viewport.width - 16 * dpr]),
+    new LinearScale([0, 100], [32 * dpr, viewport.height - 16 * dpr])
   );
 
   const font = await createDefaultFont(cg);
@@ -57,12 +57,12 @@ export default async function Area(cg: CandyGraph) {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    createTriangles(cg, triangles, { color: [0, 0.5, 1, 0.125] }),
-    createLineStrip(cg, xs, ys, {
+    new Triangles(cg, triangles, { color: [0, 0.5, 1, 0.125] }),
+    new LineStrip(cg, xs, ys, {
       colors: [0, 0.25, 0.5, 1],
       widths: 1 * dpr,
     }),
-    createOrthoAxis(cg, coords, "x", font, {
+    new OrthoAxis(cg, coords, "x", font, {
       labelSide: 1,
       tickOffset: -2.5 * dpr,
       tickLength: 6 * dpr,
@@ -71,7 +71,7 @@ export default async function Area(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, coords, "y", font, {
+    new OrthoAxis(cg, coords, "y", font, {
       tickOffset: 2.5 * dpr,
       tickLength: 6 * dpr,
       tickStep: 10,

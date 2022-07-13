@@ -6,12 +6,12 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  createTriangles,
-  createGrid,
-  createLineStrip,
-  createOrthoAxis,
-  createLinearScale,
-  createCartesianCoordinateSystem,
+  Triangles,
+  Grid,
+  LineStrip,
+  OrthoAxis,
+  LinearScale,
+  CartesianCoordinateSystem,
 } from "../../../src";
 
 export default async function TimeAndState(cg: CandyGraph) {
@@ -31,15 +31,15 @@ export default async function TimeAndState(cg: CandyGraph) {
   // We'll make two coordinate systems; one for the x-axis, which is relative time,
   // and one for the traces, which are in real time. We'll share the y scale between
   // them.
-  const yScale = createLinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
-  const axisCoords = createCartesianCoordinateSystem(
+  const yScale = new LinearScale([0, 25], [32 * dpr, viewport.height - 16 * dpr]);
+  const axisCoords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
+    new LinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
     yScale
   );
-  const timeCoords = createCartesianCoordinateSystem(
+  const timeCoords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
+    new LinearScale([-5, 0], [16 * dpr, viewport.width - 32 * dpr]),
     yScale
   );
 
@@ -47,7 +47,7 @@ export default async function TimeAndState(cg: CandyGraph) {
 
   // Make our two axes.
   const axes = [
-    createOrthoAxis(cg, axisCoords, "x", font, {
+    new OrthoAxis(cg, axisCoords, "x", font, {
       labelSide: 1,
       tickLength: 6 * dpr,
       tickOffset: -3 * dpr,
@@ -59,7 +59,7 @@ export default async function TimeAndState(cg: CandyGraph) {
       axisWidth: 1 * dpr,
       labelSize: 12 * dpr,
     }),
-    createOrthoAxis(cg, axisCoords, "y", font, {
+    new OrthoAxis(cg, axisCoords, "y", font, {
       axisIntercept: 0,
       labelSide: 1,
       tickOrigin: 0,
@@ -77,18 +77,14 @@ export default async function TimeAndState(cg: CandyGraph) {
   ];
 
   const grid = [
-    createGrid(cg, axes[0].info.ticks, axes[1].info.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
+    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
       color: [0.5, 0.5, 0.5, 1],
       width: 1 * dpr,
     }),
-    createGrid(
-      cg,
-      axes[0].info.minorTicks,
-      axes[1].info.minorTicks,
-      axisCoords.xscale.domain,
-      axisCoords.yscale.domain,
-      { color: [0.75, 0.75, 0.75, 1], width: 1 * dpr }
-    ),
+    new Grid(cg, axes[0].info.minorTicks, axes[1].info.minorTicks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
+      color: [0.75, 0.75, 0.75, 1],
+      width: 1 * dpr,
+    }),
   ];
 
   const xs: number[] = [];
@@ -146,7 +142,7 @@ export default async function TimeAndState(cg: CandyGraph) {
         t1 = states[i + 1].timestamp;
       }
       rects.push(
-        createTriangles(cg, [t0, 0, t1, 0, t1, 25, t0, 0, t1, 25, t0, 25], {
+        new Triangles(cg, [t0, 0, t1, 0, t1, 25, t0, 0, t1, 25, t0, 25], {
           color: states[i].color,
         })
       );
@@ -163,8 +159,8 @@ export default async function TimeAndState(cg: CandyGraph) {
 
     // Render the traces with the timeCoords.
     cg.render(timeCoords, viewport, [
-      createLineStrip(cg, xs, y0, { colors: [0.5, 0, 1.0, 1], widths: 2.0 * dpr }),
-      createLineStrip(cg, xs, y1, { colors: [1.0, 0, 0.5, 1], widths: 2.0 * dpr }),
+      new LineStrip(cg, xs, y0, { colors: [0.5, 0, 1.0, 1], widths: 2.0 * dpr }),
+      new LineStrip(cg, xs, y1, { colors: [1.0, 0, 0.5, 1], widths: 2.0 * dpr }),
     ]);
 
     // Render the axes with the axisCoords.

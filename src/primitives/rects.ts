@@ -1,4 +1,4 @@
-import { Regl, Buffer, DrawCommand } from "regl";
+import { Buffer, DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
@@ -12,41 +12,28 @@ const DEFAULT_OPTIONS = {
 };
 
 type Props = {
+  position: Buffer;
   rect: Buffer;
   color: Buffer;
   colorDivisor: number;
   instances: number;
 };
 
-function getPositionBuffer(cg: CandyGraph) {
-  if (!cg.hasPositionBuffer("rects")) {
-    cg.setPositionBuffer(
-      "rects",
-      // prettier-ignore
-      [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
-    );
-  }
-  return cg.getPositionBuffer("rects");
-}
-
-export function createRects(cg: CandyGraph, rects: NumberArray | Dataset, options?: Options) {
-  const positionBuffer = getPositionBuffer(cg)!;
-  return new Rects(cg.regl, positionBuffer, rects, options);
-}
-
 export class Rects extends Primitive {
   public readonly rects: Dataset;
   public readonly colors: Dataset;
+  private positionBuffer: Buffer;
 
-  constructor(private regl: Regl, private positionBuffer: Buffer, rects: NumberArray | Dataset, options: Options = {}) {
+  constructor(private cg: CandyGraph, rects: NumberArray | Dataset, options: Options = {}) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
-    this.rects = createDataset(regl, rects);
-    this.colors = createDataset(regl, opts.colors);
+    this.rects = createDataset(cg, rects);
+    this.colors = createDataset(cg, opts.colors);
+    this.positionBuffer = cg.regl.buffer([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
   }
 
   public command(glsl: string): DrawCommand {
-    return this.regl({
+    return this.cg.regl({
       vert: `
           precision highp float;
           attribute vec2 position;
@@ -73,20 +60,20 @@ export class Rects extends Primitive {
 
       attributes: {
         position: {
-          buffer: this.positionBuffer,
+          buffer: this.cg.regl.prop<Props, "position">("position"),
           divisor: 0,
         },
         rect: {
-          buffer: this.regl.prop<Props, "rect">("rect"),
+          buffer: this.cg.regl.prop<Props, "rect">("rect"),
           divisor: 1,
         },
         color: {
-          buffer: this.regl.prop<Props, "color">("color"),
-          divisor: this.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          buffer: this.cg.regl.prop<Props, "color">("color"),
+          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
         },
       },
       count: 6,
-      instances: this.regl.prop<Props, "instances">("instances"),
+      instances: this.cg.regl.prop<Props, "instances">("instances"),
     });
   }
 
@@ -95,6 +82,7 @@ export class Rects extends Primitive {
     const instances = rects.count(4);
     command({
       instances,
+      position: this.positionBuffer,
       rect: rects.buffer,
       color: colors.buffer,
       colorDivisor: colors.divisor(instances, 4),
@@ -104,5 +92,6 @@ export class Rects extends Primitive {
   public dispose(): void {
     this.rects.dispose();
     this.colors.dispose();
+    this.positionBuffer.destroy();
   }
 }

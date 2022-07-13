@@ -1,3 +1,9 @@
+## 0.8.0
+
+- Refactored all resources from the "create" pattern to classes instantiated
+  with `new`. E.g., `createLineStrip(...)` is now `new LineStrip(...)`.
+  ([#42](https://github.com/wwwtyro/candygraph/pull/42))
+
 ## 0.7.0
 
 - Fixed the blending so that compositing with the webpage looks correct. While

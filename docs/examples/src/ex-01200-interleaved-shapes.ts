@@ -2,14 +2,9 @@
 // <canvas id="ex-12000" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import CandyGraph, {
-  createDataset,
-  createLinearScale,
-  createInterleavedShapes,
-  createCartesianCoordinateSystem,
-} from "../../../src";
+import CandyGraph, { Dataset, LinearScale, InterleavedShapes, CartesianCoordinateSystem } from "../../../src";
 
-export default function InterleavedShapes(cg: CandyGraph) {
+export default function InterleavedShapesExample(cg: CandyGraph) {
   // Scale the canvas by the device pixel ratio.
   const dpr = window.devicePixelRatio;
   const canvas = document.getElementById("ex-12000") as HTMLCanvasElement;
@@ -20,14 +15,14 @@ export default function InterleavedShapes(cg: CandyGraph) {
 
   const viewport = { x: 0, y: 0, width: 384 * dpr, height: 384 * dpr };
 
-  const coords = createCartesianCoordinateSystem(
+  const coords = new CartesianCoordinateSystem(
     cg,
-    createLinearScale([0, 1], [0, viewport.width]),
-    createLinearScale([0, 1], [0, viewport.height])
+    new LinearScale([0, 1], [0, viewport.width]),
+    new LinearScale([0, 1], [0, viewport.height])
   );
 
   // prettier-ignore
-  const shape = createDataset(cg, [
+  const shape = new Dataset(cg, [
     -1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1,
     1, -1, 4, 0, 1, 1,
     1, 1, 0, 4, -1, 1,
@@ -50,7 +45,7 @@ export default function InterleavedShapes(cg: CandyGraph) {
   cg.clear([1, 1, 1, 1]);
 
   cg.render(coords, viewport, [
-    createInterleavedShapes(cg, shape, xys, {
+    new InterleavedShapes(cg, shape, xys, {
       colors,
       scales,
       rotations,
