@@ -2,7 +2,10 @@ import { Scale, Kind } from "./scale";
 import { Vector2 } from "../common";
 
 export class LinearScale extends Scale {
+  /** @internal */
   public readonly kind = Kind.Linear;
+
+  /** @internal */
   public readonly glsl = `
     float toDomain(float v, vec2 domain, vec2 range) {
       float qDomain = (domain.y - domain.x) / (range.y - range.x);

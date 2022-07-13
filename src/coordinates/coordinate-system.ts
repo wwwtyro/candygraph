@@ -7,10 +7,18 @@ export enum Kind {
 }
 
 export abstract class CoordinateSystem {
+  /** @internal */
   public abstract readonly kind: Kind;
+
+  /** @internal */
   public abstract readonly glsl: string;
+
+  /** @internal */
   public abstract readonly scope: DrawCommand;
+
+  /** @internal */
   public abstract props(): Record<string, unknown>;
+
   public abstract toDomain(rangeVector: Vector2): Vector2;
   public abstract toRange(domainVector: Vector2): Vector2;
 }

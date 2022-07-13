@@ -2,18 +2,26 @@ import { CandyGraph } from "../candygraph";
 import { Composite, Renderable, NumberArray } from "../common";
 import { CartesianCoordinateSystem } from "../coordinates/cartesian";
 import { Kind as ScaleKind } from "../scales/scale";
-import { Axis, Options as AxisOptions } from "./axis";
+import { Axis, AxisOptions } from "./axis";
 import { Font } from "../primitives/font";
 
-type Options = {
+export interface OrthoAxisOptions extends AxisOptions {
+  /** The maximum value encompassed by this axis. */
   axisHigh?: number;
+  /** The position on the opposing axis that this axis intercepts. */
   axisIntercept?: number;
+  /** The minimum value encompassed by this axis. */
   axisLow?: number;
+  /** The function to use to format the ticks. Default `(n: number) => n.toString()`. */
   labelFormatter?: (n: number) => string;
+  /** The number of minor ticks between major ticks. None if undefined. Default undefined. */
   minorTickCount?: number;
+  /** Used to anchor ticks to the axis. Using a value of 0.1 and a tickStep of
+   * 1.0 will result in ticks at `[... -1.9, -0.9, 0.1, 1.1 ... ]`. Default 0.*/
   tickOrigin?: number;
+  /** The distance between ticks. Default 1. */
   tickStep?: number;
-} & AxisOptions;
+}
 
 const DEFAULTS = {
   labelFormatter: (n: number) => n.toString(),
@@ -21,16 +29,24 @@ const DEFAULTS = {
   tickStep: 1,
 };
 
-type Info = {
+export interface OrthoAxisInfo {
+  /** The position of the major ticks of this axis. */
   ticks: NumberArray;
+  /** The position of the minor ticks of this axis. */
   minorTicks: NumberArray;
-};
+}
 
 export class OrthoAxis extends Composite {
-  public readonly info: Info;
+  public readonly info: OrthoAxisInfo;
   private axis: Renderable = [];
 
-  constructor(cg: CandyGraph, coords: CartesianCoordinateSystem, axis: "x" | "y", font: Font, options: Options = {}) {
+  constructor(
+    cg: CandyGraph,
+    coords: CartesianCoordinateSystem,
+    axis: "x" | "y",
+    font: Font,
+    options: OrthoAxisOptions = {}
+  ) {
     super();
     const opts = { ...DEFAULTS, ...options };
     const { axisIntercept, axisLow, axisHigh, minorTickCount, tickOrigin, tickStep, labelFormatter } = opts;
@@ -113,6 +129,7 @@ export class OrthoAxis extends Composite {
     };
   }
 
+  /** @internal */
   public children(): Renderable {
     return this.axis;
   }

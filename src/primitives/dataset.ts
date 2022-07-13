@@ -12,8 +12,27 @@ export function createDataset(cg: CandyGraph, data: number | number[] | number[]
   return new Dataset(cg, data);
 }
 
+/**
+ * `Datasets` are used to store and reference data on the GPU. This is useful
+ * for making some operations more efficient, such as animation or switching
+ * between `CoordinateSystems`.
+ *
+ * @example
+ * ```ts
+ * // Create a reusable DataSet.
+ * const data = new Dataset(cg, [0, 0, 1, 1]);
+ *
+ * // Render a line segment to the viewport.
+ * cg.render(coords, viewport, [
+ *   new LineSegment(cg, data, {colors: [1, 0, 0, 1], widths: 4]}), // red, width 4
+ *   new LineSegment(cg, data, {colors: [0, 0, 1, 1], widths: 1]}), // blue, width 1
+ * ]);
+ * ```
+ */
 export class Dataset {
+  /** @internal */
   public readonly buffer: Buffer;
+
   private length = 0;
   private disposed = false;
 
@@ -22,6 +41,7 @@ export class Dataset {
     this.update(data);
   }
 
+  /** Update this Dataset with new data, in-place. */
   public update = (data: number | number[] | number[][] | Float32Array) => {
     if (this.disposed) {
       throw new Error("This DataSet cannot be updated, it's already been disposed.");
@@ -43,16 +63,19 @@ export class Dataset {
     return this;
   };
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose() {
     this.buffer.destroy();
     this.disposed = true;
   }
 
+  /** @internal */
   public count(size: number) {
     this.assertFits(size);
     return this.length / size;
   }
 
+  /** @internal */
   public divisor(instances: number, size: number) {
     const count = this.count(size);
     if (count === 1) {

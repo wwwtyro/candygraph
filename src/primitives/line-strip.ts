@@ -3,10 +3,15 @@ import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
-type Options = {
+export interface LineStripOptions {
+  /** The width of the line strip segments. If this parameter is a single
+   * number, it will apply to all segments. Default 1. */
   widths?: number | NumberArray | Dataset;
+
+  /** The color of the line strip segments. If this parameter is a single
+   * Vector4, it will apply to all segments. Default [0, 0, 0, 1]. */
   colors?: NumberArray | Dataset;
-};
+}
 
 const DEFAULT_OPTIONS = {
   widths: 1,
@@ -62,7 +67,18 @@ export class LineStrip extends Primitive {
   public readonly colors: Dataset;
   private roundCapJoin: Buffer;
 
-  constructor(private cg: CandyGraph, xs: NumberArray | Dataset, ys: NumberArray | Dataset, options: Options = {}) {
+  /**
+   * @param xs An array of points in the format `[x0, x1, ...]` that represent
+   * the x-coordinates of the line strip to be rendered.
+   * @param ys An array of points in the format `[y0, y1, ...]` that represent
+   * the y-coordinates of the line strip to be rendered.
+   */
+  constructor(
+    private cg: CandyGraph,
+    xs: NumberArray | Dataset,
+    ys: NumberArray | Dataset,
+    options: LineStripOptions = {}
+  ) {
     super();
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xs = createDataset(cg, xs);
@@ -72,6 +88,7 @@ export class LineStrip extends Primitive {
     this.roundCapJoin = cg.regl.buffer(ROUND_CAP_JOIN_GEOMETRY);
   }
 
+  /** @internal */
   public command(glsl: string): DrawCommand {
     return this.cg.regl({
       vert: `
@@ -146,6 +163,7 @@ export class LineStrip extends Primitive {
     });
   }
 
+  /** @internal */
   public render(command: DrawCommand): void {
     const { xs, ys, widths, colors } = this;
     const instances = xs.count(1) - 1;
@@ -161,6 +179,7 @@ export class LineStrip extends Primitive {
     });
   }
 
+  /** Releases all GPU resources and renders this instance unusable. */
   public dispose(): void {
     this.xs.dispose();
     this.ys.dispose();

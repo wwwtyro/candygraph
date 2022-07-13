@@ -12,13 +12,34 @@ type Glyph = {
   uv: Vector2;
 };
 
+/**
+ * A `Font` is used in conjunction with the `Text` primitive to render text, such as axis labels.
+ *
+ * Font image and data files can be generated with `msdf-bmfont`:
+ * ```sh
+ * $ npm i -g msdf-bmfont-xml
+ * $ msdf-bmfont -f json -s 24 -t sdf --smart-size Lato-Regular.ttf
+ * ```
+ */
 export class Font {
+  /** @internal */
   public readonly texture: Texture;
+
+  /** @internal */
   public readonly lineHeight: number;
+
+  /** @internal */
   public readonly glyphs: Glyph[] = [];
+
   private readonly kernTable: Int8Array;
   private readonly maxid: number;
 
+  /**
+   *
+   * @param cg
+   * @param image The image produced by msdf-bmfont.
+   * @param json The json object produced by msdf-bmfont.
+   */
   constructor(cg: CandyGraph, image: HTMLImageElement, json: any) {
     this.texture = cg.regl.texture({
       data: image,
@@ -61,10 +82,12 @@ export class Font {
     }
   }
 
+  /** @internal */
   public kern(first: number, second: number) {
     return this.kernTable[first * this.maxid + second];
   }
 
+  /** Release all GPU resources and render this Font instance unusable. */
   public dispose() {
     this.texture.destroy();
   }

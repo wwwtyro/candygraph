@@ -18,8 +18,13 @@ type Props = {
 };
 
 export class PolarCoordinateSystem extends CoordinateSystem {
+  /** @internal */
   public readonly glsl: string;
+
+  /** @internal */
   public readonly kind = Kind.Polar;
+
+  /** @internal */
   public readonly scope: DrawCommand;
 
   constructor(
@@ -103,6 +108,7 @@ export class PolarCoordinateSystem extends CoordinateSystem {
     return [this.radialScale.toDomain(polar[0]), this.angularScale.toDomain(polar[1])];
   }
 
+  /** @internal */
   public props(): Props {
     return {
       radialDomain: this.radialScale.domain,

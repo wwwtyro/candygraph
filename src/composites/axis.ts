@@ -8,25 +8,61 @@ import { HLines } from "../primitives/hlines";
 import { LineSegments } from "../primitives/line-segments";
 import { Font } from "../primitives/font";
 
-export type Options = {
+export interface AxisOptions {
+  /** The color of the primary axis line. Default [0, 0, 0, 1]. */
   axisColor?: Vector4;
+
+  /** The width of the primary axis line in pixels. Default 1. */
   axisWidth?: number;
+
+  /** The x/y position of the anchor relative to the text quad, on the range
+   * [-1, -1] (bottom left) to [1, 1] (top right). When undefined will
+   * automatically anchor the text according to the direction of the axis. */
   labelAnchor?: Vector2;
+
+  /** The angle at which the text will be rotated around the anchor. Default 0. */
   labelAngle?: number;
+
+  /** The color of the tick labels. Default [0, 0, 0, 1]. */
   labelColor?: Vector4;
+
+  /** The padding between the ticks and tick labels in pixels. Default 3. */
   labelPad?: number;
+
+  /** Which side of the axis the label will be placed on. Default -1. */
   labelSide?: -1 | 1;
+
+  /** The size in pixels of the label font. Default 12. */
   labelSize?: number;
+
+  /** The color of the ticks. Default [0, 0, 0, 1]. */
   tickColor?: Vector4;
+
+  /** The length of the ticks in pixels. Default 12. */
   tickLength?: number;
+
+  /** How far the ticks are shifted from centered on the primary axis line. Zero
+   * is centered, can be negative or positive. Default 0.  */
   tickOffset?: number;
+
+  /** The width of the ticks in pixels. Default 1. */
   tickWidth?: number;
+
+  /** The position of the minor ticks as a distance from `start`. Default [] (empty). */
   minorTicks?: NumberArray;
+
+  /** The color of the minor ticks. Default [0, 0, 0, 1]. */
   minorTickColor?: Vector4;
+
+  /** The length of the minor ticks in pixels. Default 6. */
   minorTickLength?: number;
+
+  /** How far the minor ticks are shifted from centered on the primary axis line. Zero is centered, can be negative or positive. Default 0. */
   minorTickOffset?: number;
+
+  /** The width of the minor ticks in pixels. Default 1. */
   minorTickWidth?: number;
-};
+}
 
 const DEFAULTS = {
   axisColor: [0, 0, 0, 1],
@@ -53,6 +89,14 @@ export class Axis extends Composite {
   private ticks: Renderable = [];
   private minorTicks: Renderable = [];
 
+  /**
+   *
+   * @param start One endpoint of the axis.
+   * @param end The other endpoint of the axis.
+   * @param ticks The position of the ticks as a distance from `start`.
+   * @param labels The string labels for the ticks.
+   * @param font The `Font` instance used to render the tick labels.
+   */
   constructor(
     cg: CandyGraph,
     coords: CoordinateSystem,
@@ -61,7 +105,7 @@ export class Axis extends Composite {
     ticks: NumberArray,
     labels: string[],
     font: Font,
-    options: Options = {}
+    options: AxisOptions = {}
   ) {
     super();
     const opts = { ...DEFAULTS, ...options };
@@ -236,6 +280,7 @@ export class Axis extends Composite {
     }
   }
 
+  /** @internal */
   public children(): Renderable {
     return [this.axis, this.ticks, this.minorTicks, this.texts];
   }

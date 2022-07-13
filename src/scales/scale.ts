@@ -6,8 +6,12 @@ export enum Kind {
 }
 
 export abstract class Scale {
+  /** @internal */
   public abstract readonly kind: Kind;
+
+  /** @internal */
   public abstract readonly glsl: string;
+
   public abstract get domain(): Vector2;
   public abstract set domain(v: Vector2);
   public abstract get range(): Vector2;

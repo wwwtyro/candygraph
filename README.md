@@ -10,7 +10,7 @@
   <h3 align="center">
     <a href="https://wwwtyro.github.io/candygraph/tutorial/dist/">Tutorial</a> |
     <a href="https://wwwtyro.github.io/candygraph/examples/dist/">Examples</a> |
-    <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/API.md">API Docs</a>
+    <a href="https://github.com/wwwtyro/candygraph/blob/master/docs/api/">API Docs</a>
   </h3>
 </div>
 
