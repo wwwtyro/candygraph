@@ -3,7 +3,17 @@ export default CandyGraph;
 
 export { CandyGraph, CandyGraphOptions } from "./candygraph";
 
-export { Viewport, Primitive, Composite, Renderable, NumberArray, Vector2, Vector3, Vector4 } from "./common";
+export {
+  Viewport,
+  NamedDrawCommands,
+  Primitive,
+  Composite,
+  Renderable,
+  NumberArray,
+  Vector2,
+  Vector3,
+  Vector4,
+} from "./common";
 
 export { LinearScale } from "./scales/linear";
 export { LogScale } from "./scales/log";

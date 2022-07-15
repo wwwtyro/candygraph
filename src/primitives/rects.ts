@@ -1,6 +1,6 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
+import { Primitive, NumberArray, NamedDrawCommands } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
 export interface RectsOptions {
@@ -38,9 +38,10 @@ export class Rects extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      rects: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
           attribute vec4 rect;
@@ -55,7 +56,7 @@ export class Rects extends Primitive {
             vColor = color;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
 
           varying vec4 vColor;
@@ -64,30 +65,31 @@ export class Rects extends Primitive {
             gl_FragColor = vColor;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          rect: {
+            buffer: this.cg.regl.prop<Props, "rect">("rect"),
+            divisor: 1,
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
         },
-        rect: {
-          buffer: this.cg.regl.prop<Props, "rect">("rect"),
-          divisor: 1,
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-      },
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { rects, colors } = this;
     const instances = rects.count(4);
-    command({
+    commands.rects({
       instances,
       position: this.positionBuffer,
       rect: rects.buffer,

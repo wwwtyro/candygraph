@@ -1,6 +1,6 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
+import { Primitive, NumberArray, NamedDrawCommands } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
 export interface InterleavedShapesOptions {
@@ -62,9 +62,10 @@ export class InterleavedShapes extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      shapes: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
           attribute vec2 xy, scale;
@@ -88,7 +89,7 @@ export class InterleavedShapes extends Primitive {
             vColor = color;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
 
           varying vec4 vColor;
@@ -97,38 +98,39 @@ export class InterleavedShapes extends Primitive {
             gl_FragColor = vColor;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          xy: {
+            buffer: this.cg.regl.prop<Props, "xy">("xy"),
+            divisor: 1,
+          },
+          scale: {
+            buffer: this.cg.regl.prop<Props, "scale">("scale"),
+            divisor: this.cg.regl.prop<Props, "scaleDivisor">("scaleDivisor"),
+          },
+          rotation: {
+            buffer: this.cg.regl.prop<Props, "rotation">("rotation"),
+            divisor: this.cg.regl.prop<Props, "rotationDivisor">("rotationDivisor"),
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
         },
-        xy: {
-          buffer: this.cg.regl.prop<Props, "xy">("xy"),
-          divisor: 1,
-        },
-        scale: {
-          buffer: this.cg.regl.prop<Props, "scale">("scale"),
-          divisor: this.cg.regl.prop<Props, "scaleDivisor">("scaleDivisor"),
-        },
-        rotation: {
-          buffer: this.cg.regl.prop<Props, "rotation">("rotation"),
-          divisor: this.cg.regl.prop<Props, "rotationDivisor">("rotationDivisor"),
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-      },
-      count: this.cg.regl.prop<Props, "count">("count"),
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: this.cg.regl.prop<Props, "count">("count"),
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { shape, xys, scales, rotations, colors } = this;
     const instances = xys.count(2);
-    command({
+    commands.shapes({
       instances,
       xy: xys.buffer,
       position: shape.buffer,

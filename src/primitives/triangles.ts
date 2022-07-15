@@ -1,6 +1,6 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, Vector4, NumberArray } from "../common";
+import { Primitive, Vector4, NumberArray, NamedDrawCommands } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
 export interface TrianglesOptions {
@@ -34,9 +34,10 @@ export class Triangles extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      triangles: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
 
@@ -46,29 +47,30 @@ export class Triangles extends Primitive {
             gl_Position = domainToClip(position);
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
           uniform vec4 color;
           void main() {
             gl_FragColor = color;
           }`,
 
-      attributes: {
-        position: this.cg.regl.prop<Props, "position">("position"),
-      },
+        attributes: {
+          position: this.cg.regl.prop<Props, "position">("position"),
+        },
 
-      uniforms: {
-        color: this.cg.regl.prop<Props, "color">("color"),
-      },
+        uniforms: {
+          color: this.cg.regl.prop<Props, "color">("color"),
+        },
 
-      count: this.cg.regl.prop<Props, "count">("count"),
-    });
+        count: this.cg.regl.prop<Props, "count">("count"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { vertices, color } = this;
-    command({
+    commands.triangles({
       position: vertices.buffer,
       count: vertices.count(2),
       color,

@@ -1,6 +1,6 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
+import { Primitive, NumberArray, NamedDrawCommands } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
 export interface InterleavedCirclesOptions {
@@ -59,9 +59,10 @@ export class InterleavedCircles extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      circles: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
           attribute vec2 offset;
@@ -88,7 +89,7 @@ export class InterleavedCircles extends Primitive {
             vBorderWidth = borderWidth;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
 
           uniform vec2 resolution;
@@ -136,42 +137,43 @@ export class InterleavedCircles extends Primitive {
             gl_FragColor = 0.25 * pc;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          offset: {
+            buffer: this.cg.regl.prop<Props, "offset">("offset"),
+            divisor: 1,
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
+          radius: {
+            buffer: this.cg.regl.prop<Props, "radius">("radius"),
+            divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
+          },
+          borderWidth: {
+            buffer: this.cg.regl.prop<Props, "borderWidth">("borderWidth"),
+            divisor: this.cg.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
+          },
+          borderColor: {
+            buffer: this.cg.regl.prop<Props, "borderColor">("borderColor"),
+            divisor: this.cg.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
+          },
         },
-        offset: {
-          buffer: this.cg.regl.prop<Props, "offset">("offset"),
-          divisor: 1,
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-        radius: {
-          buffer: this.cg.regl.prop<Props, "radius">("radius"),
-          divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
-        },
-        borderWidth: {
-          buffer: this.cg.regl.prop<Props, "borderWidth">("borderWidth"),
-          divisor: this.cg.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
-        },
-        borderColor: {
-          buffer: this.cg.regl.prop<Props, "borderColor">("borderColor"),
-          divisor: this.cg.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
-        },
-      },
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { xys, colors, radii, borderWidths, borderColors } = this;
     const instances = xys.count(2);
-    command({
+    commands.circles({
       instances,
       position: this.positionBuffer,
       offset: xys.buffer,

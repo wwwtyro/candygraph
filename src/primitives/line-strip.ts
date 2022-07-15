@@ -1,6 +1,6 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
+import { Primitive, NumberArray, NamedDrawCommands } from "../common";
 import { Dataset, createDataset } from "./dataset";
 
 export interface LineStripOptions {
@@ -89,9 +89,10 @@ export class LineStrip extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      strip: this.cg.regl({
+        vert: `
       precision highp float;
       attribute vec3 position;
       attribute float ax, ay, bx, by;
@@ -114,7 +115,7 @@ export class LineStrip extends Primitive {
         vColor = color;
       }`,
 
-      frag: `
+        frag: `
       precision highp float;
 
       varying vec4 vColor;
@@ -123,51 +124,52 @@ export class LineStrip extends Primitive {
           gl_FragColor = vColor;
       }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          ax: {
+            buffer: this.cg.regl.prop<Props, "xs">("xs"),
+            divisor: 1,
+            offset: Float32Array.BYTES_PER_ELEMENT * 0,
+          },
+          ay: {
+            buffer: this.cg.regl.prop<Props, "ys">("ys"),
+            divisor: 1,
+            offset: Float32Array.BYTES_PER_ELEMENT * 0,
+          },
+          bx: {
+            buffer: this.cg.regl.prop<Props, "xs">("xs"),
+            divisor: 1,
+            offset: Float32Array.BYTES_PER_ELEMENT * 1,
+          },
+          by: {
+            buffer: this.cg.regl.prop<Props, "ys">("ys"),
+            divisor: 1,
+            offset: Float32Array.BYTES_PER_ELEMENT * 1,
+          },
+          width: {
+            buffer: this.cg.regl.prop<Props, "width">("width"),
+            divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
         },
-        ax: {
-          buffer: this.cg.regl.prop<Props, "xs">("xs"),
-          divisor: 1,
-          offset: Float32Array.BYTES_PER_ELEMENT * 0,
-        },
-        ay: {
-          buffer: this.cg.regl.prop<Props, "ys">("ys"),
-          divisor: 1,
-          offset: Float32Array.BYTES_PER_ELEMENT * 0,
-        },
-        bx: {
-          buffer: this.cg.regl.prop<Props, "xs">("xs"),
-          divisor: 1,
-          offset: Float32Array.BYTES_PER_ELEMENT * 1,
-        },
-        by: {
-          buffer: this.cg.regl.prop<Props, "ys">("ys"),
-          divisor: 1,
-          offset: Float32Array.BYTES_PER_ELEMENT * 1,
-        },
-        width: {
-          buffer: this.cg.regl.prop<Props, "width">("width"),
-          divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-      },
 
-      count: ROUND_CAP_JOIN_GEOMETRY.length,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: ROUND_CAP_JOIN_GEOMETRY.length,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { xs, ys, widths, colors } = this;
     const instances = xs.count(1) - 1;
-    command({
+    commands.strip({
       instances,
       position: this.roundCapJoin,
       xs: xs.buffer,

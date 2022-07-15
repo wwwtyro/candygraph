@@ -1,6 +1,6 @@
-import { DrawCommand, Buffer } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, Vector2, Vector4 } from "../common";
+import { NamedDrawCommands, Primitive, Vector2, Vector4 } from "../common";
 import { Font } from "./font";
 
 const MAX_UNAVAILABLE_GLYPH_WARNINGS = 10;
@@ -198,9 +198,10 @@ export class Text extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      text: this.cg.regl({
+        vert: `
         precision highp float;
         attribute vec2 position;
         attribute vec4 quad;
@@ -227,7 +228,7 @@ export class Text extends Primitive {
           vUV = vec2(mix(uv.x, uv.z, position.x), mix(uv.y, uv.w, position.y));
         }
       `,
-      frag: `
+        frag: `
         #extension GL_OES_standard_derivatives : enable
         precision highp float;
 
@@ -254,36 +255,37 @@ export class Text extends Primitive {
           gl_FragColor = vec4(color.rgb, alpha);
         }
       `,
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          quad: {
+            buffer: this.cg.regl.prop<Props, "quad">("quad"),
+            divisor: 1,
+          },
+          uv: {
+            buffer: this.cg.regl.prop<Props, "uv">("uv"),
+            divisor: 1,
+          },
         },
-        quad: {
-          buffer: this.cg.regl.prop<Props, "quad">("quad"),
-          divisor: 1,
+        uniforms: {
+          tSDF: this.font.texture,
+          offset: this.cg.regl.prop<Props, "offset">("offset"),
+          size: this.cg.regl.prop<Props, "size">("size"),
+          angle: this.cg.regl.prop<Props, "angle">("angle"),
+          color: this.cg.regl.prop<Props, "color">("color"),
         },
-        uv: {
-          buffer: this.cg.regl.prop<Props, "uv">("uv"),
-          divisor: 1,
-        },
-      },
-      uniforms: {
-        tSDF: this.font.texture,
-        offset: this.cg.regl.prop<Props, "offset">("offset"),
-        size: this.cg.regl.prop<Props, "size">("size"),
-        angle: this.cg.regl.prop<Props, "angle">("angle"),
-        color: this.cg.regl.prop<Props, "color">("color"),
-      },
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { color, position, angle, size, quad, uv, instances } = this;
-    command({
+    commands.text({
       color,
       position: this.quadGeometry,
       offset: position,

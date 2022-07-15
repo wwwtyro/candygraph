@@ -1,6 +1,6 @@
 import REGL, { DrawCommand, Regl, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
-import { Viewport, Renderable, RenderableType, Primitive } from "./common";
+import { Viewport, Renderable, RenderableType, Primitive, NamedDrawCommands } from "./common";
 
 type Props = {
   resolution: [number, number];
@@ -38,7 +38,7 @@ export class CandyGraph {
 
   public readonly canvas: HTMLCanvasElement;
 
-  private commandCache = new Map<string, Map<Function, DrawCommand>>();
+  private commandsByCoords = new Map<string, Map<Function, NamedDrawCommands>>();
   private scope: DrawCommand;
 
   constructor(options: CandyGraphOptions = {}) {
@@ -166,18 +166,18 @@ export class CandyGraph {
     return dest;
   }
 
-  private getCommand(coords: CoordinateSystem, primitive: Primitive) {
-    let commands = this.commandCache.get(coords.glsl);
-    if (!commands) {
-      commands = new Map<Function, DrawCommand>();
-      this.commandCache.set(coords.glsl, commands);
+  private getNamedCommands(coords: CoordinateSystem, primitive: Primitive) {
+    let commandsByPrimitive = this.commandsByCoords.get(coords.glsl);
+    if (!commandsByPrimitive) {
+      commandsByPrimitive = new Map<Function, NamedDrawCommands>();
+      this.commandsByCoords.set(coords.glsl, commandsByPrimitive);
     }
-    let command = commands.get(primitive.constructor);
-    if (!command) {
-      command = primitive.command(coords.glsl + commonGLSL);
-      commands.set(primitive.constructor, command);
+    let namedCommands = commandsByPrimitive.get(primitive.constructor);
+    if (!namedCommands) {
+      namedCommands = primitive.commands(coords.glsl + commonGLSL);
+      commandsByPrimitive.set(primitive.constructor, namedCommands);
     }
-    return command;
+    return namedCommands;
   }
 
   private recursiveRender(coords: CoordinateSystem, renderable: Renderable) {
@@ -187,7 +187,7 @@ export class CandyGraph {
       }
     } else {
       if (renderable.kind === RenderableType.Primitive) {
-        const command = this.getCommand(coords, renderable);
+        const command = this.getNamedCommands(coords, renderable);
         renderable.render(command);
       } else if (renderable.kind === RenderableType.Composite) {
         if (renderable.scope) {
