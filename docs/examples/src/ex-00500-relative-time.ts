@@ -7,7 +7,7 @@
 import CandyGraph, {
   createDefaultFont,
   Grid,
-  LineStrip,
+  TransparentLineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -108,9 +108,9 @@ export default async function RelativeTime(cg: CandyGraph) {
     }
     return {
       timestamp: time,
-      trace: new LineStrip(cg, xs, ys, {
-        colors: [1, 0, 1, 1],
-        widths: 3.0 * dpr,
+      trace: new TransparentLineStrip(cg, xs, ys, {
+        color: [1, 0, 1, 1],
+        width: 3.0 * dpr,
       }),
     };
   }
@@ -134,8 +134,8 @@ export default async function RelativeTime(cg: CandyGraph) {
     for (let i = 0; i < traces.length - 1; i++) {
       const trace = traces[i];
       const age = time - trace.timestamp;
-      trace.trace.colors.update([0, 0, 0, 0.5 * (1 - age / HISTORY)]);
-      trace.trace.widths.update(1 * dpr);
+      trace.trace.color = [0, 0, 0, 0.5 * (1 - age / HISTORY)];
+      trace.trace.width = 1 * dpr;
     }
 
     // Update the timeCoords.
