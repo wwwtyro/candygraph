@@ -70,11 +70,11 @@ export default async function LinearLog(cg: CandyGraph) {
   ];
 
   const grid = [
-    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, axes[0].computed.ticks, axes[1].computed.ticks, coords.xscale.domain, coords.yscale.domain, {
       color: [0.25, 0.25, 0.25, 1],
       width: 1 * dpr,
     }),
-    new Grid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, [], axes[1].computed.minorTicks, coords.xscale.domain, coords.yscale.domain, {
       color: [0.75, 0.75, 0.75, 1],
       width: 1 * dpr,
     }),

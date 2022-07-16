@@ -1,5 +1,6 @@
 ## 0.9.0
 
+- Renamed `Grid.info` to `Grid.computed`.
 - Added support for using multiple draw calls per primitive. If you've been
   using a custom primitive, you'll need to do the following:
   - Rename your `command` function to `commands`.

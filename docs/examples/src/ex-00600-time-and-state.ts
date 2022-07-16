@@ -77,14 +77,21 @@ export default async function TimeAndState(cg: CandyGraph) {
   ];
 
   const grid = [
-    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
+    new Grid(cg, axes[0].computed.ticks, axes[1].computed.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
       color: [0.5, 0.5, 0.5, 1],
       width: 1 * dpr,
     }),
-    new Grid(cg, axes[0].info.minorTicks, axes[1].info.minorTicks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
-      color: [0.75, 0.75, 0.75, 1],
-      width: 1 * dpr,
-    }),
+    new Grid(
+      cg,
+      axes[0].computed.minorTicks,
+      axes[1].computed.minorTicks,
+      axisCoords.xscale.domain,
+      axisCoords.yscale.domain,
+      {
+        color: [0.75, 0.75, 0.75, 1],
+        width: 1 * dpr,
+      }
+    ),
   ];
 
   const xs: number[] = [];

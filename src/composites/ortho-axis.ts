@@ -30,7 +30,7 @@ const DEFAULTS = {
   tickStep: 1,
 };
 
-export interface OrthoAxisInfo {
+export interface OrthoAxisComputed {
   /** The position of the major ticks of this axis. */
   ticks: NumberArray;
   /** The position of the minor ticks of this axis. */
@@ -38,7 +38,7 @@ export interface OrthoAxisInfo {
 }
 
 export class OrthoAxis extends Composite {
-  public readonly info: OrthoAxisInfo;
+  public readonly computed: OrthoAxisComputed;
   private axis: Renderable = [];
 
   constructor(
@@ -124,7 +124,7 @@ export class OrthoAxis extends Composite {
       { ...opts, minorTicks: boundedMinorTicks }
     );
 
-    this.info = {
+    this.computed = {
       ticks: boundedTicks.map((t) => t + resolvedAxisLow),
       minorTicks: boundedMinorTicks.map((t) => t + resolvedAxisLow),
     };

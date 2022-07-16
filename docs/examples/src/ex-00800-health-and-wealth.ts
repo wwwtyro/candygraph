@@ -84,10 +84,10 @@ export default async function HealthAndWealth(cg: CandyGraph): Promise<void> {
   ];
 
   const grid = [
-    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, axes[0].computed.ticks, axes[1].computed.ticks, coords.xscale.domain, coords.yscale.domain, {
       width: 1 * dpr,
     }),
-    new Grid(cg, axes[0].info.minorTicks, [], coords.xscale.domain, coords.yscale.domain, { width: 1 * dpr }),
+    new Grid(cg, axes[0].computed.minorTicks, [], coords.xscale.domain, coords.yscale.domain, { width: 1 * dpr }),
   ];
 
   const colors = [];

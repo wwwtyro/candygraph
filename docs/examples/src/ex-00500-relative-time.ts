@@ -77,8 +77,8 @@ export default async function RelativeTime(cg: CandyGraph) {
 
   const grid = new Grid(
     cg,
-    axes[0].info.ticks,
-    axes[1].info.ticks,
+    axes[0].computed.ticks,
+    axes[1].computed.ticks,
     axisCoords.xscale.domain,
     axisCoords.yscale.domain,
     { width: 1 * dpr }

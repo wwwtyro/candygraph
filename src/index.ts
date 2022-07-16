@@ -34,7 +34,7 @@ export { Wedges, WedgesOptions } from "./primitives/wedges";
 
 export { Axis, AxisOptions } from "./composites/axis";
 export { Grid, GridOptions } from "./composites/grid";
-export { OrthoAxis, OrthoAxisOptions, OrthoAxisInfo } from "./composites/ortho-axis";
+export { OrthoAxis, OrthoAxisOptions, OrthoAxisComputed as OrthoAxisInfo } from "./composites/ortho-axis";
 export { Scissor } from "./composites/scissor";
 
 export { createDefaultFont } from "./assets/default-font";

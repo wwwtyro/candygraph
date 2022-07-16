@@ -168,17 +168,24 @@ export default async function doc_00300(cg: CandyGraph) {
     }),
   ];
 
-  // Then we'll access the `info` objects on that variable to build grids with
+  // Then we'll access the `computed` object on that variable to build grids with
   // the `Grid` helper CandyGraph provides. First we'll make a grid with our
   // major ticks on both the x- and y-axes:
-  const majorGrid = new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
-    color: [0.25, 0.25, 0.25, 1],
-    width: 1,
-  });
+  const majorGrid = new Grid(
+    cg,
+    axes[0].computed.ticks,
+    axes[1].computed.ticks,
+    coords.xscale.domain,
+    coords.yscale.domain,
+    {
+      color: [0.25, 0.25, 0.25, 1],
+      width: 1,
+    }
+  );
 
   // Then we'll create a grid for the minor ticks, which we only have on the
   // y-axis, so we'll pass an empty array for the x-axis ticks:
-  const minorGrid = new Grid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+  const minorGrid = new Grid(cg, [], axes[1].computed.minorTicks, coords.xscale.domain, coords.yscale.domain, {
     color: [0.75, 0.75, 0.75, 1],
   });
 
