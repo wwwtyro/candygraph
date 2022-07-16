@@ -1,6 +1,7 @@
 import REGL, { DrawCommand, Regl, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
-import { Viewport, Renderable, RenderableType, Primitive, NamedDrawCommands } from "./common";
+import { Viewport, Renderable, RenderableType } from "./common";
+import { Primitive, NamedDrawCommands } from "./primitives/primitive";
 
 type Props = {
   resolution: [number, number];

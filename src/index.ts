@@ -3,17 +3,9 @@ export default CandyGraph;
 
 export { CandyGraph, CandyGraphOptions } from "./candygraph";
 
-export {
-  Viewport,
-  NamedDrawCommands,
-  Primitive,
-  Composite,
-  Renderable,
-  NumberArray,
-  Vector2,
-  Vector3,
-  Vector4,
-} from "./common";
+export { Viewport, Composite, Renderable, NumberArray, Vector2, Vector3, Vector4 } from "./common";
+
+export { NamedDrawCommands, Primitive } from "./primitives/primitive";
 
 export { Dataset } from "./dataset";
 

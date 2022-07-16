@@ -1,6 +1,7 @@
 import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray, NamedDrawCommands } from "../common";
+import { NumberArray } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
 import { Dataset, createDataset } from "../dataset";
 
 export interface InterleavedCirclesOptions {

@@ -1,6 +1,7 @@
 import { Buffer, Elements } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray, NamedDrawCommands, Vector4 } from "../common";
+import { NumberArray, Vector4 } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
 import { Dataset, createDataset } from "../dataset";
 
 export interface TransparentLineStripOptions {

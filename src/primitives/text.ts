@@ -1,6 +1,7 @@
 import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { NamedDrawCommands, Primitive, Vector2, Vector4 } from "../common";
+import { Vector2, Vector4 } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
 import { Font } from "../assets/font";
 
 const MAX_UNAVAILABLE_GLYPH_WARNINGS = 10;

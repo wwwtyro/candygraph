@@ -1,9 +1,8 @@
 import { DrawCommand } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
+import { Primitive } from "./primitives/primitive";
 
 export type UnpackPromise<T> = T extends Promise<infer U> ? U : never;
-
-export type NamedDrawCommands = Record<string, DrawCommand>;
 
 export interface Viewport {
   x: number;
@@ -15,20 +14,6 @@ export interface Viewport {
 export enum RenderableType {
   Primitive,
   Composite,
-}
-
-export abstract class Primitive {
-  /** @internal */
-  public readonly kind = RenderableType.Primitive;
-
-  /** @internal */
-  public abstract commands(glsl: string): NamedDrawCommands;
-
-  /** @internal */
-  public abstract render(commands: NamedDrawCommands): void;
-
-  /** Releases all GPU resources and renders this instance unusable. */
-  public abstract dispose(): void;
 }
 
 export abstract class Composite {
