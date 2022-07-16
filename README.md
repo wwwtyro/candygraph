@@ -31,7 +31,7 @@
 import CandyGraph, {
   createDefaultFont,
   LinearScale,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   CartesianCoordinateSystem,
 } from "candygraph";
@@ -73,8 +73,8 @@ async function main() {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0.5, 0.0, 1.0],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0.5, 0.0],
       widths: 3,
     }),
     new OrthoAxis(cg, coords, "x", font, {
