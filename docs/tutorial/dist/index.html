@@ -83,8 +83,8 @@ canvas - it is not influenced by the viewport we just defined.</p>
 render a line strip. We’ll render it with width 2 pixels and in red
 (<code>colors</code> format is [red, green, blue, alpha]).</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
   ]);
@@ -114,8 +114,8 @@ later. First we’ll grab the default font:</p>
 </code></pre>
 <p>Then render our data and axes:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font),
@@ -143,8 +143,8 @@ labels for the x-axis are in an inconvenient place. We can adjust that with
 the <code>labelSide</code> option, which takes a 1 or -1 to indicate which side of the
 axis we want to place the labels.</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, { labelSide: 1 }),
@@ -161,8 +161,8 @@ something more dense than the default of one:</p>
 <pre><code class="language-typescript">  xscale.range = [40, viewport.width - 16];
 
   cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, { labelSide: 1 }),
@@ -176,8 +176,8 @@ something more dense than the default of one:</p>
 <p>Hmm. The format of the numbers on the y-axis is inconsistent. Let’s provide
 a function to the <code>labelFormatter</code> parameter to clean that up:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, { labelSide: 1 }),
@@ -194,8 +194,8 @@ a function to the <code>labelFormatter</code> parameter to clean that up:</p>
 <p>The way the end of the x-axis hangs off the last tick isn’t particularly
 appealing. Let’s fix that:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, {
@@ -215,8 +215,8 @@ appealing. Let’s fix that:</p>
 </div>
 <p>Think the default ticks are a little <em>meh</em>? We can adjust those too:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, {
@@ -271,8 +271,8 @@ canvas, and render our data with axes:</p>
   cg.clear([1, 1, 1, 1]);
 
   cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, {
@@ -296,8 +296,8 @@ improve the axis rendering, though. Let’s make the y-axis more human
 readable with a <code>labelFormatter</code> function and create more dense ticks on
 the x-axis:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, {
@@ -321,8 +321,8 @@ the x-axis:</p>
 <p>We can make the logarithmic nature of the y-axis a little more obvious by
 adding some minor ticks:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, &quot;x&quot;, font, {
@@ -392,8 +392,8 @@ y-axis, so we’ll pass an empty array for the x-axis ticks:</p>
 <pre><code class="language-typescript">  cg.render(coords, viewport, [
     minorGrid,
     majorGrid,
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0, 0, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0, 0],
       widths: 2,
     }),
     axes,
@@ -480,22 +480,22 @@ each trace by first rendering a thick black line, then a thinner line
 in our desired color. We’ll also apply a scissor in screen space to
 confine the lines to the plot region. First the <code>ys0</code> trace in ~orange:</p>
 <pre><code class="language-typescript">      new Scissor(cg, 40, 32, viewport.width - 56, viewport.height - 48, true, [
-        new LineStrip(cg, xs, ys0, {
-          colors: [0, 0, 0, 1],
+        new OpaqueLineStrip(cg, xs, ys0, {
+          colors: [0, 0, 0],
           widths: 17,
         }),
-        new LineStrip(cg, xs, ys0, {
-          colors: [1, 0.5, 0, 1],
+        new OpaqueLineStrip(cg, xs, ys0, {
+          colors: [1, 0.5, 0],
           widths: 9,
         }),
 </code></pre>
 <p>Then our <code>ys1</code> trace in ~blue:</p>
-<pre><code class="language-typescript">        new LineStrip(cg, xs, ys1, {
-          colors: [0, 0, 0, 1],
+<pre><code class="language-typescript">        new OpaqueLineStrip(cg, xs, ys1, {
+          colors: [0, 0, 0],
           widths: 17,
         }),
-        new LineStrip(cg, xs, ys1, {
-          colors: [0, 0.5, 1, 1],
+        new OpaqueLineStrip(cg, xs, ys1, {
+          colors: [0, 0.5, 1],
           widths: 9,
         }),
       ]),
@@ -572,9 +572,9 @@ take a look at how to do that.</p>
   }
 </code></pre>
 <p>Previously we’d have fed <code>xsRaw</code> and <code>ysRaw</code> directly into primitives like
-<code>LineStrip</code>. This time, however, we’ll upload them to the GPU and keep a
-handle to them using the <code>Dataset</code> class. Once we’ve done so, we
-can continue to use them until we invoke their <code>dispose()</code> functions.</p>
+<code>OpaqueLineStrip</code>. This time, however, we’ll upload them to the GPU and
+keep a handle to them using the <code>Dataset</code> class. Once we’ve done so, we can
+continue to use them until we invoke their <code>dispose()</code> functions.</p>
 <pre><code class="language-typescript">  const xs = new Dataset(cg, xsRaw);
   const ys = new Dataset(cg, ysRaw);
 </code></pre>
@@ -641,15 +641,15 @@ axes renderable.</p>
     const axes = linear ? linlinAxis : linlogAxis;
 </code></pre>
 <p>Next we’ll use (and reuse!) our <code>xs</code> and <code>ys</code> <code>Dataset</code> objects in a
-<code>Circles</code> or <code>LineStrip</code> renderable according to the value of <code>scatter</code>:</p>
+<code>Circles</code> or <code>OpaqueLineStrip</code> renderable according to the value of <code>scatter</code>:</p>
 <pre><code class="language-typescript">    const data = scatter
       ? new Circles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
           radii: 3,
           borderWidths: 0,
         })
-      : new LineStrip(cg, xs, ys, {
-          colors: [1, 0, 0, 1],
+      : new OpaqueLineStrip(cg, xs, ys, {
+          colors: [1, 0, 0],
           widths: 0.25,
         });
 </code></pre>

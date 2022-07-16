@@ -8,7 +8,7 @@ import CandyGraph, {
   createDefaultFont,
   Triangles,
   Grid,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -166,8 +166,8 @@ export default async function TimeAndState(cg: CandyGraph) {
 
     // Render the traces with the timeCoords.
     cg.render(timeCoords, viewport, [
-      new LineStrip(cg, xs, y0, { colors: [0.5, 0, 1.0, 1], widths: 2.0 * dpr }),
-      new LineStrip(cg, xs, y1, { colors: [1.0, 0, 0.5, 1], widths: 2.0 * dpr }),
+      new OpaqueLineStrip(cg, xs, y0, { colors: [0.5, 0, 1.0], widths: 2.0 * dpr }),
+      new OpaqueLineStrip(cg, xs, y1, { colors: [1.0, 0, 0.5], widths: 2.0 * dpr }),
     ]);
 
     // Render the axes with the axisCoords.

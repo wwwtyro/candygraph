@@ -4,19 +4,19 @@ import { NumberArray } from "../common";
 import { Primitive, NamedDrawCommands } from "./primitive";
 import { Dataset, createDataset } from "../dataset";
 
-export interface LineStripOptions {
+export interface OpaqueLineStripOptions {
   /** The width of the line strip segments. If this parameter is a single
    * number, it will apply to all segments. Default 1. */
   widths?: number | NumberArray | Dataset;
 
   /** The color of the line strip segments. If this parameter is a single
-   * Vector4, it will apply to all segments. Default [0, 0, 0, 1]. */
+   * Vector3, it will apply to all segments. Default [0, 0, 0]. */
   colors?: NumberArray | Dataset;
 }
 
 const DEFAULT_OPTIONS = {
   widths: 1,
-  colors: [0, 0, 0, 1],
+  colors: [0, 0, 0],
 };
 
 interface Props {
@@ -61,7 +61,7 @@ function roundCapJoinGeometry(resolution: number) {
 
 const ROUND_CAP_JOIN_GEOMETRY = roundCapJoinGeometry(16);
 
-export class LineStrip extends Primitive {
+export class OpaqueLineStrip extends Primitive {
   public readonly xs: Dataset;
   public readonly ys: Dataset;
   public readonly widths: Dataset;
@@ -78,12 +78,9 @@ export class LineStrip extends Primitive {
     private cg: CandyGraph,
     xs: NumberArray | Dataset,
     ys: NumberArray | Dataset,
-    options: LineStripOptions = {}
+    options: OpaqueLineStripOptions = {}
   ) {
     super();
-    console.warn(
-      "LineStrip is deprecated and will soon be removed. Please use OpaqueLineStrip or TransparentLineStrip instead."
-    );
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xs = createDataset(cg, xs);
     this.ys = createDataset(cg, ys);
@@ -101,9 +98,9 @@ export class LineStrip extends Primitive {
       attribute vec3 position;
       attribute float ax, ay, bx, by;
       attribute float width;
-      attribute vec4 color;
+      attribute vec3 color;
 
-      varying vec4 vColor;
+      varying vec3 vColor;
 
       ${glsl}
 
@@ -122,10 +119,10 @@ export class LineStrip extends Primitive {
         frag: `
       precision highp float;
 
-      varying vec4 vColor;
+      varying vec3 vColor;
 
       void main() {
-          gl_FragColor = vColor;
+          gl_FragColor = vec4(vColor, 1.0);
       }`,
 
         attributes: {
@@ -181,7 +178,7 @@ export class LineStrip extends Primitive {
       width: widths.buffer,
       color: colors.buffer,
       widthDivisor: widths.divisor(instances, 1),
-      colorDivisor: colors.divisor(instances, 4),
+      colorDivisor: colors.divisor(instances, 3),
     });
   }
 

@@ -5,7 +5,7 @@
 import CandyGraph, {
   createDefaultFont,
   Text,
-  LineStrip,
+  OpaqueLineStrip,
   LineSegments,
   LinearScale,
   PolarCoordinateSystem,
@@ -100,8 +100,8 @@ export default async function PolarPlot(cg: CandyGraph) {
       colors: axisLineColors,
     }),
     ...axisLabels,
-    new LineStrip(cg, rhos, thetas, {
-      colors: [1, 0.5, 0, 1],
+    new OpaqueLineStrip(cg, rhos, thetas, {
+      colors: [1, 0.5, 0],
       widths: 2.5 * dpr,
     }),
   ]);

@@ -5,7 +5,7 @@
 import CandyGraph, {
   createDefaultFont,
   Grid,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   LogScale,
@@ -84,8 +84,8 @@ export default async function LinearLog(cg: CandyGraph) {
 
   cg.render(coords, viewport, [
     grid,
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0.5, 0.0, 1.0],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0.5, 0.0],
       widths: 3,
     }),
     axes,
