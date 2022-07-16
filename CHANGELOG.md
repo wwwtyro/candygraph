@@ -1,23 +1,15 @@
 ## 0.9.0
 
-- Added support for using multiple draw calls per Primitive. If you've been
+- Added support for using multiple draw calls per primitive. If you've been
   using a custom primitive, you'll need to do the following:
   - Rename your `command` function to `commands`.
-  - **_ MAKE YOUR COMMANDS FUNCTION STATIC??? WHICH WILL INVOLVE PASSING THE
-    CANDYGRAPH or REGL OBJECT INTO COMMANDS. _**
-  - Return a `Record<string, DrawCommand>` from commands, where the string is a
-    name you give each command. The exported type `NamedDrawCommands` resolves
-    to this Record type.
-  - Update your Primitive's `render` function to accept a `NamedDrawCommands`
+  - Return a `Record<string, DrawCommand>` from `commands`, where the string is
+    a name you give each command. The exported type alias `NamedDrawCommands`
+    resolves to this type.
+  - Update your primitive's `render` function to accept a `NamedDrawCommands`
     and use the names you provided to find the `DrawCommand` you need.
-- Fixed alpha overlap artifacts in the LineStrip primitive. In order to keep the
-  rendering simple, support for per-vertex colors and widths was dropped. The
-  `colors` and `widths` options have been renamed to `color` and `width`
-  accordingly, and accept only a `Vector4` and `number`, respectively.
-- If you still need the per-vertex colors and widths, please use the LineSegment
-  primitive.
-- LineStrips must have at least three points (two segments). If you need to
-  render a single segment, please use the LineSegment primitive instead.
+- Added the `TransparentLineStrip` primitive that allows rendering line strips
+  with alpha and avoids the overlap artifacts present in `LineStrip`.
 
 ## 0.8.0
 
