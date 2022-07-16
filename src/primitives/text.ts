@@ -30,7 +30,7 @@ const DEFAULTS = {
   size: 12,
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   quad: Float32Array;
   uv: Float32Array;
@@ -39,7 +39,7 @@ type Props = {
   size: number;
   angle: number;
   instances: number;
-};
+}
 
 // Temp arrays that will be resized as needed and reused.
 let quadBuffer = new Float32Array(1);

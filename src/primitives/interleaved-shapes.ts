@@ -21,7 +21,7 @@ const DEFAULT_OPTIONS = {
   rotations: 0,
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   xy: Buffer;
   scale: Buffer;
@@ -33,7 +33,7 @@ type Props = {
   colorDivisor: number;
   count: number;
   instances: number;
-};
+}
 
 /** Renders colored shapes. Useful for custom trace points. */
 export class InterleavedShapes extends Primitive {

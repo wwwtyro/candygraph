@@ -6,7 +6,7 @@ import { LinearScale } from "../scales/linear";
 import { LogScale } from "../scales/log";
 import { CandyGraph } from "../candygraph";
 
-type Props = {
+interface Props {
   radialDomain: Vector2;
   radialRange: Vector2;
   angularDomain: Vector2;
@@ -15,7 +15,7 @@ type Props = {
   xRange: Vector2;
   yDomain: Vector2;
   yRange: Vector2;
-};
+}
 
 export class PolarCoordinateSystem extends CoordinateSystem {
   /** @internal */

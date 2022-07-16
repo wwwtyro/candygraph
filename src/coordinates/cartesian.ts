@@ -5,12 +5,12 @@ import { LinearScale } from "../scales/linear";
 import { LogScale } from "../scales/log";
 import { CandyGraph } from "../candygraph";
 
-type Props = {
+interface Props {
   xdomain: Vector2;
   ydomain: Vector2;
   xrange: Vector2;
   yrange: Vector2;
-};
+}
 
 export class CartesianCoordinateSystem extends CoordinateSystem {
   /** @internal */

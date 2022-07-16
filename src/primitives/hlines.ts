@@ -19,7 +19,7 @@ const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   line: Buffer;
   color: Buffer;
@@ -27,7 +27,7 @@ type Props = {
   colorDivisor: number;
   widthDivisor: number;
   instances: number;
-};
+}
 
 /**
  * Renders clean horizontal lines. Line widths are rounded to the nearest pixel

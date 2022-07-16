@@ -13,13 +13,13 @@ const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 0.5],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   rect: Buffer;
   color: Buffer;
   colorDivisor: number;
   instances: number;
-};
+}
 
 export class Rects extends Primitive {
   public readonly rects: Dataset;

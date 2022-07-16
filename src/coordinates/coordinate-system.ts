@@ -17,7 +17,7 @@ export abstract class CoordinateSystem {
   public abstract readonly scope: DrawCommand;
 
   /** @internal */
-  public abstract props(): Record<string, unknown>;
+  public abstract props(): Record<string, any>;
 
   public abstract toDomain(rangeVector: Vector2): Vector2;
   public abstract toRange(domainVector: Vector2): Vector2;

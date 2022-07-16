@@ -25,7 +25,7 @@ const DEFAULT_OPTIONS = {
   borderColors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   offsetX: Buffer;
   offsetY: Buffer;
@@ -38,7 +38,7 @@ type Props = {
   borderWidthDivisor: number;
   borderColorDivisor: number;
   instances: number;
-};
+}
 
 export class Circles extends Primitive {
   public readonly xs: Dataset;

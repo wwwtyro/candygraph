@@ -4,10 +4,10 @@ import { Viewport, Renderable } from "./common";
 import { Primitive, NamedDrawCommands } from "./primitives/primitive";
 import { Composite } from "./composites/composite";
 
-type Props = {
+interface Props {
   resolution: [number, number];
   viewport: Viewport;
-};
+}
 
 const commonGLSL = `
   uniform vec2 resolution;

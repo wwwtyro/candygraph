@@ -4,9 +4,9 @@ import { Renderable } from "../common";
 import { Composite } from "./composite";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
 
-type Props = {
+interface Props {
   box: { x: number; y: number; width: number; height: number };
-};
+}
 
 /**
  * All child objects are clipped to the provided bounds.

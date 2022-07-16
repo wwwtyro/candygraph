@@ -22,7 +22,7 @@ const DEFAULT_OPTIONS = {
   borderColors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   offset: Buffer;
   color: Buffer;
@@ -34,7 +34,7 @@ type Props = {
   borderWidthDivisor: number;
   borderColorDivisor: number;
   instances: number;
-};
+}
 
 /** Colored circles with optional borders. */
 export class InterleavedCircles extends Primitive {

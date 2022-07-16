@@ -13,11 +13,11 @@ const DEFAULT_OPTIONS = {
   color: [0, 0, 0, 0.5],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   color: Vector4;
   count: number;
-};
+}
 
 export class Triangles extends Primitive {
   private vertices: Dataset;

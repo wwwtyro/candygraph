@@ -16,7 +16,7 @@ const DEFAULT_OPTIONS = {
   radii: 10,
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   offset: Buffer;
   angle: Buffer;
@@ -26,7 +26,7 @@ type Props = {
   radiusDivisor: number;
   angleDivisor: number;
   instances: number;
-};
+}
 
 /**
  * Useful for pie charts.

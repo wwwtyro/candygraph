@@ -19,7 +19,7 @@ const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   points: Buffer;
   instances: number;
@@ -27,7 +27,7 @@ type Props = {
   color: Buffer;
   widthDivisor: number;
   colorDivisor: number;
-};
+}
 
 export class LineSegments extends Primitive {
   public readonly points: Dataset;
