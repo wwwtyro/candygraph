@@ -1,7 +1,8 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { NumberArray } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
+import { Dataset, createDataset } from "../dataset";
 
 export interface LineSegmentsOptions {
   /** The width of the line segments in pixels. If this parameter is a single
@@ -18,7 +19,7 @@ const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   points: Buffer;
   instances: number;
@@ -26,7 +27,7 @@ type Props = {
   color: Buffer;
   widthDivisor: number;
   colorDivisor: number;
-};
+}
 
 export class LineSegments extends Primitive {
   public readonly points: Dataset;
@@ -55,9 +56,10 @@ export class LineSegments extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      segments: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position, pointA, pointB;
           attribute float width;
@@ -83,7 +85,7 @@ export class LineSegments extends Primitive {
             vColor = color;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
 
           varying vec4 vColor;
@@ -92,43 +94,44 @@ export class LineSegments extends Primitive {
             gl_FragColor = vColor;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          pointA: {
+            buffer: this.cg.regl.prop<Props, "points">("points"),
+            divisor: 1,
+            offset: Float32Array.BYTES_PER_ELEMENT * 0,
+            stride: Float32Array.BYTES_PER_ELEMENT * 4,
+          },
+          pointB: {
+            buffer: this.cg.regl.prop<Props, "points">("points"),
+            divisor: 1,
+            offset: Float32Array.BYTES_PER_ELEMENT * 2,
+            stride: Float32Array.BYTES_PER_ELEMENT * 4,
+          },
+          width: {
+            buffer: this.cg.regl.prop<Props, "width">("width"),
+            divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
         },
-        pointA: {
-          buffer: this.cg.regl.prop<Props, "points">("points"),
-          divisor: 1,
-          offset: Float32Array.BYTES_PER_ELEMENT * 0,
-          stride: Float32Array.BYTES_PER_ELEMENT * 4,
-        },
-        pointB: {
-          buffer: this.cg.regl.prop<Props, "points">("points"),
-          divisor: 1,
-          offset: Float32Array.BYTES_PER_ELEMENT * 2,
-          stride: Float32Array.BYTES_PER_ELEMENT * 4,
-        },
-        width: {
-          buffer: this.cg.regl.prop<Props, "width">("width"),
-          divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-      },
 
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { points, colors, widths } = this;
     const instances = points.count(2) / 2;
-    command({
+    commands.segments({
       instances,
       position: this.segmentGeometry,
       points: points.buffer,

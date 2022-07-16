@@ -1,7 +1,8 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { NumberArray } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
+import { Dataset, createDataset } from "../dataset";
 
 export interface HLinesOptions {
   widths?: number | NumberArray | Dataset;
@@ -18,7 +19,7 @@ const DEFAULT_OPTIONS = {
   colors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   line: Buffer;
   color: Buffer;
@@ -26,7 +27,7 @@ type Props = {
   colorDivisor: number;
   widthDivisor: number;
   instances: number;
-};
+}
 
 /**
  * Renders clean horizontal lines. Line widths are rounded to the nearest pixel
@@ -62,9 +63,10 @@ export class HLines extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      hlines: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
           attribute vec3 line;
@@ -110,7 +112,7 @@ export class HLines extends Primitive {
             vColor = color;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
           varying vec4 vColor;
 
@@ -118,35 +120,36 @@ export class HLines extends Primitive {
             gl_FragColor = vColor;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          line: {
+            buffer: this.cg.regl.prop<Props, "line">("line"),
+            divisor: 1,
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
+          width: {
+            buffer: this.cg.regl.prop<Props, "width">("width"),
+            divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
+          },
         },
-        line: {
-          buffer: this.cg.regl.prop<Props, "line">("line"),
-          divisor: 1,
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-        width: {
-          buffer: this.cg.regl.prop<Props, "width">("width"),
-          divisor: this.cg.regl.prop<Props, "widthDivisor">("widthDivisor"),
-        },
-      },
 
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { lines, colors, widths } = this;
     const instances = lines.count(3);
-    command({
+    commands.hlines({
       instances,
       position: this.segmentGeometry,
       line: lines.buffer,

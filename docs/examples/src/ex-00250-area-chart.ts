@@ -5,7 +5,7 @@
 import CandyGraph, {
   createDefaultFont,
   Triangles,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -58,8 +58,8 @@ export default async function Area(cg: CandyGraph) {
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
     new Triangles(cg, triangles, { color: [0, 0.5, 1, 0.125] }),
-    new LineStrip(cg, xs, ys, {
-      colors: [0, 0.25, 0.5, 1],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [0, 0.25, 0.5],
       widths: 1 * dpr,
     }),
     new OrthoAxis(cg, coords, "x", font, {

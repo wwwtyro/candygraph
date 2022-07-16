@@ -2,7 +2,7 @@
 // <canvas id="ex-11000" style="box-shadow: 0px 0px 8px #ccc;" width=384 height=384></canvas>
 
 // skip-doc-start
-import CandyGraph, { Dataset, LineStrip, Shapes, LinearScale, CartesianCoordinateSystem } from "../../../src";
+import CandyGraph, { Dataset, OpaqueLineStrip, Shapes, LinearScale, CartesianCoordinateSystem } from "../../../src";
 
 export default function ShapesExample(cg: CandyGraph) {
   // Scale the canvas by the device pixel ratio.
@@ -51,8 +51,8 @@ export default function ShapesExample(cg: CandyGraph) {
   cg.clear([0, 0, 0.25, 1]);
 
   cg.render(coords, viewport, [
-    new LineStrip(cg, xData, ys0, {
-      colors: [1, 1, 1, 1],
+    new OpaqueLineStrip(cg, xData, ys0, {
+      colors: [1, 1, 1],
       widths: 2 * dpr,
     }),
     new Shapes(cg, shape, xData, ys0, {
@@ -60,8 +60,8 @@ export default function ShapesExample(cg: CandyGraph) {
       scales,
       rotations,
     }),
-    new LineStrip(cg, xData, ys1, {
-      colors: [1, 1, 1, 1],
+    new OpaqueLineStrip(cg, xData, ys1, {
+      colors: [1, 1, 1],
       widths: 2 * dpr,
     }),
     new Shapes(cg, shape, xData, ys1, {

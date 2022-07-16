@@ -5,7 +5,7 @@
 import CandyGraph, {
   createDefaultFont,
   Grid,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   LogScale,
@@ -70,11 +70,11 @@ export default async function LinearLog(cg: CandyGraph) {
   ];
 
   const grid = [
-    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, axes[0].computed.ticks, axes[1].computed.ticks, coords.xscale.domain, coords.yscale.domain, {
       color: [0.25, 0.25, 0.25, 1],
       width: 1 * dpr,
     }),
-    new Grid(cg, [], axes[1].info.minorTicks, coords.xscale.domain, coords.yscale.domain, {
+    new Grid(cg, [], axes[1].computed.minorTicks, coords.xscale.domain, coords.yscale.domain, {
       color: [0.75, 0.75, 0.75, 1],
       width: 1 * dpr,
     }),
@@ -84,8 +84,8 @@ export default async function LinearLog(cg: CandyGraph) {
 
   cg.render(coords, viewport, [
     grid,
-    new LineStrip(cg, xs, ys, {
-      colors: [1, 0.5, 0.0, 1.0],
+    new OpaqueLineStrip(cg, xs, ys, {
+      colors: [1, 0.5, 0.0],
       widths: 3,
     }),
     axes,

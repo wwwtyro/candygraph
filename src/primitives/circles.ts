@@ -1,7 +1,8 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
-import { createDataset, Dataset } from "./dataset";
+import { NumberArray } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
+import { createDataset, Dataset } from "../dataset";
 
 export interface CirclesOptions {
   /** The interior color of the circles. If this value is a single Vector4, it will apply to all the circles. Default [0, 0, 0, 0.5]. */
@@ -24,7 +25,7 @@ const DEFAULT_OPTIONS = {
   borderColors: [0, 0, 0, 1],
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   offsetX: Buffer;
   offsetY: Buffer;
@@ -37,7 +38,7 @@ type Props = {
   borderWidthDivisor: number;
   borderColorDivisor: number;
   instances: number;
-};
+}
 
 export class Circles extends Primitive {
   public readonly xs: Dataset;
@@ -73,9 +74,10 @@ export class Circles extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      circle: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
           attribute float offsetX, offsetY;
@@ -103,7 +105,7 @@ export class Circles extends Primitive {
             vBorderWidth = borderWidth;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
 
           uniform vec2 resolution;
@@ -151,46 +153,47 @@ export class Circles extends Primitive {
             gl_FragColor = 0.25 * pc;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          offsetX: {
+            buffer: this.cg.regl.prop<Props, "offsetX">("offsetX"),
+            divisor: 1,
+          },
+          offsetY: {
+            buffer: this.cg.regl.prop<Props, "offsetY">("offsetY"),
+            divisor: 1,
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
+          radius: {
+            buffer: this.cg.regl.prop<Props, "radius">("radius"),
+            divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
+          },
+          borderWidth: {
+            buffer: this.cg.regl.prop<Props, "borderWidth">("borderWidth"),
+            divisor: this.cg.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
+          },
+          borderColor: {
+            buffer: this.cg.regl.prop<Props, "borderColor">("borderColor"),
+            divisor: this.cg.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
+          },
         },
-        offsetX: {
-          buffer: this.cg.regl.prop<Props, "offsetX">("offsetX"),
-          divisor: 1,
-        },
-        offsetY: {
-          buffer: this.cg.regl.prop<Props, "offsetY">("offsetY"),
-          divisor: 1,
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-        radius: {
-          buffer: this.cg.regl.prop<Props, "radius">("radius"),
-          divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
-        },
-        borderWidth: {
-          buffer: this.cg.regl.prop<Props, "borderWidth">("borderWidth"),
-          divisor: this.cg.regl.prop<Props, "borderWidthDivisor">("borderWidthDivisor"),
-        },
-        borderColor: {
-          buffer: this.cg.regl.prop<Props, "borderColor">("borderColor"),
-          divisor: this.cg.regl.prop<Props, "borderColorDivisor">("borderColorDivisor"),
-        },
-      },
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { xs, ys, colors, radii, borderWidths, borderColors } = this;
     const instances = xs.count(1);
-    command({
+    commands.circle({
       instances,
       position: this.positionBuffer,
       offsetX: xs.buffer,

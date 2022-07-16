@@ -2,7 +2,7 @@ import { Texture } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Vector2 } from "../common";
 
-type Glyph = {
+interface Glyph {
   id: number;
   xoffset: number;
   yoffset: number;
@@ -10,7 +10,7 @@ type Glyph = {
   height: number;
   xadvance: number;
   uv: Vector2;
-};
+}
 
 /**
  * A `Font` is used in conjunction with the `Text` primitive to render text, such as axis labels.

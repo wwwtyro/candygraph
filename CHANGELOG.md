@@ -1,3 +1,21 @@
+## 0.9.0
+
+- Renamed `Grid.info` to `Grid.computed`.
+- Added support for using multiple draw calls per primitive. If you've been
+  using a custom primitive, you'll need to do the following:
+  - Rename your `command` function to `commands`.
+  - Return a `Record<string, DrawCommand>` from `commands`, where the string is
+    a name you give each command. The exported type alias `NamedDrawCommands`
+    resolves to this type.
+  - Update your primitive's `render` function to accept a `NamedDrawCommands`
+    and use the names you provided to find the `DrawCommand` you need.
+- Added the `TransparentLineStrip` primitive that allows rendering line strips
+  with alpha and avoids the overlap artifacts present in `LineStrip`.
+- Added the `OpaqueLineStrip` primitive and a deprecation warning when using
+  `LineStrip`.
+
+([#44](https://github.com/wwwtyro/candygraph/pull/42))
+
 ## 0.8.0
 
 - Refactored all resources from the "create" pattern to classes instantiated

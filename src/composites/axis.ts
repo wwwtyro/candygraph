@@ -1,12 +1,13 @@
 import { vec2 } from "gl-matrix";
 import { CandyGraph } from "../candygraph";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
-import { Composite, Renderable, Vector4, Vector2, NumberArray } from "../common";
+import { Renderable, Vector4, Vector2, NumberArray } from "../common";
+import { Composite } from "./composite";
 import { Text } from "../primitives/text";
 import { VLines } from "../primitives/vlines";
 import { HLines } from "../primitives/hlines";
 import { LineSegments } from "../primitives/line-segments";
-import { Font } from "../primitives/font";
+import { Font } from "../assets/font";
 
 export interface AxisOptions {
   /** The color of the primary axis line. Default [0, 0, 0, 1]. */

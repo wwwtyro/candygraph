@@ -1,7 +1,8 @@
-import { Buffer, DrawCommand } from "regl";
+import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Primitive, NumberArray } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { NumberArray } from "../common";
+import { Primitive, NamedDrawCommands } from "./primitive";
+import { Dataset, createDataset } from "../dataset";
 
 export interface WedgesOptions {
   /** The interior color of the wedges. If this value is a single Vector4, it will apply to all the wedges. Default [0, 0, 0, 0.5]. */
@@ -15,7 +16,7 @@ const DEFAULT_OPTIONS = {
   radii: 10,
 };
 
-type Props = {
+interface Props {
   position: Buffer;
   offset: Buffer;
   angle: Buffer;
@@ -25,7 +26,7 @@ type Props = {
   radiusDivisor: number;
   angleDivisor: number;
   instances: number;
-};
+}
 
 /**
  * Useful for pie charts.
@@ -57,9 +58,10 @@ export class Wedges extends Primitive {
   }
 
   /** @internal */
-  public command(glsl: string): DrawCommand {
-    return this.cg.regl({
-      vert: `
+  public commands(glsl: string): NamedDrawCommands {
+    return {
+      wedges: this.cg.regl({
+        vert: `
           precision highp float;
           attribute vec2 position;
           attribute vec2 offset, angle;
@@ -81,7 +83,7 @@ export class Wedges extends Primitive {
             vAngle = angle;
           }`,
 
-      frag: `
+        frag: `
           precision highp float;
 
           uniform vec2 resolution;
@@ -132,38 +134,39 @@ export class Wedges extends Primitive {
             gl_FragColor = 0.25 * pc;
           }`,
 
-      attributes: {
-        position: {
-          buffer: this.cg.regl.prop<Props, "position">("position"),
-          divisor: 0,
+        attributes: {
+          position: {
+            buffer: this.cg.regl.prop<Props, "position">("position"),
+            divisor: 0,
+          },
+          offset: {
+            buffer: this.cg.regl.prop<Props, "offset">("offset"),
+            divisor: 1,
+          },
+          angle: {
+            buffer: this.cg.regl.prop<Props, "angle">("angle"),
+            divisor: this.cg.regl.prop<Props, "angleDivisor">("angleDivisor"),
+          },
+          color: {
+            buffer: this.cg.regl.prop<Props, "color">("color"),
+            divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
+          },
+          radius: {
+            buffer: this.cg.regl.prop<Props, "radius">("radius"),
+            divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
+          },
         },
-        offset: {
-          buffer: this.cg.regl.prop<Props, "offset">("offset"),
-          divisor: 1,
-        },
-        angle: {
-          buffer: this.cg.regl.prop<Props, "angle">("angle"),
-          divisor: this.cg.regl.prop<Props, "angleDivisor">("angleDivisor"),
-        },
-        color: {
-          buffer: this.cg.regl.prop<Props, "color">("color"),
-          divisor: this.cg.regl.prop<Props, "colorDivisor">("colorDivisor"),
-        },
-        radius: {
-          buffer: this.cg.regl.prop<Props, "radius">("radius"),
-          divisor: this.cg.regl.prop<Props, "radiusDivisor">("radiusDivisor"),
-        },
-      },
-      count: 6,
-      instances: this.cg.regl.prop<Props, "instances">("instances"),
-    });
+        count: 6,
+        instances: this.cg.regl.prop<Props, "instances">("instances"),
+      }),
+    };
   }
 
   /** @internal */
-  public render(command: DrawCommand): void {
+  public render(commands: NamedDrawCommands): void {
     const { xys, angles, colors, radii } = this;
     const instances = xys.count(2);
-    command({
+    commands.wedges({
       instances,
       position: this.positionBuffer,
       offset: xys.buffer,

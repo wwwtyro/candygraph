@@ -8,7 +8,7 @@ import CandyGraph, {
   createDefaultFont,
   Triangles,
   Grid,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -77,14 +77,21 @@ export default async function TimeAndState(cg: CandyGraph) {
   ];
 
   const grid = [
-    new Grid(cg, axes[0].info.ticks, axes[1].info.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
+    new Grid(cg, axes[0].computed.ticks, axes[1].computed.ticks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
       color: [0.5, 0.5, 0.5, 1],
       width: 1 * dpr,
     }),
-    new Grid(cg, axes[0].info.minorTicks, axes[1].info.minorTicks, axisCoords.xscale.domain, axisCoords.yscale.domain, {
-      color: [0.75, 0.75, 0.75, 1],
-      width: 1 * dpr,
-    }),
+    new Grid(
+      cg,
+      axes[0].computed.minorTicks,
+      axes[1].computed.minorTicks,
+      axisCoords.xscale.domain,
+      axisCoords.yscale.domain,
+      {
+        color: [0.75, 0.75, 0.75, 1],
+        width: 1 * dpr,
+      }
+    ),
   ];
 
   const xs: number[] = [];
@@ -159,8 +166,8 @@ export default async function TimeAndState(cg: CandyGraph) {
 
     // Render the traces with the timeCoords.
     cg.render(timeCoords, viewport, [
-      new LineStrip(cg, xs, y0, { colors: [0.5, 0, 1.0, 1], widths: 2.0 * dpr }),
-      new LineStrip(cg, xs, y1, { colors: [1.0, 0, 0.5, 1], widths: 2.0 * dpr }),
+      new OpaqueLineStrip(cg, xs, y0, { colors: [0.5, 0, 1.0], widths: 2.0 * dpr }),
+      new OpaqueLineStrip(cg, xs, y1, { colors: [1.0, 0, 0.5], widths: 2.0 * dpr }),
     ]);
 
     // Render the axes with the axisCoords.

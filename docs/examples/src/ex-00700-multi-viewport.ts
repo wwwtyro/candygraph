@@ -5,7 +5,7 @@
 import CandyGraph, {
   Dataset,
   createDefaultFont,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -101,8 +101,8 @@ export default async function MultiViewport(cg: CandyGraph) {
       const y = 5 + 5 * primenoise(x * rate + offset);
       ys.push(y);
     }
-    return new LineStrip(cg, xs, ys, {
-      colors: [Math.random(), Math.random(), Math.random(), 1],
+    return new OpaqueLineStrip(cg, xs, ys, {
+      colors: [Math.random(), Math.random(), Math.random()],
       widths: dpr * (Math.random() * 2 + 1),
     });
   }

@@ -1,5 +1,5 @@
 import { CandyGraph } from "../candygraph";
-import { Font } from "../primitives/font";
+import { Font } from "./font";
 
 function loadImage(url: string) {
   return new Promise<HTMLImageElement>((accept) => {

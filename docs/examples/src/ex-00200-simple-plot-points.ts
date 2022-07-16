@@ -5,7 +5,7 @@
 import CandyGraph, {
   createDefaultFont,
   Circles,
-  LineStrip,
+  OpaqueLineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -49,8 +49,8 @@ export default async function SimplePlotPoints(cg: CandyGraph) {
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
     new Scissor(cg, 0, 0, 1, 1, false, [
-      new LineStrip(cg, xs, ys, {
-        colors: [1, 0.5, 0, 1],
+      new OpaqueLineStrip(cg, xs, ys, {
+        colors: [1, 0.5, 0],
         widths: 3 * dpr,
       }),
       new Circles(cg, xs, ys, {
