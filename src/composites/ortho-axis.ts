@@ -3,7 +3,7 @@ import { Composite, Renderable, NumberArray } from "../common";
 import { CartesianCoordinateSystem } from "../coordinates/cartesian";
 import { Kind as ScaleKind } from "../scales/scale";
 import { Axis, AxisOptions } from "./axis";
-import { Font } from "../primitives/font";
+import { Font } from "../assets/font";
 
 export interface OrthoAxisOptions extends AxisOptions {
   /** The maximum value encompassed by this axis. */

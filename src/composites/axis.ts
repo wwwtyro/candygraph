@@ -6,7 +6,7 @@ import { Text } from "../primitives/text";
 import { VLines } from "../primitives/vlines";
 import { HLines } from "../primitives/hlines";
 import { LineSegments } from "../primitives/line-segments";
-import { Font } from "../primitives/font";
+import { Font } from "../assets/font";
 
 export interface AxisOptions {
   /** The color of the primary axis line. Default [0, 0, 0, 1]. */

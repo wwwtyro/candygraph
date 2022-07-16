@@ -15,6 +15,8 @@ export {
   Vector4,
 } from "./common";
 
+export { Dataset } from "./dataset";
+
 export { LinearScale } from "./scales/linear";
 export { LogScale } from "./scales/log";
 
@@ -23,8 +25,6 @@ export { PolarCoordinateSystem } from "./coordinates/polar";
 export { CoordinateSystem } from "./coordinates/coordinate-system";
 
 export { Circles, CirclesOptions } from "./primitives/circles";
-export { Dataset } from "./dataset";
-export { Font } from "./primitives/font";
 export { HLines, HLinesOptions } from "./primitives/hlines";
 export { InterleavedCircles, InterleavedCirclesOptions } from "./primitives/interleaved-circles";
 export { InterleavedShapes, InterleavedShapesOptions } from "./primitives/interleaved-shapes";
@@ -44,3 +44,4 @@ export { OrthoAxis, OrthoAxisOptions, OrthoAxisInfo } from "./composites/ortho-a
 export { Scissor } from "./composites/scissor";
 
 export { createDefaultFont } from "./assets/default-font";
+export { Font } from "./assets/font";
