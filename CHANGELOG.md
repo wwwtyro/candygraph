@@ -11,6 +11,10 @@
     and use the names you provided to find the `DrawCommand` you need.
 - Added the `TransparentLineStrip` primitive that allows rendering line strips
   with alpha and avoids the overlap artifacts present in `LineStrip`.
+- Added the `OpaqueLineStrip` primitive and a deprecation warning when using
+  `LineStrip`.
+
+([#44](https://github.com/wwwtyro/candygraph/pull/42))
 
 ## 0.8.0
 
