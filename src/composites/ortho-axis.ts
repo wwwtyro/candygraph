@@ -1,5 +1,6 @@
 import { CandyGraph } from "../candygraph";
-import { Composite, Renderable, NumberArray } from "../common";
+import { Renderable, NumberArray } from "../common";
+import { Composite } from "./composite";
 import { CartesianCoordinateSystem } from "../coordinates/cartesian";
 import { Kind as ScaleKind } from "../scales/scale";
 import { Axis, AxisOptions } from "./axis";

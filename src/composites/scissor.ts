@@ -1,6 +1,7 @@
 import { DrawCommand } from "regl";
 import { CandyGraph } from "../candygraph";
-import { Composite, Renderable } from "../common";
+import { Renderable } from "../common";
+import { Composite } from "./composite";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
 
 type Props = {

@@ -1,5 +1,6 @@
 import { CandyGraph } from "../candygraph";
-import { Composite, Renderable, Vector4, Vector2, NumberArray } from "../common";
+import { Renderable, Vector4, Vector2, NumberArray } from "../common";
+import { Composite } from "./composite";
 import { VLines } from "../primitives/vlines";
 import { HLines } from "../primitives/hlines";
 
