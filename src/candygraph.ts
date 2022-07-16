@@ -1,7 +1,8 @@
 import REGL, { DrawCommand, Regl, Vec4 } from "regl";
 import { CoordinateSystem } from "./coordinates/coordinate-system";
-import { Viewport, Renderable, RenderableType } from "./common";
+import { Viewport, Renderable } from "./common";
 import { Primitive, NamedDrawCommands } from "./primitives/primitive";
+import { Composite } from "./composites/composite";
 
 type Props = {
   resolution: [number, number];
@@ -187,10 +188,10 @@ export class CandyGraph {
         this.recursiveRender(coords, element);
       }
     } else {
-      if (renderable.kind === RenderableType.Primitive) {
+      if (renderable instanceof Primitive) {
         const command = this.getNamedCommands(coords, renderable);
         renderable.render(command);
-      } else if (renderable.kind === RenderableType.Composite) {
+      } else if (renderable instanceof Composite) {
         if (renderable.scope) {
           renderable.scope(renderable.props(coords), () => {
             this.recursiveRender(coords, renderable.children());

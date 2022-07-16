@@ -1,18 +1,11 @@
 import { Primitive } from "./primitives/primitive";
 import { Composite } from "./composites/composite";
 
-export type UnpackPromise<T> = T extends Promise<infer U> ? U : never;
-
 export interface Viewport {
   x: number;
   y: number;
   width: number;
   height: number;
-}
-
-export enum RenderableType {
-  Primitive,
-  Composite,
 }
 
 export type Renderable = Primitive | Composite | Renderable[];

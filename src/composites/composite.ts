@@ -1,11 +1,9 @@
 import { DrawCommand } from "regl";
-import { Renderable, RenderableType } from "../common";
+import { Renderable } from "../common";
+import { Primitive } from "../primitives/primitive";
 import { CoordinateSystem } from "../coordinates/coordinate-system";
 
 export abstract class Composite {
-  /** @internal */
-  public readonly kind = RenderableType.Composite;
-
   /** @internal */
   public abstract children(): Renderable;
 
@@ -24,9 +22,9 @@ export abstract class Composite {
         for (const element of renderable) {
           recurse(element);
         }
-      } else if (renderable.kind === RenderableType.Composite) {
+      } else if (renderable instanceof Composite) {
         recurse(renderable.children());
-      } else if (renderable.kind === RenderableType.Primitive) {
+      } else if (renderable instanceof Primitive) {
         renderable.dispose();
       }
     }
