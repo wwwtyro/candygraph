@@ -1,7 +1,7 @@
 import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray, NamedDrawCommands } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { Dataset, createDataset } from "../dataset";
 
 export interface VLinesOptions {
   /** The width of the lines in pixels. If this value is a single number, it will apply to all the lines. Default 1. */

@@ -1,5 +1,5 @@
 import { Buffer } from "regl";
-import { CandyGraph } from "../candygraph";
+import { CandyGraph } from "./candygraph";
 
 function isDataset(obj: any): obj is Dataset {
   return obj.constructor === Dataset;

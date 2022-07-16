@@ -1,7 +1,7 @@
 import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, Vector4, NumberArray, NamedDrawCommands } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { Dataset, createDataset } from "../dataset";
 
 export interface TrianglesOptions {
   /** The color of the triangles. Default [0, 0, 0, 0.5]. */

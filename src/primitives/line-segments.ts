@@ -1,7 +1,7 @@
 import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray, NamedDrawCommands } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { Dataset, createDataset } from "../dataset";
 
 export interface LineSegmentsOptions {
   /** The width of the line segments in pixels. If this parameter is a single

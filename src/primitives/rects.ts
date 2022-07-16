@@ -1,7 +1,7 @@
 import { Buffer } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray, NamedDrawCommands } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { Dataset, createDataset } from "../dataset";
 
 export interface RectsOptions {
   /** The color of the rectangles. If this value is a single Vector4, it will apply to all the rectangles. Default [0, 0, 0, 0.5]. */

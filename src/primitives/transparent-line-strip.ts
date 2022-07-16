@@ -1,7 +1,7 @@
 import { Buffer, Elements } from "regl";
 import { CandyGraph } from "../candygraph";
 import { Primitive, NumberArray, NamedDrawCommands, Vector4 } from "../common";
-import { Dataset, createDataset } from "./dataset";
+import { Dataset, createDataset } from "../dataset";
 
 export interface TransparentLineStripOptions {
   /** The width of the line strip. Default 1. */

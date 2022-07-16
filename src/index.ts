@@ -23,7 +23,7 @@ export { PolarCoordinateSystem } from "./coordinates/polar";
 export { CoordinateSystem } from "./coordinates/coordinate-system";
 
 export { Circles, CirclesOptions } from "./primitives/circles";
-export { Dataset } from "./primitives/dataset";
+export { Dataset } from "./dataset";
 export { Font } from "./primitives/font";
 export { HLines, HLinesOptions } from "./primitives/hlines";
 export { InterleavedCircles, InterleavedCirclesOptions } from "./primitives/interleaved-circles";
