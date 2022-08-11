@@ -14,7 +14,7 @@
 - Added the `OpaqueLineStrip` primitive and a deprecation warning when using
   `LineStrip`.
 
-([#44](https://github.com/wwwtyro/candygraph/pull/42))
+([#44](https://github.com/wwwtyro/candygraph/pull/44))
 
 ## 0.8.0
 
