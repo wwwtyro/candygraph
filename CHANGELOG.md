@@ -1,3 +1,7 @@
+## Next
+
+- Fixed an issue with the `TransparentLineStrip` primitive where line joins caused a visual artifact/glitch
+
 ## 0.9.0
 
 - Renamed `Grid.info` and `OrthoAxis.info` to `Grid.computed` and `OrthoAxis.computed` respectively.
