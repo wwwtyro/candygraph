@@ -122,7 +122,7 @@ export class TransparentLineStrip extends Primitive {
             attribute vec2 position;
             attribute float ax, ay, bx, by, cx, cy, dx, dy;
             uniform float width;
-            
+
             ${glsl}
 
             void main() {
@@ -143,8 +143,12 @@ export class TransparentLineStrip extends Primitive {
               vec2 p01Norm = normalize(vec2(-p01.y, p01.x));
               float sigma = sign(dot(p01 + p21, normal));
               if (sign(pos.y) == -sigma) {
-                vec2 point = 0.5 * normal * -sigma * width / dot(normal, p01Norm);
-                gl_Position = rangeToClip(p1 + point);
+                vec2 point = p1 + 0.5 * width * normal * -sigma / dot(normal, p01Norm);
+                // Make sure that the position of the join is within the bounds
+                // of all three points
+                gl_Position = rangeToClip(
+                  clamp(point, min(p0, min(p1, p2)), max(p0, max(p1, p2)))
+                );
               } else {
                 vec2 xBasis = p2 - p1;
                 vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));
@@ -224,26 +228,30 @@ export class TransparentLineStrip extends Primitive {
             vec2 pA = toRange(vec2(ax, ay));
             vec2 pB = toRange(vec2(bx, by));
             vec2 pC = toRange(vec2(cx, cy));
+
+            vec2 ab = pB - pA;
+            vec2 abNorm = normalize(vec2(-ab.y, ab.x));
+
             if (position.x == 0.0) {
-              vec2 xBasis = pB - pA;
-              vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));
-              vec2 point = pA + xBasis * position.x + yBasis * width * position.y;
+              vec2 point = pA + ab * position.x + abNorm * width * position.y;
               gl_Position = rangeToClip(point);
               return;
             }
-            vec2 tangent = normalize(normalize(pC - pB) + normalize(pB - pA));
+
+            vec2 tangent = normalize(normalize(pC - pB) + normalize(ab));
             vec2 normal = vec2(-tangent.y, tangent.x);
-            vec2 ab = pB - pA;
             vec2 cb = pB - pC;
-            vec2 abNorm = normalize(vec2(-ab.y, ab.x));
             float sigma = sign(dot(ab + cb, normal));
+
             if (sign(position.y) == -sigma) {
-              vec2 position = 0.5 * normal * -sigma * width / dot(normal, abNorm);
-              gl_Position = rangeToClip(pB + position);
+              vec2 position = pB + 0.5 * width * normal * -sigma / dot(normal, abNorm);
+              // Make sure that the position of the join is within the bounds
+              // of all three points
+              gl_Position = rangeToClip(
+                clamp(position, min(pA, min(pB, pC)), max(pA, max(pB, pC)))
+              );
             } else {
-              vec2 xBasis = pB - pA;
-              vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));
-              vec2 point = pA + xBasis * position.x + yBasis * width * position.y;
+              vec2 point = pA + ab * position.x + abNorm * width * position.y;
               gl_Position = rangeToClip(point);
             }
           }`,
@@ -305,24 +313,29 @@ export class TransparentLineStrip extends Primitive {
           const float slices = ${JOIN_GEOMETRY.resolution.toExponential()};
           ${glsl}
           void main() {
-            vec2 pointA = toRange(vec2(ax, ay));
-            vec2 pointB = toRange(vec2(bx, by));
-            vec2 pointC = toRange(vec2(cx, cy));
-            vec2 xBasis = normalize(normalize(pointC - pointB) + normalize(pointB - pointA));
+            vec2 pA = toRange(vec2(ax, ay));
+            vec2 pB = toRange(vec2(bx, by));
+            vec2 pC = toRange(vec2(cx, cy));
+            vec2 ab = pB - pA;
+            vec2 xBasis = normalize(normalize(pC - pB) + normalize(ab));
             vec2 yBasis = vec2(-xBasis.y, xBasis.x);
-            vec2 ab = pointB - pointA;
-            vec2 cb = pointB - pointC;
+            vec2 cb = pB - pC;
             vec2 abn = normalize(vec2(-ab.y, ab.x));
             vec2 cbn = -normalize(vec2(-cb.y, cb.x));
             float sigma = sign(dot(ab + cb, yBasis));
             if (id == 0.0) {
-              gl_Position = rangeToClip(pointB + -0.5 * yBasis * sigma * width / dot(yBasis, abn));
+              vec2 position = pB + -0.5 * yBasis * sigma * width / dot(yBasis, abn);
+              // Make sure that the position of the join is within the bounds
+              // of all three points
+              gl_Position = rangeToClip(
+                clamp(position, min(pA, min(pB, pC)), max(pA, max(pB, pC)))
+              );
               return;
             }
             float theta = acos(dot(abn, cbn));
             theta = (sigma * 0.5 * ${Math.PI}) + -0.5 * theta + theta * (id - 1.0) / slices;
             vec2 pos = 0.5 * width * vec2(cos(theta), sin(theta));
-            pos = pointB + xBasis * pos.x + yBasis * pos.y;
+            pos = pB + xBasis * pos.x + yBasis * pos.y;
             gl_Position = rangeToClip(pos);
           }`,
         frag: `
