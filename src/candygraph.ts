@@ -53,6 +53,7 @@ export class CandyGraph {
         depth: false,
         alpha: opts.alpha,
         premultipliedAlpha: true,
+        stencil: true
       },
     });
     this.scope = this.regl({
