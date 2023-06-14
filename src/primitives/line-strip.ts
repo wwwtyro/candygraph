@@ -163,15 +163,15 @@ export class LineStrip extends Primitive {
         stencil: {
           enable: true,
           func: {
-            cmp: 'equal',
+            cmp: "equal",
             ref: 0,
             mask: 0xff,
           },
           op: {
-            fail: 'keep',
-            zpass: 'increment',
-            zfail: 'keep'
-          }
+            fail: "keep",
+            zpass: "increment",
+            zfail: "keep",
+          },
         },
         count: ROUND_CAP_JOIN_GEOMETRY.length,
         instances: this.cg.regl.prop<Props, "instances">("instances"),
@@ -183,7 +183,7 @@ export class LineStrip extends Primitive {
   public render(commands: NamedDrawCommands): void {
     const { xs, ys, widths, colors } = this;
     const instances = xs.count(1) - 1;
-    this.cg.regl.clear({stencil: 0});
+    this.cg.regl.clear({ stencil: 0 });
     commands.strip({
       instances,
       position: this.roundCapJoin,

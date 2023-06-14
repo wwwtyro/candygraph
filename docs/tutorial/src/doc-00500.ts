@@ -5,7 +5,7 @@ import CandyGraph, {
   LinearScale,
   LogScale,
   CartesianCoordinateSystem,
-  OpaqueLineStrip,
+  LineStrip,
   OrthoAxis,
   Dataset,
 } from "../../../src";
@@ -46,7 +46,7 @@ export default async function doc_00500(cg: CandyGraph) {
   }
 
   // Previously we'd have fed `xsRaw` and `ysRaw` directly into primitives like
-  // `OpaqueLineStrip`. This time, however, we'll upload them to the GPU and
+  // `LineStrip`. This time, however, we'll upload them to the GPU and
   // keep a handle to them using the `Dataset` class. Once we've done so, we can
   // continue to use them until we invoke their `dispose()` functions.
   const xs = new Dataset(cg, xsRaw);
@@ -117,15 +117,15 @@ export default async function doc_00500(cg: CandyGraph) {
     const axes = linear ? linlinAxis : linlogAxis;
 
     // Next we'll use (and reuse!) our `xs` and `ys` `Dataset` objects in a
-    // `Circles` or `OpaqueLineStrip` renderable according to the value of `scatter`:
+    // `Circles` or `LineStrip` renderable according to the value of `scatter`:
     const data = scatter
       ? new Circles(cg, xs, ys, {
           colors: [1, 0, 0, 0.1],
           radii: 3,
           borderWidths: 0,
         })
-      : new OpaqueLineStrip(cg, xs, ys, {
-          colors: [1, 0, 0],
+      : new LineStrip(cg, xs, ys, {
+          colors: [1, 0, 0, 1],
           widths: 0.25,
         });
 
