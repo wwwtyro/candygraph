@@ -23,6 +23,8 @@ export { HLines, HLinesOptions } from "./primitives/hlines";
 export { InterleavedCircles, InterleavedCirclesOptions } from "./primitives/interleaved-circles";
 export { InterleavedShapes, InterleavedShapesOptions } from "./primitives/interleaved-shapes";
 export { LineSegments, LineSegmentsOptions } from "./primitives/line-segments";
+export { OpaqueLineStrip, OpaqueLineStripOptions } from "./primitives/opaque-line-strip";
+export { TransparentLineStrip, TransparentLineStripOptions } from "./primitives/transparent-line-strip";
 export { LineStrip, LineStripOptions } from "./primitives/line-strip";
 export { Rects, RectsOptions } from "./primitives/rects";
 export { Shapes, ShapesOptions } from "./primitives/shapes";
