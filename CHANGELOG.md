@@ -1,4 +1,4 @@
-## Next
+## 0.10.0
 
 - Simplified line strip rendering; `TransparentLineStrip` and `OpaqueLineStrip` are deprecated.
 
