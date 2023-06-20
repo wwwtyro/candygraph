@@ -100,6 +100,9 @@ export class TransparentLineStrip extends Primitive {
     options: TransparentLineStripOptions = {}
   ) {
     super();
+    console.warn(
+      "TransparentLineStrip is deprecated and will be removed in a future release. Please use LineStrip instead."
+    );
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xs = createDataset(cg, xs);
     this.ys = createDataset(cg, ys);

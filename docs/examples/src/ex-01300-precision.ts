@@ -4,7 +4,7 @@
 // skip-doc-start
 import CandyGraph, {
   createDefaultFont,
-  OpaqueLineStrip,
+  LineStrip,
   OrthoAxis,
   LinearScale,
   CartesianCoordinateSystem,
@@ -50,8 +50,8 @@ export default async function PrecisionPlot(cg: CandyGraph) {
 
   // Render the a line strip representing the x & y data, and axes.
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0.5, 0.0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0.5, 0.0, 1],
       widths: 3 * dpr,
     }),
     new OrthoAxis(cg, coords, "x", font, {

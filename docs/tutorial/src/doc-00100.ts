@@ -1,5 +1,5 @@
 // skip-doc-start
-import CandyGraph, { LinearScale, CartesianCoordinateSystem, OpaqueLineStrip } from "../../../src";
+import CandyGraph, { LinearScale, CartesianCoordinateSystem, LineStrip } from "../../../src";
 // skip-doc-stop
 
 // ## Viewport, Scale, and Coordinates
@@ -50,8 +50,8 @@ export default function doc_00100(cg: CandyGraph): void {
   // render a line strip. We'll render it with width 2 pixels and in red
   // (`colors` format is [red, green, blue, alpha]).
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
   ]);

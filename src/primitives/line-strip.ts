@@ -81,9 +81,6 @@ export class LineStrip extends Primitive {
     options: LineStripOptions = {}
   ) {
     super();
-    console.warn(
-      "LineStrip is deprecated and will soon be removed. Please use OpaqueLineStrip or TransparentLineStrip instead."
-    );
     const opts = { ...DEFAULT_OPTIONS, ...options };
     this.xs = createDataset(cg, xs);
     this.ys = createDataset(cg, ys);
@@ -163,6 +160,19 @@ export class LineStrip extends Primitive {
           },
         },
 
+        stencil: {
+          enable: true,
+          func: {
+            cmp: "equal",
+            ref: 0,
+            mask: 0xff,
+          },
+          op: {
+            fail: "keep",
+            zpass: "increment",
+            zfail: "keep",
+          },
+        },
         count: ROUND_CAP_JOIN_GEOMETRY.length,
         instances: this.cg.regl.prop<Props, "instances">("instances"),
       }),
@@ -173,6 +183,7 @@ export class LineStrip extends Primitive {
   public render(commands: NamedDrawCommands): void {
     const { xs, ys, widths, colors } = this;
     const instances = xs.count(1) - 1;
+    this.cg.regl.clear({ stencil: 0 });
     commands.strip({
       instances,
       position: this.roundCapJoin,

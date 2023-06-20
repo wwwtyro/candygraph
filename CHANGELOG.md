@@ -1,6 +1,6 @@
 ## Next
 
-- Fixed an issue with the `TransparentLineStrip` primitive where line joins caused a visual artifact/glitch
+- Simplified line strip rendering; `TransparentLineStrip` and `OpaqueLineStrip` are deprecated.
 
 ## 0.9.0
 

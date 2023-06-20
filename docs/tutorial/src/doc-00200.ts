@@ -3,7 +3,7 @@ import CandyGraph, {
   createDefaultFont,
   LinearScale,
   CartesianCoordinateSystem,
-  OpaqueLineStrip,
+  LineStrip,
   OrthoAxis,
 } from "../../../src";
 // skip-doc-stop
@@ -47,8 +47,8 @@ export default async function doc_00200(cg: CandyGraph) {
   cg.clear([1, 1, 1, 1]); // skip-doc
 
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font),
@@ -82,8 +82,8 @@ export default async function doc_00200(cg: CandyGraph) {
   // skip-doc-start
   cg.clear([1, 1, 1, 1]);
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font),
@@ -99,8 +99,8 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
@@ -124,8 +124,8 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
@@ -146,8 +146,8 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font, { labelSide: 1 }),
@@ -171,8 +171,8 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font, {
@@ -199,8 +199,8 @@ export default async function doc_00200(cg: CandyGraph) {
 
   cg.clear([1, 1, 1, 1]); // skip-doc
   cg.render(coords, viewport, [
-    new OpaqueLineStrip(cg, xs, ys, {
-      colors: [1, 0, 0],
+    new LineStrip(cg, xs, ys, {
+      colors: [1, 0, 0, 1],
       widths: 2,
     }),
     new OrthoAxis(cg, coords, "x", font, {
