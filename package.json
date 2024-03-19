@@ -17,7 +17,7 @@
   "contributors": [
     "Fritz Lekschas (https://lekschas.de)"
   ],
-  "license": "Unlicense",
+  "license": "Unlicense OR MIT",
   "scripts": {
     "build": "npm run clean && npm run build-library && npm run build-tutorial && npm run build-examples && npm run build-apidocs",
     "build-library": "tsc -p tsconfig.json && webpack",
